@@ -113,7 +113,7 @@ test("all built-in characters have valid story gates and future notes remain loc
     }
     const first = entries.find((entry) => !entry.chapter.isIllustration);
     const visible = unlockedCharacters(defaults, entries, [first.id]);
-    assert.equal(visible.length, series.slug === "thien-su-nha-ben" ? 2 : 4);
+    assert.equal(visible.length, series.slug === "tinh-yeu-vo-hinh" ? 4 : 2);
     assert.equal(unlockedCharacters(defaults, entries, [entries.at(-1).id]).length, defaults.length);
   }
 });

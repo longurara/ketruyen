@@ -25,5 +25,16 @@
     "status": "",
     "description": "Một đêm tháng Tư ở Tokyo, Kakeru Sorano, một sinh viên đại học, gặp Koharu Fuyutsuki, cô gái luôn mỉm cười tỏa ra sự ấm áp trái ngược hẳn với tính hướng nội của cậu. Nhưng có một điều cậu không hề biết: cô đã mất đi thị lực từ lâu. Dù vậy, cô vẫn ngày ngày đến trường, tham gia câu lạc bộ, có thêm nhiều người bạn mới và mơ ước một ngày được tự bắn pháo hoa.",
     "tags": ["Romance", "Drama", "Light Novel"]
+  },
+  {
+    "slug": "arya-ban-ben",
+    "source": "output/arya-ban-ben",
+    "titleVi": "Arya Bàn Bên Thỉnh Thoảng Lại Trêu Ghẹo Tôi Bằng Tiếng Nga",
+    "titleJp": "Tokidoki Bosotto Russia-go de Dereru Tonari no Alya-san",
+    "author": "Sunsunsun",
+    "illustrator": "Momoco",
+    "status": "Đang cập nhật",
+    "description": "Ngồi cạnh Kuze Masachika là Alisa Mikhailovna Kujou — cô nữ sinh mang hai dòng máu Nga - Nhật xinh đẹp, lạnh lùng và luôn đứng đầu trường. Đôi khi nàng công chúa tóc bạc ấy lại lẩm bẩm những lời ngọt ngào bằng tiếng Nga để trêu cậu, hoàn toàn không hề biết rằng Masachika nghe hiểu tiếng Nga như tiếng mẹ đẻ.",
+    "tags": ["Romance", "Comedy", "Học đường", "Light Novel"]
   }
 ]

@@ -621,6 +621,237 @@
           "chapter": "Chương 5: Cây cầu bắc qua dải Ngân Hà"
         }
       }
+    ],
+    "arya-ban-ben": [
+      {
+        "key": "masachika",
+        "name": "Kuze Masachika",
+        "aliases": [
+          "Masachika",
+          "Kuze",
+          "Masachika Kuze",
+          "Kuzecchi"
+        ],
+        "note": "Nam sinh ngồi cạnh Alisa; thường tỏ ra lười biếng nhưng thực chất hiểu tiếng Nga và rất nhạy bén.",
+        "gate": "Tập_1\u001fChương mở đầu: Nàng công chúa cô độc và cậu bạn \"hàng xóm\" lười biếng",
+        "appearance": {
+          "volume": "Tập 1",
+          "chapter": "Chương mở đầu: Nàng công chúa cô độc và cậu bạn \"hàng xóm\" lười biếng"
+        },
+        "legacy": {
+          "name": "Kuze Masachika",
+          "aliases": [
+            "Masachika",
+            "Kuze"
+          ],
+          "note": "Nam sinh ngồi cạnh Alisa, hiểu được những câu tiếng Nga của cô.",
+          "gate": "Tập_1\u001fChương mở đầu: Nàng công chúa cô độc và cậu bạn \"hàng xóm\" lười biếng"
+        }
+      },
+      {
+        "key": "alisa",
+        "name": "Alisa Mikhailovna Kujou",
+        "aliases": [
+          "Alisa",
+          "Alya",
+          "Arya",
+          "Kujou Alisa"
+        ],
+        "note": "Nữ sinh mang hai dòng máu Nga - Nhật ngồi cạnh Masachika; xinh đẹp, nghiêm túc và hay lẩm bẩm tiếng Nga.",
+        "gate": "Tập_1\u001fChương mở đầu: Nàng công chúa cô độc và cậu bạn \"hàng xóm\" lười biếng",
+        "appearance": {
+          "volume": "Tập 1",
+          "chapter": "Chương mở đầu: Nàng công chúa cô độc và cậu bạn \"hàng xóm\" lười biếng"
+        },
+        "legacy": {
+          "name": "Alisa Mikhailovna Kujou",
+          "aliases": [
+            "Alisa",
+            "Alya",
+            "Arya"
+          ],
+          "note": "Nữ sinh mang hai dòng máu Nga - Nhật ngồi cạnh Masachika.",
+          "gate": "Tập_1\u001fChương mở đầu: Nàng công chúa cô độc và cậu bạn \"hàng xóm\" lười biếng"
+        }
+      },
+      {
+        "key": "yuki",
+        "name": "Suou Yuki",
+        "aliases": [
+          "Yuki",
+          "Yuki Suou"
+        ],
+        "note": "Nữ sinh nổi tiếng khóa năm nhất, cựu hội trưởng hội học sinh sơ trung và rất thân thiết với Masachika.",
+        "gate": "Tập_1\u001fChương 2: Tớ không phải là kẻ cô độc, được chứ?",
+        "appearance": {
+          "volume": "Tập 1",
+          "chapter": "Chương 2: Tớ không phải là kẻ cô độc, được chứ?"
+        }
+      },
+      {
+        "key": "maria",
+        "name": "Maria Mikhailovna Kujou",
+        "aliases": [
+          "Maria",
+          "Masha",
+          "Kujou Maria"
+        ],
+        "note": "Chị gái của Alisa, thư ký hội học sinh; dịu dàng, ấm áp và luôn quan tâm tới mọi người.",
+        "gate": "Tập_1\u001fChương 2: Tớ không phải là kẻ cô độc, được chứ?",
+        "appearance": {
+          "volume": "Tập 1",
+          "chapter": "Chương 2: Tớ không phải là kẻ cô độc, được chứ?"
+        }
+      },
+      {
+        "key": "takeshi",
+        "name": "Maruyama Takeshi",
+        "aliases": [
+          "Takeshi",
+          "Maruyama",
+          "Takeshi Maruyama"
+        ],
+        "note": "Bạn thân cùng lớp của Masachika; nhiệt tình, bộc trực và hay đi cùng Hikaru.",
+        "gate": "Tập_1\u001fChương 2: Tớ không phải là kẻ cô độc, được chứ?",
+        "appearance": {
+          "volume": "Tập 1",
+          "chapter": "Chương 2: Tớ không phải là kẻ cô độc, được chứ?"
+        }
+      },
+      {
+        "key": "hikaru",
+        "name": "Kiyomiya Hikaru",
+        "aliases": [
+          "Hikaru",
+          "Kiyomiya",
+          "Hikaru Kiyomiya"
+        ],
+        "note": "Bạn thân cùng lớp của Masachika; điềm tĩnh, hiền lành và thường đi cùng Takeshi.",
+        "gate": "Tập_1\u001fChương 2: Tớ không phải là kẻ cô độc, được chứ?",
+        "appearance": {
+          "volume": "Tập 1",
+          "chapter": "Chương 2: Tớ không phải là kẻ cô độc, được chứ?"
+        }
+      },
+      {
+        "key": "touya",
+        "name": "Kenzaki Touya",
+        "aliases": [
+          "Touya",
+          "Kenzaki",
+          "Touya Kenzaki"
+        ],
+        "note": "Hội trưởng hội học sinh Học viện Seirei; uy nghiêm, lôi cuốn và luôn dẫn dắt hội học sinh.",
+        "gate": "Tập_1\u001fChương 5: Dừng lại! Đừng đánh nhau vì tôi chứ!",
+        "appearance": {
+          "volume": "Tập 1",
+          "chapter": "Chương 5: Dừng lại! Đừng đánh nhau vì tôi chứ!"
+        }
+      },
+      {
+        "key": "chisaki",
+        "name": "Sarashina Chisaki",
+        "aliases": [
+          "Chisaki",
+          "Sarashina",
+          "Chisaki Sarashina"
+        ],
+        "note": "Phó hội trưởng hội học sinh Học viện Seirei; mạnh mẽ, giỏi võ và là bạn gái của Touya.",
+        "gate": "Tập_1\u001fChương 8: ĐÚNG RỒ I, MÌNH LÀM ĐƯỢC MÀ",
+        "appearance": {
+          "volume": "Tập 1",
+          "chapter": "Chương 8: ĐÚNG RỒ I, MÌNH LÀM ĐƯỢC MÀ"
+        }
+      },
+      {
+        "key": "sumire",
+        "name": "Kiryuuin Sumire",
+        "aliases": [
+          "Sumire",
+          "Kiryuuin Sumire"
+        ],
+        "note": "Đàn chị có mái tóc cuộn dọc đặc trưng thuộc câu lạc bộ Kendo.",
+        "gate": "Tập_1\u001fLời bạt",
+        "appearance": {
+          "volume": "Tập 1",
+          "chapter": "Lời bạt"
+        }
+      },
+      {
+        "key": "ayano",
+        "name": "Kimishima Ayano",
+        "aliases": [
+          "Ayano",
+          "Ayano Kimishima"
+        ],
+        "note": "Người hầu thân cận phục vụ Yuki và gia tộc Suou; trầm mặc, ít biểu lộ cảm xúc nhưng hết mực tận tụy.",
+        "gate": "Tập_2\u001fChương 1: Anh hiểu ý em mà?",
+        "appearance": {
+          "volume": "Tập 2",
+          "chapter": "Chương 1: Anh hiểu ý em mà?"
+        }
+      },
+      {
+        "key": "sayaka",
+        "name": "Taniyama Sayaka",
+        "aliases": [
+          "Sayaka",
+          "Taniyama",
+          "Sayaka Taniyama"
+        ],
+        "note": "Nữ sinh từng cạnh tranh chức hội trưởng hội học sinh sơ trung với Yuki; nghiêm túc và thẳng thắn.",
+        "gate": "Tập_2\u001fChương 4: Vị của nó chỉ giống kem thôi sao? Thật vậy không đấy?",
+        "appearance": {
+          "volume": "Tập 2",
+          "chapter": "Chương 4: Vị của nó chỉ giống kem thôi sao? Thật vậy không đấy?"
+        }
+      },
+      {
+        "key": "nonoa",
+        "name": "Miyamae Nonoa",
+        "aliases": [
+          "Nonoa",
+          "Miyamae",
+          "Nonoa Miyamae"
+        ],
+        "note": "Bạn thân của Sayaka; có mái tóc vàng uốn xoăn, phong thái thoải mái và đầu óc tính toán sắc sảo.",
+        "gate": "Tập_2\u001fChương 8: Lý tưởng của người theo chủ nghĩa hiện thực",
+        "appearance": {
+          "volume": "Tập 2",
+          "chapter": "Chương 8: Lý tưởng của người theo chủ nghĩa hiện thực"
+        }
+      },
+      {
+        "key": "yuushou",
+        "name": "Kiryuuin Yuushou",
+        "aliases": [
+          "Yuushou",
+          "Yusho",
+          "Yuusho",
+          "Kiryuuin Yuushou"
+        ],
+        "note": "Anh em nhà Kiryuuin, đối thủ cũ của Masachika trong mảng piano.",
+        "gate": "Tập_5\u001fChương 2 - Chỉ Vì Đó Là Một Giấc Mơ, Lần Sau Đừng Làm Nó Ở Thế Giới Thực.",
+        "appearance": {
+          "volume": "Tập 5",
+          "chapter": "Chương 2 - Chỉ Vì Đó Là Một Giấc Mơ, Lần Sau Đừng Làm Nó Ở Thế Giới Thực."
+        }
+      },
+      {
+        "key": "elena",
+        "name": "Narahashi Elena",
+        "aliases": [
+          "Elena",
+          "Narahashi",
+          "Elena Narahashi"
+        ],
+        "note": "Đàn chị phụ trách câu lạc bộ âm nhạc; vui tính và quen biết Masachika.",
+        "gate": "Tập_7\u001fChương 3 - Đợi Đã, Ahoge Của Mình Vừa Dựng Đứng Lên À?",
+        "appearance": {
+          "volume": "Tập 7",
+          "chapter": "Chương 3 - Đợi Đã, Ahoge Của Mình Vừa Dựng Đứng Lên À?"
+        }
+      }
     ]
   }
 };

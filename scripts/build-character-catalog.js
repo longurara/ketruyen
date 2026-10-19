@@ -51,6 +51,22 @@ const CAST = {
     ["kyoko", "Kyoko", [], "Mẹ của Kakeru; giàu năng lượng, nhiệt tình và quan tâm tới con trai."],
     ["soichiro", "Soichiro Fuyutsuki", ["Soichiro", "Souichiro", "Fuyutsuki Soichiro"], "Bố của Koharu, được Kakeru gặp và trò chuyện trong một bữa ăn."],
     ["haruka", "Haruka Fuyutsuki", ["Haruka", "Fuyutsuki Haruka"], "Mẹ của Koharu, vợ của Soichiro; là người gần gũi, chăm sóc và hỗ trợ con gái."]
+  ],
+  "arya-ban-ben": [
+    ["masachika", "Kuze Masachika", ["Masachika", "Kuze", "Masachika Kuze", "Kuzecchi"], "Nam sinh ngồi cạnh Alisa; thường tỏ ra lười biếng nhưng thực chất hiểu tiếng Nga và rất nhạy bén."],
+    ["alisa", "Alisa Mikhailovna Kujou", ["Alisa", "Alya", "Arya", "Kujou Alisa"], "Nữ sinh mang hai dòng máu Nga - Nhật ngồi cạnh Masachika; xinh đẹp, nghiêm túc và hay lẩm bẩm tiếng Nga."],
+    ["yuki", "Suou Yuki", ["Yuki", "Yuki Suou"], "Nữ sinh nổi tiếng khóa năm nhất, cựu hội trưởng hội học sinh sơ trung và rất thân thiết với Masachika."],
+    ["maria", "Maria Mikhailovna Kujou", ["Maria", "Masha", "Kujou Maria"], "Chị gái của Alisa, thư ký hội học sinh; dịu dàng, ấm áp và luôn quan tâm tới mọi người."],
+    ["ayano", "Kimishima Ayano", ["Ayano", "Ayano Kimishima"], "Người hầu thân cận phục vụ Yuki và gia tộc Suou; trầm mặc, ít biểu lộ cảm xúc nhưng hết mực tận tụy."],
+    ["chisaki", "Sarashina Chisaki", ["Chisaki", "Sarashina", "Chisaki Sarashina"], "Phó hội trưởng hội học sinh Học viện Seirei; mạnh mẽ, giỏi võ và là bạn gái của Touya."],
+    ["touya", "Kenzaki Touya", ["Touya", "Kenzaki", "Touya Kenzaki"], "Hội trưởng hội học sinh Học viện Seirei; uy nghiêm, lôi cuốn và luôn dẫn dắt hội học sinh."],
+    ["takeshi", "Maruyama Takeshi", ["Takeshi", "Maruyama", "Takeshi Maruyama"], "Bạn thân cùng lớp của Masachika; nhiệt tình, bộc trực và hay đi cùng Hikaru."],
+    ["hikaru", "Kiyomiya Hikaru", ["Hikaru", "Kiyomiya", "Hikaru Kiyomiya"], "Bạn thân cùng lớp của Masachika; điềm tĩnh, hiền lành và thường đi cùng Takeshi."],
+    ["sayaka", "Taniyama Sayaka", ["Sayaka", "Taniyama", "Sayaka Taniyama"], "Nữ sinh từng cạnh tranh chức hội trưởng hội học sinh sơ trung với Yuki; nghiêm túc và thẳng thắn."],
+    ["nonoa", "Miyamae Nonoa", ["Nonoa", "Miyamae", "Nonoa Miyamae"], "Bạn thân của Sayaka; có mái tóc vàng uốn xoăn, phong thái thoải mái và đầu óc tính toán sắc sảo."],
+    ["elena", "Narahashi Elena", ["Elena", "Narahashi", "Elena Narahashi"], "Đàn chị phụ trách câu lạc bộ âm nhạc; vui tính và quen biết Masachika."],
+    ["sumire", "Kiryuuin Sumire", ["Sumire", "Kiryuuin Sumire"], "Đàn chị có mái tóc cuộn dọc đặc trưng thuộc câu lạc bộ Kendo."],
+    ["yuushou", "Kiryuuin Yuushou", ["Yuushou", "Yusho", "Yuusho", "Kiryuuin Yuushou"], "Anh em nhà Kiryuuin, đối thủ cũ của Masachika trong mảng piano."]
   ]
 };
 
@@ -63,6 +79,10 @@ const LEGACY = {
     kakeru: ["Kakeru Sorano", ["Kakeru", "Sorano"], "Sinh viên đại học, bạn cùng phòng ký túc xá của Narumi."],
     koharu: ["Koharu Fuyutsuki", ["Koharu", "Fuyutsuki"], "Cô gái Kakeru gặp tại buổi chào đón thành viên mới."],
     narumi: ["Narumi", [], "Bạn cùng phòng ký túc xá, người rủ Sorano đến buổi tiệc."]
+  },
+  "arya-ban-ben": {
+    masachika: ["Kuze Masachika", ["Masachika", "Kuze"], "Nam sinh ngồi cạnh Alisa, hiểu được những câu tiếng Nga của cô."],
+    alisa: ["Alisa Mikhailovna Kujou", ["Alisa", "Alya", "Arya"], "Nữ sinh mang hai dòng máu Nga - Nhật ngồi cạnh Masachika."]
   }
 };
 

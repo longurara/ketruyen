@@ -6,6 +6,7 @@
   "scripts": {
     "crawl": "node crawl.js",
     "epub": "node crawl.js --epub-only",
+    "import-pdf": "node import-pdf.js",
     "build-data": "node build-data.js",
     "build-characters": "node scripts/build-character-catalog.js",
     "vendor-ebook-reader": "node scripts/vendor-ebook-reader.js",
