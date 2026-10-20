@@ -241,6 +241,89 @@
     ]
   },
   {
+    "slug": "co-gai-van-chuong",
+    "source": "output/co-gai-van-chuong",
+    "titleVi": "Cô Gái Văn Chương",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Cô Gái Văn Chương và Tên Hề Thích Chết"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Cô Gái Văn Chương và Hồn Ma Đói Khát"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Cô Gái Văn Chương và Gã Khờ Bị Trói Buộc"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Cô Gái Văn Chương và Thiên Thần Sa Ngã"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Cô Gái Văn Chương và Người Hành Hương Than Khóc"
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": "Cô Gái Văn Chương và Tinh Linh Nước Mang Hoa Mặt Trăng"
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": "Cô Gái Văn Chương và Nhà Văn Hướng Về Chúa Trời (Phần 1)"
+      },
+      "Tập_08": {
+        "label": "Tập 08",
+        "title": "Cô Gái Văn Chương và Nhà Văn Hướng Về Chúa Trời (Phần 2)"
+      },
+      "Tập_09": {
+        "label": "Tuyển tập 01",
+        "title": "Cô Gái Văn Chương và Tuyển Tập Tình Yêu - Tập 1"
+      },
+      "Tập_10": {
+        "label": "Tuyển tập 02",
+        "title": "Cô Gái Văn Chương và Tuyển Tập Tình Yêu - Tập 2"
+      },
+      "Tập_11": {
+        "label": "Tuyển tập 03",
+        "title": "Cô Gái Văn Chương và Tuyển Tập Tình Yêu - Tập 3"
+      },
+      "Tập_12": {
+        "label": "Tuyển tập 04",
+        "title": "Cô Gái Văn Chương và Tuyển Tập Tình Yêu - Tập 4"
+      },
+      "Tập_13": {
+        "label": "Tập sự 01",
+        "title": "Tình Đầu Của Cô Gái Văn Chương Tập Sự"
+      },
+      "Tập_14": {
+        "label": "Tập sự 02",
+        "title": "Sự Tổn Thương Của Cô Gái Văn Chương Tập Sự"
+      },
+      "Tập_15": {
+        "label": "Tập sự 03",
+        "title": "Lễ Tốt Nghiệp Của Cô Gái Văn Chương Tập Sự"
+      },
+      "Tập_16": {
+        "label": "Hậu truyện",
+        "title": "Cô Gái Văn Chương - Nhà Văn Mới Nổi Và Biên Tập Viên"
+      }
+    },
+    "titleJp": "Bungaku Shoujo (”文学少女”シリーズ)",
+    "author": "Nomura Mizuki",
+    "illustrator": "Takeoka Miho",
+    "status": "Hoàn thành",
+    "description": "Amano Tooko — chủ nhiệm câu lạc bộ Văn học tự nhận mình là “Cô gái văn chương”, một yêu tinh sách có thể ăn-tươi-nuốt-sống các trang giấy và cảm nhận hương vị của từng câu chuyện — cùng nam sinh đàn em Inoue Konoha lần mở những bí ẩn đẫm tâm tư ẩn sau các kiệt tác văn học kinh điển. Trọn bộ 16 tập gồm 8 tập chính truyện, 4 tập Tuyển tập Tình yêu, 3 tập Cô gái văn chương Tập sự và tập hậu truyện.",
+    "tags": [
+      "Mystery",
+      "Romance",
+      "Drama",
+      "Học đường",
+      "Light Novel"
+    ]
+  },
+  {
     "slug": "khi-hikaru-con-tren-the-gian-nay",
     "source": "output/khi-hikaru-con-tren-the-gian-nay",
     "titleVi": "Khi Hikaru Còn Trên Thế Gian Này...",
@@ -3084,6 +3167,50 @@
     "tags": [
       "Romance",
       "Fantasy",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "chang-tham-dinh-vien-va-nu-tac-gia-tap-su",
+    "source": "output/chang-tham-dinh-vien-va-nu-tac-gia-tap-su",
+    "titleVi": "Chàng Thẩm Định Viên Và Nữ Tác Giả Tập Sự",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Chàng Thẩm Định Viên Và Nữ Tác Giả Tập Sự"
+      }
+    },
+    "titleJp": "Sorezore no Kanteishi to Toukousha",
+    "author": "Nomura Mizuki",
+    "illustrator": "Eihi",
+    "status": "Hoàn thành",
+    "description": "Dù chỉ là một nam sinh cấp ba bình thường, Ao còn làm công việc thẩm định viên đọc duyệt bản thảo dự thi giải thưởng tiểu thuyết mới. Nhờ một sự tình cờ nơi hiệu sách, cậu nhận ra cô bạn cùng lớp rụt rè Hiyuki chính là tác giả của những bản thảo ngập tràn đam mê đã luôn gửi tới suốt bảy năm qua.",
+    "tags": [
+      "Romance",
+      "Đời thường",
+      "Học đường",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "riku-va-chise",
+    "source": "output/riku-va-chise",
+    "titleVi": "Riku Và Chise - Chàng Trai Phân Chia Thế Giới Và Cô Gái Trong Biệt Thự",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Chàng Trai Phân Chia Thế Giới Và Cô Gái Trong Biệt Thự"
+      }
+    },
+    "titleJp": "Riku to Chise: Sekai wo Wakatsu Shounen to Bessou no Shoujo",
+    "author": "Nomura Mizuki",
+    "illustrator": "Takeoka Miho",
+    "status": "Hoàn thành",
+    "description": "Mùa hè năm mười lăm tuổi, vì biến cố ly hôn của cha mẹ, Chise được gửi tới một căn biệt thự yên tĩnh vùng thôn quê. Tại đây, cô tiểu thư luôn giấu nỗi cô đơn sau nụ cười phải lòng Riku — chàng trai có ánh mắt sắc lạnh mưu sinh bằng đủ nghề trong làng và luôn vạch rõ ranh giới giữa hai thế giới.",
+    "tags": [
+      "Romance",
+      "Drama",
+      "Đời thường",
       "Light Novel"
     ]
   }
