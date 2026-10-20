@@ -324,6 +324,36 @@
     ]
   },
   {
+    "slug": "hanh-trinh-cua-elaina",
+    "source": "output/hanh-trinh-cua-elaina",
+    "titleVi": "Hành Trình Của Elaina",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Hành Trình Của Elaina - Tập 1"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Hành Trình Của Elaina - Tập 2"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Hành Trình Của Elaina - Tập 3"
+      }
+    },
+    "titleJp": "Majo no Tabitabi (魔女の旅々)",
+    "author": "Jougi Shiraishi",
+    "illustrator": "Azure",
+    "status": "Đang cập nhật",
+    "description": "Ở một xứ sở nọ có một cô phù thủy nhỏ yêu thích ngao du thiên hạ. Khoác lên mình tấm áo choàng đen lấp lánh huy hiệu trên ngực cùng mái tóc màu xám tro bay trong gió, “Phù thủy Tro Tàn” Elaina đi qua biết bao vùng đất kỳ lạ, gặp gỡ vô vàn con người và ghi lại những câu chuyện vừa dịu dàng vừa chất chứa suy tư trên hành trình bất tận của mình.",
+    "tags": [
+      "Fantasy",
+      "Adventure",
+      "Đời thường",
+      "Light Novel"
+    ]
+  },
+  {
     "slug": "khi-hikaru-con-tren-the-gian-nay",
     "source": "output/khi-hikaru-con-tren-the-gian-nay",
     "titleVi": "Khi Hikaru Còn Trên Thế Gian Này...",
