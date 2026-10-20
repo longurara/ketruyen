@@ -145,8 +145,24 @@ async function buildSeries(config) {
   const OPT_DEST = path.join(PUBLIC_DIR, "img", sub);
   const seriesDataDir = path.join(DATA_DIR, sub);
   const urlBase = (dir) => (sub ? `/${dir}/${sub}` : `/${dir}`);
+  const metadataPath = path.join(OUTPUT_DIR, "metadata.json");
+  const indexPath = path.join(seriesDataDir, "index.json");
 
-  const raw = JSON.parse(fs.readFileSync(path.join(OUTPUT_DIR, "metadata.json"), "utf-8"));
+  if ((!fs.existsSync(metadataPath) || process.env.VERCEL) && fs.existsSync(indexPath)) {
+    const data = JSON.parse(fs.readFileSync(indexPath, "utf-8"));
+    const totalChapters = data.reduce((s, v) => s + v.chapters.length, 0);
+    const { source, legacyPaths, volumeTitles, ...meta } = config;
+    return {
+      ...meta,
+      index: `${urlBase("data")}/index.json`,
+      cover: data.find((volume) => volume.cover)?.cover || "",
+      volumes: data.length,
+      chapters: totalChapters,
+      bytes: data.reduce((s, v) => s + (v.bytes || 0), 0)
+    };
+  }
+
+  const raw = JSON.parse(fs.readFileSync(metadataPath, "utf-8"));
   let totalImages = 0;
   const data = [];
   const texts = [];
@@ -226,6 +242,11 @@ async function buildSeries(config) {
   }
 
   ensureDir(seriesDataDir);
+  for (const existing of fs.readdirSync(seriesDataDir)) {
+    if (/^vol-\d+\.[0-9a-f]+\.json$/i.test(existing)) {
+      fs.rmSync(path.join(seriesDataDir, existing), { force: true });
+    }
+  }
   let textBytes = 0;
   data.forEach((volume, volIdx) => {
     const json = JSON.stringify(texts[volIdx]);
@@ -242,7 +263,6 @@ async function buildSeries(config) {
       + pictures.reduce((sum, src) => sum + fs.statSync(path.join(PUBLIC_DIR, src)).size, 0);
   });
 
-  const indexPath = path.join(seriesDataDir, "index.json");
   fs.writeFileSync(indexPath, JSON.stringify(data), "utf-8");
 
   const indexKB = (fs.statSync(indexPath).size / 1024).toFixed(0);
@@ -270,8 +290,6 @@ async function main() {
   console.log("📦 Building data/ + images for static deployment...\n");
   const seriesList = JSON.parse(fs.readFileSync(SERIES_PATH, "utf-8"));
 
-  // Rewrite data/ from scratch so files from older builds do not pile up.
-  fs.rmSync(DATA_DIR, { recursive: true, force: true });
   ensureDir(DATA_DIR);
   if (fs.existsSync(LEGACY_DATA_PATH)) fs.rmSync(LEGACY_DATA_PATH);
 
