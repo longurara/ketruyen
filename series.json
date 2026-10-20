@@ -149,6 +149,42 @@
       "Tập_22": {
         "label": "Tập 22",
         "title": "Gremory trong Lễ Tốt Nghiệp"
+      },
+      "Tập_23": {
+        "label": "Tập 23",
+        "title": "Giải đấu bóng của Joker"
+      },
+      "Tập_24": {
+        "label": "Tập 24",
+        "title": "Buổi học ngoài trường của Tử Thần"
+      },
+      "Tập_25": {
+        "label": "Tập 25",
+        "title": "Khóa học hè của Yggdrasil"
+      },
+      "Shin_Tập_01": {
+        "label": "Shin Tập 01",
+        "title": "Học kỳ mới của Welsh Dragon"
+      },
+      "Shin_Tập_02": {
+        "label": "Shin Tập 02",
+        "title": "Bài kiểm tra năng lực của Ruin Princess"
+      },
+      "Shin_Tập_03": {
+        "label": "Shin Tập 03",
+        "title": "Mưa bóng mây trong chuyến tham quan của trường"
+      },
+      "Shin_Tập_04": {
+        "label": "Shin Tập 04",
+        "title": "Vương quốc của trận quyết chiến du học"
+      },
+      "High_School_DxD_EX": {
+        "label": "Ngoại truyện EX",
+        "title": "High School DxD EX"
+      },
+      "High_School_DxD_Zero": {
+        "label": "Ngoại truyện Zero",
+        "title": "High School DxD Zero"
       }
     },
     "titleJp": "High School DxD (ハイスクールD×D)",
@@ -3365,6 +3401,2732 @@
       "Đời thường",
       "Chữa lành",
       "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "hieu-thuoc-o-di-gioi",
+    "source": "output/hieu-thuoc-o-di-gioi",
+    "titleVi": "Hiệu Thuốc Ở Dị Giới",
+    "volumeTitles": {
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Y học trị liệu, Y học phòng ngừa, Thuật Giả Kim (Năm 1147)"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Bệnh Di Truyền và sáng chế Dược Phẩm Sinh Học (Năm 1147)"
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": "Người sử dụng Thần Thuật và Người sử dụng Chú Thuật (Năm 1147)"
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": "Truyền thuyết Tân Đại Lục (Năm 1148)"
+      }
+    },
+    "titleJp": "Isekai Yakkyoku (異世界薬局)",
+    "author": "Takayama Liz",
+    "illustrator": "Keepout",
+    "status": "Đang cập nhật",
+    "description": "Vol 4: Y học trị liệu, Y học phòng ngừa, Thuật Giả Kim (Năm 1147) - Chương 10: Chân tướng trò Giả Kim của Hermes Ngày tổ chức cuộc họp của các nhà giả kim đã đến. Sau khi kết thúc công việc và đóng cửa tiệm thuốc, Ellen thay đổi trang phục nam như đã bàn bạc trước đó và xuất hiện trước mặt nhân viên.",
+    "tags": [
+      "Isekai",
+      "Fantasy",
+      "Y khoa",
+      "Đời thường",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "overlord",
+    "source": "output/overlord",
+    "titleVi": "Overlord",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "The Undead King (Vua Bất Tử)"
+      }
+    },
+    "titleJp": "Overlord (オーバーロード)",
+    "author": "Maruyama Kugane",
+    "illustrator": "so-bin",
+    "status": "Đang cập nhật",
+    "description": "Đối mặt với cô gái trẻ và em gái của cô, tên kỵ sĩ lạnh lùng nâng kiếm. Có lẽ vì lòng thương hại, hắn quyết định chỉ một nhát chém duy nhất để kết liễu hai đứa trẻ để chúng không phải cảm nhận thêm bất kì sự đau đớn nào cả. Thanh kiếm giương cao quá đầu tạo thành một đường cung lớn, tỏa sáng lấp lánh dưới ánh nắng rực rỡ",
+    "tags": [
+      "Isekai",
+      "Fantasy",
+      "Dark Fantasy",
+      "Action",
+      "Adventure",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "su-tro-lai-cua-anh-hung-yeu-nhat",
+    "source": "output/su-tro-lai-cua-anh-hung-yeu-nhat",
+    "titleVi": "Sự Trở Lại Của Anh Hùng Yếu Nhất",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": "Sự Trở Lại Của Anh Hùng Yếu Nhất"
+      }
+    },
+    "titleJp": "",
+    "author": "나비계곡",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tôi đang bước đi trên một hành trình đời người bất tận. Những dấu chân kéo dài nối tiếp nhau như nét bút vẽ lên mặt đất ngập tràn sắc trắng tinh khôi.",
+    "tags": [
+      "Fantasy",
+      "Action",
+      "Adventure",
+      "Web Novel",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "absolute-duo",
+    "source": "output/absolute-duo",
+    "titleVi": "Absolute Duo",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Hiiragi★Takumi",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tôi còn không có thời gian để hiểu ý nghĩa của những từ đó. Dấu ấn được gọi là <<Aster>> xuất hiện trên ngực tôi và nó tạo ra sức nóng dữ dội. Sức nóng lan tỏa toàn bộ cơ thể chỉ trong khoảnh khắc và khiến tôi gặp khó khăn trong việc thở.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "accel-world",
+    "source": "output/accel-world",
+    "titleVi": "Accel World",
+    "volumeTitles": {
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Tinh Ảnh Phù Cao Kiều"
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": "Tai Ương Giáp"
+      },
+      "Tập_08": {
+        "label": "Tập 08",
+        "title": "Vân Mệnh Liên Tinh"
+      },
+      "Tập_09": {
+        "label": "Tập 09",
+        "title": "Thất Thiên Niên Chi Kỳ"
+      },
+      "Tập_10": {
+        "label": "Tập 10",
+        "title": "Elements"
+      },
+      "Tập_11": {
+        "label": "Tập 11",
+        "title": "Cuồng Ngạnh Lang"
+      },
+      "Tập_12": {
+        "label": "Tập 12",
+        "title": "Xích Văn Chương"
+      },
+      "Tập_13": {
+        "label": "Tập 13",
+        "title": "Thủy Tế Hiệu Hỏa"
+      },
+      "Ngoại_truyện": {
+        "label": "Ngoại truyện",
+        "title": "Hắc sắc song kiếm, Ngân sắc song dực"
+      }
+    },
+    "titleJp": "",
+    "author": "Reki Kawahara",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Arita Haruyuki như nín thở khi dòng chữ rực cháy đó xuất hiện ở chính giữa tầm nhìn, theo sau đó là sự gia tăng về Burst Point của cậu. Cậu đã được thưởng 10 điểm từ một trận tác chiến 2 chọi 2 với tổ đội có tổng cấp độ tương đương. Âm thanh kim loại vang lên khi điểm tăng lên dù có nghe bao lần vẫn rất chi êm dịu. Từ 298— nó đã tăng lên thành 308.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "akuyaku-reijo-ni-koi-wo-shite",
+    "source": "output/akuyaku-reijo-ni-koi-wo-shite",
+    "titleVi": "Akuyaku Reijo Ni Koi Wo Shite",
+    "volumeTitles": {
+      "Phần_01": {
+        "label": "Phần 01",
+        "title": "Phần Mở đầu"
+      },
+      "In_The_Game": {
+        "label": "In The Game",
+        "title": "Phần Học viện"
+      }
+    },
+    "titleJp": "",
+    "author": "Tsukino Ayato",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Phần Mở đầu - Chương 1: Đột nhiên phải giết người thì thật là quá sức mà! Khi tôi tỉnh dậy, một bầu trời đêm đầy sao hiện hữu ra trước mắt.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "amamori-junna-vo-cung-am-uot",
+    "source": "output/amamori-junna-vo-cung-am-uot",
+    "titleVi": "Amamori Junna Vô Cùng Ẩm Ướt",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Mizuki Mizushiro",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Nếu hỏi tôi có thích mưa không, tôi sẽ đáp rằng mình không thích cũng chẳng ghét. Nói chung, người ta thường không ưa trời mưa. Ướt át, ẩm ướt, lại phải lỉnh kỉnh thêm cái ô, bao nhiêu việc đáng lẽ làm được dưới nắng thì lại dở dang. Nào là dã ngoại, hội thao, đại nhạc hội ngoài trời, điền kinh…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "ashita-boku-wa-shinu-kimi-wa-ikikaeru",
+    "source": "output/ashita-boku-wa-shinu-kimi-wa-ikikaeru",
+    "titleVi": "Ashita, Boku wa Shinu. Kimi wa Ikikaeru.",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Phần_03": {
+        "label": "Phần 03",
+        "title": "Ngoại truyện"
+      }
+    },
+    "titleJp": "",
+    "author": "Fuji Maru",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Những đám mây xám xịt, những hạt mưa không ngớt, cơ thể ướt đẫm kia, cuối cùng cũng đã ngừng cử động Cái thảm kịch nhỏ bé đó, trong cái nơi vô danh của cái thế giới này, cũng có thể thu hút hàng đống người đang sinh hoạt thường ngày kéo đến.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "bau-troi-hai-mat",
+    "source": "output/bau-troi-hai-mat",
+    "titleVi": "Bầu Trời Hai Mặt",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Đối Đầu"
+      }
+    },
+    "titleJp": "",
+    "author": "DokutahWS",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Nếu N.A.T.I.O.N, hay còn gọi là Nation, là một khối quốc gia được thành lập dựa trên một lý tưởng về một thế giới, nơi ma pháp là một phần của cuộc sống, thì đối lập với họ, là O.R.G.A.N.I.Z.A.T.I.O.N, hay còn gọi là Organization. Một khối quốc gia hình thành trên những gì còn sót lại của U.N sau Chiến tranh Thế giới III, cũng là nơi mang tư tưởng đối…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "berserker-of-gluttony",
+    "source": "output/berserker-of-gluttony",
+    "titleVi": "Berserker of Gluttony",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Ichika Isshiki",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Trong thế giới này tồn tại khái niệm về level. Tất cả những sinh vật sống đều bắt đầu từ level ,và chúng đều có thể gia tăng level của mình bằng cách kiếm điểm kinh nghiệm. Điểm kinh nghiệm có thể được thu thập bằng cách giết những quái vật, giống loài đang thống trị thế giới này. Tuy nhiên, không phải ai cũng có thể hạ gục được chúng bởi lẽ chúng cực kỳ…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "bi-mat-cua-phu-thuy-tinh-lang",
+    "source": "output/bi-mat-cua-phu-thuy-tinh-lang",
+    "titleVi": "Bí mật của Phù Thủy Tĩnh Lặng",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": ""
+      },
+      "Tập_4.5": {
+        "label": "Tập 4.5",
+        "title": "Hậu truyện-- Hồ Sơ Vụ Án của Phù Thủy Tĩnh Lặng"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": ""
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": ""
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": ""
+      },
+      "Phần_09": {
+        "label": "Phần 09",
+        "title": "Bí mật của Phù Thủy Tĩnh Lặng -another- Phần 1- Sự Trỗi Dậy của Pháp Sư Kết Giới"
+      },
+      "Phần_10": {
+        "label": "Phần 10",
+        "title": "Bí mật của Phù Thủy Tĩnh Lặng -another- Phần 2- Sự Trỗi Dậy của Pháp Sư Kết Giới"
+      }
+    },
+    "titleJp": "",
+    "author": "Isora Matsuri",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tại dãy núi Worgan, thuộc lãnh địa của Bá tước Kerbeck, một con rồng đã xuất hiện. Tin tức chấn động không chỉ cư dân lãnh địa Bá tước Kerbeck mà còn cả Vương quốc Ridill, gieo rắc nỗi kinh hoàng cho mọi người.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "bluesteel-blasphemer",
+    "source": "output/bluesteel-blasphemer",
+    "titleVi": "Bluesteel Blasphemer",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Sakaki Ichirou",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Họ nói rằng vào lúc chết, cuộc sống của một người sẽ lóe lên trước mắt họ. Nếu đúng là như vậy, thì Amano Yukinari thực sự nghĩ rằng cậu ấy sắp sửa chết. Một loạt các kí ức đang nhấp nháy vào ra liên hồi ở mặt sau tâm trí của cậu. Những mảnh kí ức rời rạc, không ngừng nhấp nháy, mà chẳng hề có bối cảnh. Thậm chí có cả một số sự kiện mà chính bản thân…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "bokutachi-no-remake",
+    "source": "output/bokutachi-no-remake",
+    "titleVi": "Bokutachi no Remake",
+    "volumeTitles": {
+      "Tập_08": {
+        "label": "Tập 08",
+        "title": ""
+      },
+      "Tập_09": {
+        "label": "Tập 09",
+        "title": ""
+      },
+      "Tập_10": {
+        "label": "Tập 10",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Kionachi",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Hơi nóng mùa hè oi ả bao trùm khắp Osaka, tháng Bảy dường như đã sắp sửa khép lại. Thay đổi rõ rệt nhất ở ngôi nhà chung này chính là thực đơn, giờ đây đã hoàn toàn mang đậm hương vị mùa hè. Những món như mì lạnh hay udon mát lạnh bỗng trở nên cực kỳ được ưa chuộng. Để xua tan đi sự mệt mỏi do cái nóng gay gắt, chúng tôi thường xuyên thưởng thức chúng.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "bup-be-cau-nang",
+    "source": "output/bup-be-cau-nang",
+    "titleVi": "Búp bê cầu nắng",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Búp bê cầu nắng"
+      }
+    },
+    "titleJp": "",
+    "author": "Xám",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Màn vải rũ xuống che căn phòng nhỏ trở nên tối om. Trên chiếc giường nhỏ, Mưa vẫn cuộn người chặt trong chăn, úp mặt xuống gối. Gió và mây bên ngoài hiên đang vẫy gọi. Mưa ơi! Sao Mưa chẳng ra chơi cùng? Có cơn gió nào đó như đang thì thầm rằng: “Vì ngoài ban công chẳng còn Nắng nên Mưa không thích ra ban công nữa.”",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "campione",
+    "source": "output/campione",
+    "titleVi": "Campione",
+    "volumeTitles": {
+      "Tập_10": {
+        "label": "Tập 10",
+        "title": "Thương Chiến Thần"
+      },
+      "Tập_11": {
+        "label": "Tập 11",
+        "title": "Câu Chuyện Thứ Hai"
+      },
+      "Tập_12": {
+        "label": "Tập 12",
+        "title": "Đêm Thánh Giả Tạo"
+      },
+      "Tập_13": {
+        "label": "Tập 13",
+        "title": "Nữ Thần của Vùng Biển Phía Nam"
+      },
+      "Tập_14": {
+        "label": "Tập 14",
+        "title": "Sát Thần Giả Thứ Tám"
+      },
+      "Tập_15": {
+        "label": "Tập 15",
+        "title": "Con Trai của Nữ Thần"
+      },
+      "Tập_16": {
+        "label": "Tập 16",
+        "title": "Nhịp Đập Anh Hùng"
+      },
+      "Tập_17": {
+        "label": "Tập 17",
+        "title": "Danh Xưng Anh Hùng"
+      },
+      "Tập_18": {
+        "label": "Tập 18",
+        "title": "Chuyện Chưa Kể Về Các Ma Vương"
+      },
+      "Tập_19": {
+        "label": "Tập 19",
+        "title": "Nội Chiến Ma Vương"
+      }
+    },
+    "titleJp": "",
+    "author": "Takedzuki Jou",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tối hôm qua, Erica Blandelli đang ở nhà khi nhận được tin này. \"Mặc dù họ không hẳn là vệ sĩ, những người bí mật theo dõi Kusanagi-san đã báo cáo như sau.\"",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "cang-bi-phan-doi-cang-chung-to-ta-dung",
+    "source": "output/cang-bi-phan-doi-cang-chung-to-ta-dung",
+    "titleVi": "Càng Bị Phản Đối, Càng Chứng Tỏ Ta Đúng",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Kim Chúc Vũ Điểm (金属雨点)",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Web Novel - Chương 1: Thánh ngôn của ngươi ít nhất có ba lỗi ngữ pháp. Mưa phùn gõ nhịp lên song sắt nhà ngục, tí tách không ngừng.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "cam-nang-tao-loi-trai-tim",
+    "source": "output/cam-nang-tao-loi-trai-tim",
+    "titleVi": "Cẩm Nang Tạo Lỗi Trái Tim",
+    "volumeTitles": {
+      "Arc_01": {
+        "label": "Arc 01",
+        "title": "Thảo Nguyên - Green Heaven (Normal route)"
+      },
+      "Arc_03": {
+        "label": "Arc 03",
+        "title": "Cô gái A - Earl Grey (Harem Route - Tập 1)"
+      }
+    },
+    "titleJp": "",
+    "author": "Otagira",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tôi được cô gái xinh đẹp nhất lớp kết bạn? Cái mô-típ xưa như trái đất này, năm nào tôi cũng phải vấp trúng cả chục tác phẩm mì ăn liền trên mạng. Nhưng mà, dù cho đám nam sinh trong trường có nghiến răng ken két vì ghen tị thì sự thật vẫn là sự thật. Chính cô nàng lớp trưởng ấy đã chủ động xin kết bạn với tôi thật đấy. Trong mấy bộ truyện tình cảm quen…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "chang-vang-khong-loi",
+    "source": "output/chang-vang-khong-loi",
+    "titleVi": "Chạng Vạng Không Lối",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Săn Đồ Sứ Đại Tội"
+      }
+    },
+    "titleJp": "",
+    "author": "YiBlaze",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "\"Sương mù giăng lối. Hồn ma trở mình. Chuông cổ rung ngân giữa cõi u linh. Trăng bạc treo trên đỉnh đầu. Con mắt đêm tối gác từng bước đi.\" Mưa rơi lất phất như làn khói lạnh thở ra từ miệng quỷ. Đường phố lát đá cổ kính ánh lên màu xanh nhấp nháy của đèn đường, một thứ ánh sáng không đủ xua tan bóng tối, chỉ khiến nó thêm run rẩy. Người người vội vã…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "chi-minh-toi-chong-tuong-lai-cua-em-ay-moi-biet-cach-lam-em-ay-do",
+    "source": "output/chi-minh-toi-chong-tuong-lai-cua-em-ay-moi-biet-cach-lam-em-ay-do",
+    "titleVi": "Chỉ mình tôi, chồng tương lai của em ấy, mới biết cách làm em ấy đổ",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Hiro Nakamura (中村ヒロ)",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Lần đầu tiên nghe thấy, tôi đã nghĩ đó là một danh hiệu hoàn toàn xứng đáng. Nó gói gọn một cách hoàn hảo cả vẻ ngoài lẫn tính cách của em.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "chikan-saresou-ni-natteiru-s-kyuu-bishoujo-wo-tasuketara-tonari-no-seki-no-osananajimi-datta",
+    "source": "output/chikan-saresou-ni-natteiru-s-kyuu-bishoujo-wo-tasuketara-tonari-no-seki-no-osananajimi-datta",
+    "titleVi": "Chikan Saresou ni Natteiru S-kyuu Bishoujo wo Tasuketara Tonari no Seki no Osananajimi datta",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Kennoji",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 1 - Chương 1: Cô gái lạ trên chuyến tàu quen thuộc Năm học mới vừa bắt đầu, chuyến tàu điện mỗi sáng thì vẫn cứ đông đúc như thường lệ.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "chuuko-demo-koi-ga-shitai",
+    "source": "output/chuuko-demo-koi-ga-shitai",
+    "titleVi": "Chuuko demo Koi ga Shitai!",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Tao Noritake",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Một cảm giác bất thường khiến tôi tỉnh giấc, nhảy dựng ra khỏi chiếc giường như thể mình vừa gặp ác mộng. Tôi hoảng loạn nhìn quanh căn phòng của mình, chẳng có gì khác lạ cả. Chẳng còn một sinh linh nào khác ở đây, kể cả là một con bọ cũng không. Những tia nắng sớm chiếu lọt qua tấm rèm cửa và soi sáng những hạt bụi đang bay lơ lửng trong không khí. Bây…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "ciaphas-cain-chien-tuong-cua-hon-mang",
+    "source": "output/ciaphas-cain-chien-tuong-cua-hon-mang",
+    "titleVi": "Ciaphas Cain - Chiến tướng của Hỗn Mang",
+    "volumeTitles": {
+      "Phần_01": {
+        "label": "Phần 01",
+        "title": "Bộ truyện chính"
+      },
+      "Phần_02": {
+        "label": "Phần 02",
+        "title": "Ngoại truyện"
+      }
+    },
+    "titleJp": "",
+    "author": "Zahariel",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Đường phố Thủ phủ Hành tinh tràn ngập tiếng cười của dân chúng. Những cơn bão lửa của Cuộc Khởi Nghĩa đã lắng xuống, cuốn theo cả tàn dư của chế độ cũ. Sau hàng thế kỷ bị áp bức và bóc lột bởi gia tộc Giorba - một lũ người ngày càng xa hoa, trụy lạc, tàn nhẫn và bất ổn - Slawkenberg cuối cùng cũng được tự do. Hàng triệu người đang nhập tiệc, vui chơi ăn…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "co-sao-khong-neu-lo-phai-long-em-ke",
+    "source": "output/co-sao-khong-neu-lo-phai-long-em-ke",
+    "titleVi": "Có sao không nếu lỡ phải lòng em kế?",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "手島史詞",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Thanh âm chất chứa nỗi bi ai khẽ bật ra từ đôi môi. Mái tóc ánh bạc xõa tung trên chiếc giường cô nằm, một giọt lệ đơn độc lăn dài từ đôi mắt to tròn.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "counter-stop",
+    "source": "output/counter-stop",
+    "titleVi": "Counter Stop!",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Ratiumu",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Web Novel - Mở đầu : Điều chờ đợi tôi tại tầng cuối cùng – Cuối cùng tôi cũng tới được tầng thứ 100. Tôi tự hỏi bản thân không biết từ đó đến giờ đã bao lâu rồi  ? Kể từ lúc tôi chỉ là đứa trẻ , chẳng thể đánh lại nổi một con thú có hình dạng như quái vật. Trái ngược lại là tôi xuýt chết rất nhiều lần.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "co-gai-nguoi-anh-xinh-dep-duoc-menh-danh-la-doa-hoa-co-doc-muon-duoc-nuong-chieu-sau-khi-tro-thanh-em-ke-cua-toi",
+    "source": "output/co-gai-nguoi-anh-xinh-dep-duoc-menh-danh-la-doa-hoa-co-doc-muon-duoc-nuong-chieu-sau-khi-tro-thanh-em-ke-cua-toi",
+    "titleVi": "Cô Gái Người Anh Xinh Đẹp Được Mệnh Danh là Đóa Hoa Cô Độc, Muốn Được Nuông Chiều Sau Khi Trở Thành Em Kế Của Tôi",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Nekokuro",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tôi - Shirakawa Kento - vừa bước chân vào nhà, thì nghe một giọng nói lẩm bẩm bằng tiếng Anh cùng vẻ mặt khó chịu vang lên. Đó chính là Sofia Frost, một nhân vật nổi tiếng của trường. Như cái tên đã gợi ý, cô ấy là người nước ngoài, có vẻ đến từ Anh Quốc.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "co-hau-gai-day-tinh-chiem-huu-toi-vua-thue-hoa-ra-la-mot-nang-cong-chua",
+    "source": "output/co-hau-gai-day-tinh-chiem-huu-toi-vua-thue-hoa-ra-la-mot-nang-cong-chua",
+    "titleVi": "Cô Hầu Gái Đầy Tính Chiếm Hữu Tôi Vừa Thuê Hóa Ra Là Một Nàng Công Chúa",
+    "volumeTitles": {
+      "Web_Novel_(1": {
+        "label": "Web Novel (1",
+        "title": "160)"
+      },
+      "Web_Novel_(161": {
+        "label": "Web Novel (161",
+        "title": "300)"
+      }
+    },
+    "titleJp": "",
+    "author": "Kamitsuki",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Web Novel (1 - 160) - Chương 01: Cô hầu gái vs Nàng công chúa Khi tôi vừa từ thư viện trở về, tôi bước vào dinh thự của gia tộc bá tước Roddel - tức là nhà của tôi. Một cô gái mười lăm tuổi với mái tóc bạc óng ả, gần như trắng hoàn toàn, trên người cô ấy khoác trên mình bộ đồng phục hầu gái, người đã đứng đó chào đón tôi với nụ cười rạng rỡ. Người đó…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "co-nang-xinh-dep-toi-vo-tinh-cuu-vi-ly-do-nao-do-lai-tro-nen-gan-bo-voi-toi",
+    "source": "output/co-nang-xinh-dep-toi-vo-tinh-cuu-vi-ly-do-nao-do-lai-tro-nen-gan-bo-voi-toi",
+    "titleVi": "Cô Nàng Xinh Đẹp Tôi Vô Tình Cứu Vì Lý Do Nào Đó Lại Trở Nên Gắn Bó Với Tôi",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Sakuranomiya Amane",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tiếng chuông vang lên, báo hiệu giờ ra chơi giữa buổi đã đến, kết thúc tiết học thứ tư. Những ai vừa gắng gượng vượt qua cơn buồn ngủ và đói bụng trong giờ học, giờ đây đã tụ tập cùng bạn bè, rộn ràng chuẩn bị cho bữa trưa, tận hưởng khoảnh khắc nghỉ ngơi ngắn ngủi này.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "crimson-angel",
+    "source": "output/crimson-angel",
+    "titleVi": "Crimson Angel",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Phần_03": {
+        "label": "Phần 03",
+        "title": "Artist Corner"
+      },
+      "Phần_04": {
+        "label": "Phần 04",
+        "title": "Minh hoạ"
+      }
+    },
+    "titleJp": "",
+    "author": "Herz",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "“Kenggg!!!” - “Chátttt!!!” Âm thanh kim loại va chạm vang lên xé toạc màn đêm tĩnh mịch, như thể chính bóng tối cũng bị chẻ làm đôi bởi sự khốc liệt của trận chiến. Từng tia lửa tóe ra giữa làn khói đen kịt, rực rỡ rồi nhanh chóng vụt tắt như pháo hoa tàn lụi. Nhưng đó không phải pháo hoa ăn mừng. Đó là điềm báo… cho một vũ điệu sinh tử đang diễn ra trên…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "ctg-zero-kara-sodateru-dennou-shoujo",
+    "source": "output/ctg-zero-kara-sodateru-dennou-shoujo",
+    "titleVi": "CtG -Zero kara Sodateru Dennou Shoujo-",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Gangudou",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Ngay trước khi tiếp đất lần thứ ba, chủ nhân của cái bóng đã chạm mặt đất phát ra âm thanh ầm ĩ. Tuy đã tránh khỏi bị dẫm bẹp nhưng, do mặt đất bị rung lên bởi thân hình khổng lồ, chân cậu loạng choạng lùi về sau vài bước.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "danshi-koukousei-de-urekko-light-novel-sakka-wo-shiteiru-keredo-toshishita-no-classmate-de-seiyuu-no-onna-no-ko-ni-kubi-wo-shimerareteiru",
+    "source": "output/danshi-koukousei-de-urekko-light-novel-sakka-wo-shiteiru-keredo-toshishita-no-classmate-de-seiyuu-no-onna-no-ko-ni-kubi-wo-shimerareteiru",
+    "titleVi": "Danshi Koukousei de Urekko Light Novel Sakka wo Shiteiru Keredo, Toshishita no Classmate de Seiyuu no Onna no Ko ni Kubi wo Shimerareteiru.",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Sigsawa Keiichi",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 1 - Chương 1 – Ngày 10 Tháng 4 , Tôi Gặp Em Tôi là một học sinh cao trung và cũng là một tác giả Light Novel  được ưa chuộng, đang bị một nữ sinh cùng lớp nhỏ tuổi hơn cũng là một seiyuu bóp nghẹt cổ.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "danzai-no-exceed",
+    "source": "output/danzai-no-exceed",
+    "titleVi": "Danzai no Exceed",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "SAU GIỜ TAN HỌC CÙNG VỚI PHÙ THỦY TRẮNG"
+      }
+    },
+    "titleJp": "",
+    "author": "Misora Riku",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "TẬP 1 - SAU GIỜ TAN HỌC CÙNG VỚI PHÙ THỦY TRẮNG - Hình Minh Họa",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "dawnbringer-of-humanity",
+    "source": "output/dawnbringer-of-humanity",
+    "titleVi": "Dawnbringer Of Humanity",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Miracle in his eyes"
+      },
+      "Phần_02": {
+        "label": "Phần 02",
+        "title": "Minh họa nhân vật"
+      }
+    },
+    "titleJp": "",
+    "author": "Thằn Lằn Đen",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tiếng kèn hiệu từ tháp canh phía Đông lại rú lên, một âm thanh khô khốc và vô hồn như tiếng rên của một con thú kim loại đang hấp hối. Bảy giờ tối. Thêm một ca làm việc nữa kết thúc dưới lòng đất, và một ca khác bắt đầu. Nhịp điệu của DarkSteel cũng có phần máy móc như một cái đồng hồ quả lắc khổng lồ, một cái đồng hồ được bôi trơn bằng mồ hôi và máu. Ta…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "di-thoai",
+    "source": "output/di-thoai",
+    "titleVi": "Dị Thoại",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Câu chuyện về những bộ phận"
+      }
+    },
+    "titleJp": "",
+    "author": "Choeng",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Năm cuối cấp ba, cái chặng mà ai cũng mong sẽ kịp để lại một dấu ấn riêng biệt nào đó dưới mái trường… nơi tôi xin tạm gọi là “kính yêu” đi cho phải phép. Dù là điều gì to tát hay chỉ đơn thuần là một mẩu ký ức mơ hồ, những kỷ niệm như thế hẳn đều được chúng ta vô thức cất gọn vào một góc quan trọng nào đó trong lòng. Ấy vậy mà Nguyễn Trần Thảo Vy – cô…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "dragon-bloodline",
+    "source": "output/dragon-bloodline",
+    "titleVi": "Dragon Bloodline",
+    "volumeTitles": {
+      "Phần_01": {
+        "label": "Phần 01",
+        "title": "Khởi Hành"
+      },
+      "Phần_02": {
+        "label": "Phần 02",
+        "title": "Thành Phố Mê Cung"
+      }
+    },
+    "titleJp": "",
+    "author": "Hitoneko",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Khởi Hành - Chương 1: Tôi thành ra như thế này sau khi hồi sinh Không, thật đấy, tại sao chuyện này lại xảy ra?",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "dragon-poor",
+    "source": "output/dragon-poor",
+    "titleVi": "Dragon Poor",
+    "volumeTitles": {
+      "Quyển_01": {
+        "label": "Quyển 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Geulump (글럼프)",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Những người rơi vào thế giới này được thức tỉnh với vai trò là một trong vô số class khác nhau, từ kiếm sĩ thông thường nhất, đến các pháp sư, thuật sĩ và hiệp sĩ. Tuy nhiên, anh là người duy nhất được thức tỉnh thành kỵ sĩ rồng. Tất nhiên, anh đã mong đợi những thứ thật phi thường, nhưng đáng thất vọng thay, thực tế lại không tốt đẹp đến thế.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "du-chuyen-sinh-lo-hong-trong-trai-tim-toi-van-khong-the-duoc-lap-day",
+    "source": "output/du-chuyen-sinh-lo-hong-trong-trai-tim-toi-van-khong-the-duoc-lap-day",
+    "titleVi": "Dù Chuyển Sinh, Lỗ Hổng Trong Trái Tim Tôi Vẫn Không Thể Được Lấp Đầy",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Niteron",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 1 - Chương 1: Chuyển Sinh Đến Thế Giới Khác Vào một ngày xuân nọ, Konoe được triệu hồi đến một thế giới khác.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "dungeon-predator",
+    "source": "output/dungeon-predator",
+    "titleVi": "Dungeon Predator",
+    "volumeTitles": {
+      "Quyển_01": {
+        "label": "Quyển 01",
+        "title": ""
+      },
+      "Quyển_02": {
+        "label": "Quyển 02",
+        "title": ""
+      },
+      "Quyển_03": {
+        "label": "Quyển 03",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Hodam (호담)",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Một cơn chóng mặt tựa như rơi từ trên không trung xuống mà không có dù bao trùm lấy cậu. Cả cơ thể của cậu ấy gào thét, cảm thấy đau giống như thể cả cơ thể cậu vỡ thành từng mảnh. Các cặp mắt của các thành viên trong gia đình cậu trở nên xa xôi hơn bao giờ hết… Khi tỉnh dậy, điều đầu tiên cậu thấy là các cô em gái của mình.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "da-thi-roi-nguoi-thi-heo",
+    "source": "output/da-thi-roi-nguoi-thi-heo",
+    "titleVi": "Đá thì rơi, ngươi thì hẹo",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Có một tập à"
+      }
+    },
+    "titleJp": "",
+    "author": "zechamp",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Có một tập à - Chương 1 – [Đá Lăn Lóc] cóc bám rêu Ở một đỉnh núi nọ, cao vút trên tầng mây, một cuộc sinh tử chiến đang diễn ra.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "day-la-uy-ban-dinh-tre-tan-the",
+    "source": "output/day-la-uy-ban-dinh-tre-tan-the",
+    "titleVi": "Đây Là Ủy Ban Đình Trệ Tận Thế",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Aien Kien",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Cùng bộ giáp và khiên của tình yêu và lòng dũng cảm. Tên tôi là Kotoyorozu Kotoha, một nam sinh trung học bình thường mà bạn có thể bắt gặp ở bất cứ đâu.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "den-tuoi-trung-nien-tinh-bao-cua-toi-moi-ngay-deu-duoc-lam-moi",
+    "source": "output/den-tuoi-trung-nien-tinh-bao-cua-toi-moi-ngay-deu-duoc-lam-moi",
+    "titleVi": "Đến Tuổi Trung Niên, Tình Báo Của Tôi Mỗi Ngày Đều Được Làm Mới",
+    "volumeTitles": {
+      "Chương_1–50": {
+        "label": "Chương 1–50",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Tiểu Nguyệt Thiên Tôn",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Chẳng biết là ai đã gào lên một tiếng xé toạc không gian, khiến góc phố vốn đang yên bình bỗng chốc trở nên hỗn loạn như vỡ tổ. Tề Vân ngẩng đầu nhìn thoáng qua, chẳng kịp màng đến chảo cơm chiên đang nghi ngút khói, anh vội vã rút tờ 10 tệ trong túi nhét vào tay gã thanh niên đứng cạnh, rồi dốc sức đẩy chiếc xe ba bánh lao đi.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "dinh-nghia-lai-meta-tai-hoc-vien-vrmmo",
+    "source": "output/dinh-nghia-lai-meta-tai-hoc-vien-vrmmo",
+    "titleVi": "Định Nghĩa Lại META Tại Học Viện VRMMO",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Hayaken",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Cuộc sống của tôi khi ấy bận rộn đến mức bản thân dần đánh mất phương hướng về tương lai— Cửa sổ chat trên màn hình máy tính hiện lên dòng chữ đó.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "doa-thien-cau-than-slashd-g",
+    "source": "output/doa-thien-cau-than-slashd-g",
+    "titleVi": "Đọa Thiên Cẩu Thần —SLASHDØG—",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Ishibumi Ichiei",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Cậu không biết đây là giấc mơ hay là hồi tưởng, nhưng đó là một ký ức mà cậu không thể quên. Thời thơ ấu— vào năm lên bảy, có một lần cậu quanh quẩn ở khu vực bỏ hoang tại thị trấn kế bên để chơi trò mạo hiểm.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "emperor-of-solo-play",
+    "source": "output/emperor-of-solo-play",
+    "titleVi": "Emperor of Solo Play",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "D-Dart",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Không được sinh ra với tài năng đặc biệt gì, cũng chẳng có gì giỏi giang hơn người khác. Thế nên tôi cũng chẳng thể ý kiến gì mỗi khi bị gọi là rác rưởi. Củng chẳng phải tôi chưa từng nỗ lực để trở lên tốt hơn. Nhưng tới cuối ngày, tôi buồn ngủ và giận dữ đá cái ga giường. Thế nhưng lần đầu tiên, tôi tìm thấy thứ gì đó mình giỏi hơn người khác.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "everyone-else-is-a-returnee",
+    "source": "output/everyone-else-is-a-returnee",
+    "titleVi": "Everyone Else is a Returnee",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "토이카/Toika/Toy Car",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "(trans: tên chương là phiên bản chế của phim ‘Ở nhà một mình’) Đó là vào tháng Tư. Ngay khi bài giảng kết thúc lúc 14:45, cậu tân sinh viên Yu IlHan rời khỏi Hội Trường nhanh hơn bất cứ ai, cứ như thể sợ rằng mình sẽ không phải là người đầu tiên ra khỏi đó vậy. Vì chẳng quen ai, nên không có người nào cản bước cậu ấy lại, thế nhưng Yu IlHan vẫn cố bước…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "eyes-of-life-the-cursed-assassin",
+    "source": "output/eyes-of-life-the-cursed-assassin",
+    "titleVi": "Eyes of life- The Cursed Assassin",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Khởi đầu cuộc đời mới"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Chim sơn ca trong chiếc lồng vàng"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Trở thành Nô lệ"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Hướng tới thung lũng Rồng"
+      },
+      "Cốt_truyện_phụ": {
+        "label": "Cốt truyện phụ",
+        "title": "Công chúa cũng là người Tái sinh -"
+      }
+    },
+    "titleJp": "",
+    "author": "Sagimiya Riel",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tiếng gầm của con Bạch hổ vang vọng khắp căn phòng đá. Những bức tường vuông vức được tráng cẩm thạch thay nhau phản xạ thứ âm thanh mạnh mẽ đó về phía trung tâm. Dù vẫn còn choáng váng do hiệu ứng phụ từ đòn công kích, song cả đội cũng đã có những động thái nhất định. Đứng chắn ở hàng đầu trước 23 con người phía sau, một cậu trai 17 và một vị Thủ lĩnh…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "e-nha-chung-ta-la-thanh-vien-cua-lien-minh-bo-cau-lac-bo-do",
+    "source": "output/e-nha-chung-ta-la-thanh-vien-cua-lien-minh-bo-cau-lac-bo-do",
+    "titleVi": "Ê nha, chúng ta là thành viên của \"Liên minh bỏ Câu Lạc Bộ\" đó!",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Kuyou",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Bởi vì, trong khối của bọn tôi, không chỉ có một mà tận hai cô gái xinh đẹp mà ai cũng có thể tự hào nhắc đến. Cô ấy là một người dễ thương với mái tóc ngang vai, khuôn mặt chính là định nghĩa của “trong sáng và ngây thơ”. Khi nói chuyện, cổ hay kèm với cử chỉ tay chân, khiến người khác khó mà quên được, cơ mà chuyện đó cũng dễ hiểu thôi. Cổ là thành…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "failure-frame-toi-tro-nen-manh-nhat-va-huy-diet-moi-thu-voi-ky-nang-bac-thap",
+    "source": "output/failure-frame-toi-tro-nen-manh-nhat-va-huy-diet-moi-thu-voi-ky-nang-bac-thap",
+    "titleVi": "Failure Frame: Tôi Trở Nên Mạnh Nhất Và Hủy Diệt Mọi Thứ Với Kỹ Năng Bậc Thấp",
+    "volumeTitles": {
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": ""
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Kaoru Shinozaki",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 2 - Chương 1: Những Quái Vật Nổi Danh Của Thế Giới Tàn Tích Thanh Trừng, nơi mụ nữ thần thối tha kia đày tôi tới, thật chẳng khác nào địa ngục trần gian, nhưng chính tại nơi đó, tôi đã tìm thấy bản ngã đích thực, không chút giả tạo. Tôi đối diện với tử thần hết lần này đến lần khác, nhưng đồng thời, tôi cũng cảm thấy mình có thể tự quyết định mọi…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "fate-apocrypha",
+    "source": "output/fate-apocrypha",
+    "titleVi": "Fate / Apocrypha",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Ngụy Tác-Đại Chiến Chén Thánh"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Đen Khiêu Vũ, Đỏ Mở Hội"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Vị Thánh Chiến Thắng Trở Về"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Chiếc Chén Ăn Năn"
+      }
+    },
+    "titleJp": "",
+    "author": "Yuichiro Higashide",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Đó là một thế giới bất biến. Biển rộng chẳng biết sóng vỗ bờ, mây trời chẳng biết đến trôi đi. Sống trong thế giới không trăng không sao, người ấy thấy hơi chút luyến tiếc.ó là một nơi không tồn tại ở bất cứ đâu. Một thế giới không tồn tại ở bất cứ đâu. Không chịu ảnh hưởng của khái niệm ‘thời gian’, nơi ấy không có ngày, chẳng có đêm, không có mặt trăng…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "fate-strange-fake",
+    "source": "output/fate-strange-fake",
+    "titleVi": "Fate/Strange Fake",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": ""
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Ryōgo Narita",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Thành phố đó, trồi lên từ bóng tối của vùng nội địa xung quanh, thật phù hợp được gọi là “một rãnh nứt”. Nó không phải là một giới tuyến phân ly, thứ có thể chia cách ngày và đêm;bóng tối và ánh sáng. Thực chất, nó là một rào chắn hài hòa, một lằn ranh ngăn cách giữa những thứ có cùng đặc tính. Đó là điều kì lạ về thành phố Snowfield này.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "free-life-fantasy-online",
+    "source": "output/free-life-fantasy-online",
+    "titleVi": "Free Life Fantasy Online",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Nenohi Akisuzu",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Xin chào,Deforestation đây. Chương01 Mở đầucủa bộ Web Novel mới đây. Do từ lúc xin được permission tới nay cũng khá lâu nên tôi có “tích trữ” được 1 vài chương. Nên tôi sẽ đăng mỗi ngày 1 chương cho tới hết hàng tích trữ. Khi đó sẽ là tốc độ thực trong hè. Hết hè thì sẽ chậm lại, và còn có thể bị Delay (như đã nói ở trang chính Project). Tôi nhận một cái…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "full-metal-panic",
+    "source": "output/full-metal-panic",
+    "titleVi": "Full Metal Panic",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Shoji Gatou",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tách biệt hoàn toàn với sự huyên náo thường nhật sau mỗi giờ học, Chidori Kaname lúc này đang đứng trước cửa phòng giáo viên và gắt giọng. Cô nàng sở hữu mái tóc đen nhánh trải dài đến hết sống lưng với điểm nhấn nằm ở sợi ruy-băng màu đỏ cùng đôi mắt ánh lên vẻ quyết tâm vô cùng mãnh liệt. Cô ngoắc ngón tay ra hiệu cho nam sinh trước mặt mình. “Mỗi gói…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "ga-va-dong-ho-qua-quyt",
+    "source": "output/ga-va-dong-ho-qua-quyt",
+    "titleVi": "Gà và Đồng Hồ Quả Quýt",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Ba lần"
+      }
+    },
+    "titleJp": "",
+    "author": "Gà",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Màn hình trên máy tính nhấp nháy hiện ra dòng chữ: “Trò chơi kết thúc, cảm ơn bạn đã đồng hành tới những giây phút cuối.”",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "gaikotsu-kishi-sama-tadaima-isekai-e-o-dekake-chuu",
+    "source": "output/gaikotsu-kishi-sama-tadaima-isekai-e-o-dekake-chuu",
+    "titleVi": "Gaikotsu Kishi-sama, Tadaima Isekai e o Dekake-chuu",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Thế giới mới"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Kiếm Tâm Phái"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Con người và Elf"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Con suối và lời nguyền"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Lục Địa Mới"
+      }
+    },
+    "titleJp": "",
+    "author": "Enki Hakari",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Đêm đến. Một cô gái phải chạy trốn xuyên qua khu rừng tăm tối. Cây cối rậm rạp cùng với bầu trời đen mịt làm cho khu rừng trở nên ma mị hơn bao giờ hết. Mặc dù vậy, những người kẻ đang theo đuổi cô càng lúc càng bám gần hơn.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "gakusen-toshi-asterisk",
+    "source": "output/gakusen-toshi-asterisk",
+    "titleVi": "Gakusen Toshi Asterisk",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Cuộc Gặp Gỡ Với Công Chúa Của Ngọn Lửa"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Sự Thức Tỉnh Của Thiếu Nữ Tóc Bạc"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Phá vỡ hồi ức"
+      }
+    },
+    "titleJp": "",
+    "author": "Miyazaki Yuu",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Nằm giữa trung tâm Asterisk, nơi giao nhau giữa khu thương mại và khu hành chính là tòa nhà được biết đến rộng rãi với cái tên “ Khách sạn Elnath”. Mặc dù nơi này được thường xuyên viếng thăm bởi VIP và những người nổi tiếng từ các quốc gia, nhưng nó lại nổi tiếng về điều khác, đó là một khu vực rộng rãi có kiến trúc dạng vườn treo mái vòm, nằm tầng trên…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "genjitsushugi-yuusha-no-oukoku-saikenki",
+    "source": "output/genjitsushugi-yuusha-no-oukoku-saikenki",
+    "titleVi": "Genjitsushugi Yuusha no Oukoku Saikenki",
+    "volumeTitles": {
+      "Arc_I": {
+        "label": "Arc I",
+        "title": "Làm giàu cho đất nước"
+      },
+      "Arc_II": {
+        "label": "Arc II",
+        "title": "Chinh Phục"
+      },
+      "Arc_III": {
+        "label": "Arc III",
+        "title": "Hậu Chiến"
+      }
+    },
+    "titleJp": "",
+    "author": "Dojyomaru",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Web Novel - Arc I: Làm giàu cho đất nước - Chương 0: Anh Hùng không lên đường diệt Quỷ Vương Tôi tin lời giáo huấn của Lão gia Mito[1]là sáng suốt. Cuộc đời có núi cao, cũng có vực sâu. Chính vì vượt qua được gian nan mà quãng đường sau này mới thong thả. Nếu chỉ chọn đường dễ đi thì đến một lúc nào đó sẽ mắc kẹt giữa bốn bề vách núi. Tóm lại, cũng vì lẽ…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "goc-nhin-doc-gia-toan-tri",
+    "source": "output/goc-nhin-doc-gia-toan-tri",
+    "titleVi": "Góc Nhìn Độc Giả Toàn Tri",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": ""
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": ""
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": ""
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Sing N Shong",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 1 - Chương 1: Mở đầu – Ba Cách Để Sống Sót Trong Thế Giới Đổ Nát 「Có tất cả 3 cách để sống sót trong thế giới đổ nát. Tôi hiện đã quên mất một số chúng. Tuy nhiên, có một điều chắc chắn: bạn, người đang đọc những từ này, sẽ sống sót.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "hachi-nan-tte-sore-wa-nai-deshou",
+    "source": "output/hachi-nan-tte-sore-wa-nai-deshou",
+    "titleVi": "Hachi-nan tte, Sore wa Nai deshou!",
+    "volumeTitles": {
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": ""
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": ""
+      },
+      "Phần_05": {
+        "label": "Phần 05",
+        "title": "Web Novel"
+      }
+    },
+    "titleJp": "",
+    "author": "Y.A",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Sáu giờ sáng, tôi bị đánh thức bởi tiếng chuông báo thức như mọi khi, vội vàng chuẩn bị đi làm, mua cơm nắm và những thứ khác ở cửa hàng tiện lợi trên đường để ăn sáng. Tôi nuốt thức ăn cùng với trà ô long đã mua, đồng thời đi đến nơi làm việc. Tôi là Ichinomiya Shingo, năm nay 25 tuổi, sau khi tốt nghiệp một trường đại học có chút tiếng tăm, tôi vào làm…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "hanbun-no-tsuki-ga-noboru-sora",
+    "source": "output/hanbun-no-tsuki-ga-noboru-sora",
+    "titleVi": "Hanbun no Tsuki ga Noboru Sora (Nửa Vầng Trăng Lên)",
+    "volumeTitles": {
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Đợi chờ nửa vầng trăng"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Điều ước đến vầng trăng khuyết"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Nắm lấy vầng trăng khuyết"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Đi Thật Lâu Dưới Vầng Trăng Khuyết"
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": "Cuộc Sống Tiếp Diễn"
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": "Khía Cạnh Khác Của Mặt Trăng - Phần đầu"
+      },
+      "Tập_08": {
+        "label": "Tập 08",
+        "title": "Một Khía Cạnh Khác Của Mặt Trăng - Phần cuối"
+      }
+    },
+    "titleJp": "",
+    "author": "Tsumugu Hashimoto",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Gần đây, quan hệ giữa tôi và Rika tiến triển rất thuận lợi. Rika vẫn bướng bỉnh như vậy, nhưng thỉnh thoảng cũng nói những lời dịu dàng, khi ánh mắt chúng tôi chạm nhau, cô ấy cũng nói những câu như \"Chuyện gì vậy\" với vẻ mặt ngượng ngùng. Đáng yêu đến mức khiến người ta không nhịn được mà muốn ôm chặt lấy.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "hanh-trinh-cay-the-gioi",
+    "source": "output/hanh-trinh-cay-the-gioi",
+    "titleVi": "Hành Trình Cây Thế Giới",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Viola"
+      }
+    },
+    "titleJp": "",
+    "author": "S.Soo",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Chân tôi khựng lại. Một tiếng nứt khô khốc vang lên, kéo theo cơn nhói âm ỉ lan dọc qua da. Tôi cụp mắt nhìn xuống. Mảng tường mục nát vỡ vụn, những mảnh nhỏ cắm vào da thịt. Tôi cử động ngón chân, cố hất nhẹ những mảnh vụn còn sót lại, nhưng phần lớn vẫn lì lợm bám chặt. Tất cả đều đã mục rữa… và mình cũng chẳng khác gì! Ý nghĩ ấy chợt lướt qua trong…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "hay-de-toi-yen-chang-hieu-sao-co-ay-lai-dang-co-gang-thay-doi-cuoc-song-cao-trung-co-doc-cua-toi",
+    "source": "output/hay-de-toi-yen-chang-hieu-sao-co-ay-lai-dang-co-gang-thay-doi-cuoc-song-cao-trung-co-doc-cua-toi",
+    "titleVi": "Hãy để tôi yên - Chẳng hiểu sao, cô ấy lại đang cố gắng thay đổi cuộc sống cao trung cô độc của tôi",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      },
+      "Phần_04": {
+        "label": "Phần 04",
+        "title": "Manga Special Short Stories"
+      }
+    },
+    "titleJp": "",
+    "author": "Kabegiwa Aizaki",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Đây là mùa hoa cỏ nở rộ và muôn loài tỉnh giấc sau kỳ ngủ đông. Ai cũng đồng ý rằng thể loại truyện thanh xuân vườn trường thường mở đầu vào mùa xuân.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "hac-bach-avesta",
+    "source": "output/hac-bach-avesta",
+    "titleVi": "Hắc Bạch Avesta",
+    "volumeTitles": {
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Masada Takashi",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Ngay khoảnh khắc biết mình mang thai, tôi đã nghĩ thế này không ổn rồi. Sinh mệnh đang cư ngụ trong bụng tôi không phải là một sinh mệnh đáng được chúc phúc. Chân Ngã [Avesta] đang mách bảo rằng, nó là thứ kinh tởm thuộc về phe \"bên kia\", khác biệt với tôi và chồng mình.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "ham-mo-noi-dai-duong-quen-lang",
+    "source": "output/ham-mo-noi-dai-duong-quen-lang",
+    "titleVi": "Hầm Mộ Nơi Đại Dương Quên Lãng",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Dark Elf và những món nợ của quá khứ"
+      }
+    },
+    "titleJp": "",
+    "author": "Mirage the Great",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Dark Elf và những món nợ của quá khứ - Chương 01: Dark Elf nghỉ hưu Đối với Raizen, chưa bao giờ như lúc này lại khiến hắn yên bình đến thế. Bỏ lại những ngày tháng rong chơi khắp các hầm ngục ở Newt Earth, quên đi những giây phút làm mạo hiểm giả lăn lộn đấu với quái vật. Gã tai nhọn, ngay lúc này, đơn thuần là một tên Dark Elf hơn tám mươi tuổi đã nghỉ…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "heaven-s-haven",
+    "source": "output/heaven-s-haven",
+    "titleVi": "Heaven's Haven",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Mikazuki Gwen",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Đó là một đoạn tóm tắt ngắn, nằm gọn ghẽ ngay trang đầu của tờ báo chiều. Người phát ngôn vừa lên sóng truyền hình và đọc to thông báo ấy. Chẳng có gì đặc biệt. Thị trường chứng khoán hôm nay lại tiếp tục lặn sâu xuống rãnh Mariana. Ngày, tháng, năm, cùng biểu đồ nến cháy rực hiện lên trên màn hình. Một tai nạn đau thương, nhiều nạn nhân phá sản và cảnh…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "he-thong-truong-thanh-tuoi-ba-muoi",
+    "source": "output/he-thong-truong-thanh-tuoi-ba-muoi",
+    "titleVi": "Hệ Thống Trưởng Thành Tuổi Ba Mươi",
+    "volumeTitles": {
+      "Chương_1–50": {
+        "label": "Chương 1–50",
+        "title": ""
+      },
+      "Chương_51–100": {
+        "label": "Chương 51–100",
+        "title": ""
+      },
+      "Chương_101–150": {
+        "label": "Chương 101–150",
+        "title": ""
+      },
+      "Chương_151–200": {
+        "label": "Chương 151–200",
+        "title": ""
+      },
+      "Chương_201–250": {
+        "label": "Chương 201–250",
+        "title": ""
+      },
+      "Chương_251–323": {
+        "label": "Chương 251–323",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Bán Chỉ Tình Thư 0 (半纸情书0)",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Chương 1 - 50 - Chương 1: Hệ thống Phát triển Thiên tài Bảo Bảo \"Thôi vậy, cứ đợi mặt trời lặn rồi sửa sau cũng được.\"",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "hoa-cua-o-y",
+    "source": "output/hoa-cua-o-y",
+    "titleVi": "Hoa của Ô Y",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Shirakawa Kouko",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tại kinh sư của Tiêu quốc, có một vu nữ tài năng tuyệt thế, không ai sánh bằng. Nàng chỉ cần búng tay một cái là có thể hàng phục u hồn, phá giải lời nguyền; những lá bùa nàng vẽ ra cũng linh nghiệm vô cùng. Chính vì thế, các quan đại thần trong triều luôn tranh nhau mời nàng đến phủ. Ngay cả Hoàng đế cũng dành cho nàng sự ưu ái đặc biệt, mỗi khi có đại…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "hoc-vien-co-dau-danh-cho-vi-anh-hung-cuoi-cung",
+    "source": "output/hoc-vien-co-dau-danh-cho-vi-anh-hung-cuoi-cung",
+    "titleVi": "Học Viện Cô Dâu Dành Cho Vị Anh Hùng Cuối Cùng",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Hozumi Mitaka",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Volume 1 - Chương 0: Ngày vị anh hùng cuối cùng quyết định đi đến tương lai Những nhân vật lưu danh sử sách thường được chia làm hai loại.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "hon-ca-tinh-yeu-voi-em-nguoi-khong-phai-ban-gai-toi",
+    "source": "output/hon-ca-tinh-yeu-voi-em-nguoi-khong-phai-ban-gai-toi",
+    "titleVi": "Hơn Cả Tình Yêu, Với Em, Người Không Phải Bạn Gái Tôi",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Mochizaki Yuba",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Nhớ lại lúc còn nhỏ, hai chữ “người lớn” đã từng khiến cho tôi phải ghen tị và khao khát biết nhường nào. Thế nhưng, khi đã đặt chân vào thế giới của người trưởng thành, cũng là lúc tôi nhận ra nó là một cuộc sống tẻ nhạt và tù túng đến đáng sợ. Tôi không nghĩ ra được lý do nào để có thể cảm thấy hãnh diện về cuộc sống này.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "isekai-kenkokuki",
+    "source": "output/isekai-kenkokuki",
+    "titleVi": "Isekai Kenkokuki",
+    "volumeTitles": {
+      "Arc_01": {
+        "label": "Arc 01",
+        "title": "Rừng Cấm và Điểu Sư"
+      },
+      "Ngoại_truyện_I": {
+        "label": "Ngoại truyện I",
+        "title": "Hướng đến bán đảo Adernia"
+      }
+    },
+    "titleJp": "",
+    "author": "Passing Villagers [ 通りすがりの村人 ]",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tại một địa điểm và khoảnh khắc không thể ngờ tới. Thời gian chuyển động thật chậm. Những việc tôi còn thực hiện dang dở lần lượt xuất hiện trong tâm trí và vụt biến.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "isekai-maou-to-shoukan-shoujo-no-dorei-majutsu",
+    "source": "output/isekai-maou-to-shoukan-shoujo-no-dorei-majutsu",
+    "titleVi": "Isekai Maou to Shoukan Shoujo no Dorei Majutsu",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Ta là Ma Vương Diablo"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Tiến đến Vương Quốc yêu tinh"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Ma Vương vs Ma Vương"
+      }
+    },
+    "titleJp": "",
+    "author": "Murasaki Yukiya",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Trong trò chơi đó, chỉ có một kẻ duy nhất nắm giữ vai trò của một 《 Ma Vương 》 chân chính. 《 Ma Vương 》 ở đây không phải là một loại Quái vật mà đó là chính một Người chơi được chọn ra từ ba triệu Người chơi của Cross Reverie. Trò chơi này có một hệ thống là 《 Người chơi có thể kiến tạo một Dungeon cho riêng mình và quản lý nó như Boss》. Bất cứ ai cũng…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "isekai-nonbiri-nouka",
+    "source": "output/isekai-nonbiri-nouka",
+    "titleVi": "Isekai Nonbiri Nouka",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Naitou Kinosuke",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Sinh sống và làm việc tại Nhật Bản, rồi sau đó chết đi… Nhưng điều may mắn chính là, dưới sự dẫn dắt của Thần Linh đại nhân, tôi đã được đưa đến một thế giới khác. Đồng thời, tôi cũng trở nên trẻ trung hơn, và nhận được một 「Thân thể khỏe mạnh」 không bao giờ nhiễm đến bệnh tật, và còn được ban cho 「Nông Cụ Vạn Năng」giúp tôi làm nông.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "isekai-shinki-to-no-saikeiyaku",
+    "source": "output/isekai-shinki-to-no-saikeiyaku",
+    "titleVi": "Isekai Shinki to no Saikeiyaku",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Một Lần Nữa Yêu Cơn Gió Đầy Hung Tàn Đó"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Tái Chiến Với Nữ Hoàng Thần Khí"
+      }
+    },
+    "titleJp": "",
+    "author": "Kota Nozomi",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 1 - Một Lần Nữa Yêu Cơn Gió Đầy Hung Tàn Đó - Mở Đầu Câu trả lời của Zesca Aldebaran là cay đắng sắc bén.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "isekai-wa-smartphone-to-tomo-ni",
+    "source": "output/isekai-wa-smartphone-to-tomo-ni",
+    "titleVi": "Isekai wa Smartphone to Tomo ni",
+    "volumeTitles": {
+      "Arc_01": {
+        "label": "Arc 01",
+        "title": "Tiếng Gọi Từ Thế Giới Khác"
+      },
+      "Arc_02": {
+        "label": "Arc 02",
+        "title": "Bạn Đồng Hành"
+      },
+      "Arc_03": {
+        "label": "Arc 03",
+        "title": "Tinh thể tinh"
+      },
+      "Arc_04": {
+        "label": "Arc 04",
+        "title": "Thành viên Hoàng tộc"
+      },
+      "Arc_05": {
+        "label": "Arc 05",
+        "title": "Hướng Về Thủ Đô Hoàng Gia"
+      },
+      "Arc_06": {
+        "label": "Arc 06",
+        "title": "Đất Nước Của Á Nhân, Misumido"
+      },
+      "Arc_07": {
+        "label": "Arc 07",
+        "title": "Cuộc sống thường ngày"
+      },
+      "Arc_08": {
+        "label": "Arc 08",
+        "title": "Thánh quốc Ishen"
+      },
+      "Arc_09": {
+        "label": "Arc 09",
+        "title": "Di Sản Babylon"
+      },
+      "Arc_10": {
+        "label": "Arc 10",
+        "title": "Cuộc sống thường ngày #2"
+      },
+      "Arc_11": {
+        "label": "Arc 11",
+        "title": "Biến Cố Nơi Hoang Mạc"
+      },
+      "Arc_12": {
+        "label": "Arc 12",
+        "title": "Cuộc Sống Thường Ngày #3"
+      },
+      "Arc_13": {
+        "label": "Arc 13",
+        "title": "Sự Hỗn Loạn Ở Thủ Đô Đế Quốc"
+      },
+      "Arc_14": {
+        "label": "Arc 14",
+        "title": "Công quốc Brunhild"
+      },
+      "Arc_15": {
+        "label": "Arc 15",
+        "title": "Biển Rừng, Núi Tuyết"
+      },
+      "Arc_16": {
+        "label": "Arc 16",
+        "title": "Thần đang dõi theo"
+      },
+      "Arc_17": {
+        "label": "Arc 17",
+        "title": "Cuộc Sống Thường Ngày 4"
+      },
+      "Arc_18": {
+        "label": "Arc 18",
+        "title": "Hai Hoàng tử"
+      },
+      "Arc_19": {
+        "label": "Arc 19",
+        "title": "Cẩn Tắc Vô Áy Náy"
+      },
+      "Arc_20": {
+        "label": "Arc 20",
+        "title": "Thảm Họa Ập Tới"
+      },
+      "Arc_21": {
+        "label": "Arc 21",
+        "title": "Trận chiến của những cô gái"
+      },
+      "Arc_22": {
+        "label": "Arc 22",
+        "title": "Mùa đông đã đến rồi, liệu mùa xuân có còn xa không"
+      },
+      "Arc_23": {
+        "label": "Arc 23",
+        "title": "Mối Đe Dọa Mới Đang Đến"
+      },
+      "Arc_24": {
+        "label": "Arc 24",
+        "title": "Vị Vua Bận Rộn Với Nhiều Công Việc"
+      },
+      "Arc_25": {
+        "label": "Arc 25",
+        "title": "Tín Đồ Ảo Tưởng"
+      },
+      "Arc_26": {
+        "label": "Arc 26",
+        "title": "Những Thứ Có Thể Làm Cho Ngày Mai"
+      },
+      "Arc_27": {
+        "label": "Arc 27",
+        "title": "Thế Giới Ngược"
+      },
+      "Arc_28": {
+        "label": "Arc 28",
+        "title": "Sự Trỗi Dậy Của Đất Nước"
+      }
+    },
+    "titleJp": "",
+    "author": "Patora Fuyuhara",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "“Vậy nên giờ thì… cậu đã chết. Ta rất lấy làm tiếc…” Ông già phía trước cúi mình thấp nhất có thể, những cụm mây tỏa sáng phía sau ông ta cũng bắt đầu giãn đều ra bên cạnh, tỏa ra mọi phía như một tấm thảm trải dài bất tận.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "jakushou-soshage-bu-no-bokura-ga-kamige-wo-tsukuru-made",
+    "source": "output/jakushou-soshage-bu-no-bokura-ga-kamige-wo-tsukuru-made",
+    "titleVi": "Jakushou Soshage-bu no Bokura ga Kamige wo Tsukuru made",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Shiki Oriori",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Cạch. Ngay khi cánh cửa mở ra, tiếng xì xào giữa các thành viên câu lạc bộ vang khắp phòng hội đồng lắng xuống thành im lặng. Kurenai Akane, chủ tịch câu lạc bộ, mang mái tóc dài thẳng hầu như không có một gợn cong rủ xuống eo. Cô đứng giữa trung tâm của bầu im lặng đó, và tiếng bước chân vang lên rõ mồn một khi cô bước vào phòng. Trong một khắc ngắn…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "jashin-average",
+    "source": "output/jashin-average",
+    "titleVi": "Jashin Average",
+    "volumeTitles": {
+      "Phần_đầu": {
+        "label": "Phần đầu",
+        "title": "Quyển sách của Quỷ"
+      },
+      "Phần_sau": {
+        "label": "Phần sau",
+        "title": "Quyển sách của Thần"
+      },
+      "Phần_03": {
+        "label": "Phần 03",
+        "title": "Ngoại truyện"
+      }
+    },
+    "titleJp": "",
+    "author": "Kitaseno Yunaki",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Mái tóc là phần tôi thích nhất trên cơ thể mình. Tuy chỉ là mái tóc đen như bao người Nhật khác nhưng tôi chưa bao giờ quên chăm chút cho nó. Và khi tôi lùa chiếc lược qua, thật mượt mà.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "junior-high-school-dxd",
+    "source": "output/junior-high-school-dxd",
+    "titleVi": "Junior High School DxD",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Học sinh chuyển trường là cô nàng Samurai"
+      }
+    },
+    "titleJp": "",
+    "author": "Shinonome Rippu",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 1 - Học sinh chuyển trường là cô nàng Samurai - Life.0 Một học viện tư thục đảm nhận các cấp giáo dục từ mầm non đến đại học. Trường cấp một và cấp hai của học viện nằm chung một khuân viên. Thực tế, học viện này được điều hành bởi gia tộc Ác Ma Gremory. Có những học sinh sở hữu sức mạnh siêu nhiên hoặc không phải con người đang theo học tại đây.…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "kami-sama-no-memochou",
+    "source": "output/kami-sama-no-memochou",
+    "titleVi": "Kami-sama no Memochou",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Hikaru Sugii",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "“Bày tỏ lòng biết ơn là phản xạ tự nhiên. Cốt yếu cũng là làm vừa lòng người khác. Cậu thấy đấy, mấy ông chủ của chúng ta thường khá đần; bọn họ có thể đã cảm thấy dễ chịu chỉ đơn giản qua cảm giác vật lý thôi.” “Cảm ơn cậu đã hiểu cho tôi. Vô cùng cảm ơn cậu.”",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "kamigoroshi-no-eiyuu-to-nanatsu-no-seiyaku",
+    "source": "output/kamigoroshi-no-eiyuu-to-nanatsu-no-seiyaku",
+    "titleVi": "Kamigoroshi no Eiyuu to Nanatsu no Seiyaku",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Umetane",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Khi ngấng đầu lên khỏi chiếc bàn gỗ, các khớp trên cơ thể tôi có hơi nhức chút đỉnh. Có thể là do tư thế ngủ của tôi khá bị lạ đời. Tôi căng người ra khiến cơ bắp cảm thấy dễ chịu lại.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "kenja-no-deshi-wo-nanoru-kenja",
+    "source": "output/kenja-no-deshi-wo-nanoru-kenja",
+    "titleVi": "Kenja no Deshi wo Nanoru Kenja",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Ryuusen Hirotsugu",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Ngót nghét một nửa thế kỉ đã trôi qua kể từ khi hệ thống VR được hoàn thiện. Hiện tại, công nghệ này đã trở thành một phần không thể thiếu đối với nền kinh tế toàn cầu. Việc giáo dục tại trường học thì biến thành việc tham dự các lớp học thực tế ảo thông qua kết nối mạng với những thiết bị đầu cuối chuyên dụng ngay tại nhà. Là một giải pháp giáo dục được…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "kenkyo-kenjitsu-o-motto-ni-ikite-orimasu",
+    "source": "output/kenkyo-kenjitsu-o-motto-ni-ikite-orimasu",
+    "titleVi": "Kenkyo, Kenjitsu o Motto ni Ikite Orimasu",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Hiyoko no kēki",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "…Không, tôi không có bị dở người hay gì đâu, chỉ là nói điều này ra thì ngại lắm, nhưng nó là sự thật. Tôi nhận ra mình có khả năng này lúc sắp thi vào trường tiểu học.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "khong-duoc-tuoc-bo-nhan-quyen-cua-toi",
+    "source": "output/khong-duoc-tuoc-bo-nhan-quyen-cua-toi",
+    "titleVi": "Không Được Tước Bỏ Nhân Quyền Của Tôi",
+    "volumeTitles": {
+      "Chương_151–200": {
+        "label": "Chương 151–200",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Khả Liên Tịch Tịch (可怜的夕夕)",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Chương 151-200 - Chương 1: Việc đến nước này, vẫn là nên ăn cơm trước Trên cửa sổ có những tấm lá mỏng đến gần như trong suốt dán lên, khiến ánh nắng ban mai vừa dịu dàng vừa ấm áp xuyên vào phòng.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "kiem-com-bang-cach-choi-game-sinh-tu",
+    "source": "output/kiem-com-bang-cach-choi-game-sinh-tu",
+    "titleVi": "Kiếm cơm bằng cách chơi game sinh tử",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": ""
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Yushi Ukai",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Chiếc nệm dường như đủ rộng cho ít nhất năm người. Đó là một chiếc giường có mái che sang trọng, được phủ rèm che bốn phía, kiểu giường mà một nàng công chúa được nuông chiều sẽ ngả lưng mệt mỏi, và kiểu giường mà một dân thường sẽ không bao giờ bắt gặp trong đời. Và Yuki thấy chiếc giường hoàn toàn lạ lẫm. Như vậy, có thể khẳng định rằng cô không thuộc…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "kimi-wa-tsukiyo-ni-hikari-kagayaku",
+    "source": "output/kimi-wa-tsukiyo-ni-hikari-kagayaku",
+    "titleVi": "Kimi wa Tsukiyo ni Hikari Kagayaku",
+    "volumeTitles": {
+      "Oneshot": {
+        "label": "Oneshot",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Tetsuya Sano",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Oneshot - Chương 1: Short season, cold feeling Tôi mua cuốn light novel này trong một dịp ra nước ngoài và tình cờ đọc thấy nội dung rất cảm động, sâu sắc. So với những project tôi đang theo đuổi thì bộ truyện này có thể loại hơi khác một tí. Phải thừa nhận đây là lần đầu tiên tôi dịch tiểu thuyết từ sách chứ không phải từ web.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "konjiki-no-moji-tsukai-yuusha-yonin-ni-makikomareta-unique-cheat",
+    "source": "output/konjiki-no-moji-tsukai-yuusha-yonin-ni-makikomareta-unique-cheat",
+    "titleVi": "Konjiki no Moji Tsukai: Yuusha Yonin ni Makikomareta Unique Cheat",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Tomoto Sui",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Dưới bầu trời trong xanh, ta có thể nghe thấy tiếng chân của ba người. Họ đang băng qua một con đường cát trong khi lê bước lên con dốc. Nơi này được gọi là 【Núi Rogi】, một nơi mà các du hành giả rất hiếm khi ghé qua. Nguyên nhân là vì ở đây có rất nhiều quái vật sinh sống.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "kuro-no-hiera-glaphicos",
+    "source": "output/kuro-no-hiera-glaphicos",
+    "titleVi": "Kuro no Hiera Glaphicos",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Ureshino Akihiko",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 1 - Mở đầu: Phương Đông Đỏ Rực Như Lửa Cháy Một vị thần xưa kia sở hữu sức mạnh ấy đã phong ấn đi bè lũ “Ma quỷ”.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "kuroki-eiyuu-no-ichigeki-musou-one-turn-kill",
+    "source": "output/kuroki-eiyuu-no-ichigeki-musou-one-turn-kill",
+    "titleVi": "Kuroki Eiyuu no Ichigeki Musou (One Turn Kill!)",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Nữ Kỵ Sĩ Gặp Nạn"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Ma Nữ Sỉ Nhục"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Em Gái Sa Đọa"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Thiên Sứ Huấn Luyện"
+      }
+    },
+    "titleJp": "",
+    "author": "Nozomi Kota",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Nhẹ nhàng gạt đi những giọt nước mắt trên khóe mi của họ. Thế nhưng — tuyệt đối không được tổn thương bất kỳ một người phụ nữ nào.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "lam-lai-cuoc-doi-sau-khi-bi-cam-sung-va-vu-oan-toi-tro-nen-than-thiet-voi-nu-than-xinh-dep-nhat-truong",
+    "source": "output/lam-lai-cuoc-doi-sau-khi-bi-cam-sung-va-vu-oan-toi-tro-nen-than-thiet-voi-nu-than-xinh-dep-nhat-truong",
+    "titleVi": "Làm Lại Cuộc Đời~ Sau khi bị cắm sừng và vu oan, tôi trở nên thân thiết với nữ thần xinh đẹp nhất trường",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "D",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 1 - Chương 1: Bắt Quả Tang Ngoại Tình và Bị Bắt Nạt Tôi là Aono Eiji, một nam sinh cao trung năm hai bình thường như bao người.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "lazy-dungeon-master",
+    "source": "output/lazy-dungeon-master",
+    "titleVi": "Lazy Dungeon Master",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Onikage Supana",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Web Novel - Chương 1 : Tôi không muốn làm gì cả…! Ngay khi vừa mới chuyển đến thế giới này, đúng hơn là sau khi Kami-sama nghe thấy điều kiện duy nhất của tôi. Ông ấy trả lời tôi, Masuda Keima rằng:",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "league-of-legends",
+    "source": "output/league-of-legends",
+    "titleVi": "League of Legends",
+    "volumeTitles": {
+      "Quyển_01": {
+        "label": "Quyển 01",
+        "title": "Sự trở lại của Bại Vương"
+      }
+    },
+    "titleJp": "",
+    "author": "Loạn (乱)",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Quyển 1 – Sự trở lại của Bại Vương - Chương 1: Trở thành một người chơi nghiệp dư cũng không tệ Trong nhà thi đấu, ánh đèn neon lóe sáng chói lóa. Muôn vàn màu sắc từ đèn LED rọi sáng bục vinh quang.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "legend",
+    "source": "output/legend",
+    "titleVi": "Legend",
+    "volumeTitles": {
+      "Arc_01": {
+        "label": "Arc 01",
+        "title": "Đột Kích Làng Orc"
+      },
+      "Arc_02": {
+        "label": "Arc 02",
+        "title": "Bài Kiểm Tra Thăng Cấp"
+      },
+      "Arc_03": {
+        "label": "Arc 03",
+        "title": "Bệ Thờ Thừa Kế"
+      }
+    },
+    "titleJp": "",
+    "author": "Kannazuki Kurenai",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Cái nắng hè gay gắt dội xuống mặt đất. Saeki Reniji lau mồ hôi trên trán, dừng xe lại chờ đèn đỏ. Tiếng ve kêu rả rích, cậu bực bội nheo mắt nhìn mặt trời.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "linh-danh-thue-hoi-quy-deu-co-ke-hoach",
+    "source": "output/linh-danh-thue-hoi-quy-deu-co-ke-hoach",
+    "titleVi": "Lính Đánh Thuê Hồi Quy Đều Có Kế Hoạch",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "골드행",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Web Novel - Chương 1: Sự Khinh Miệt Này Sao Mà Quen Thuộc (1) \"Chuyện đó thì tôi chịu, tôi đã chết đâu mà biết.\"",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "ma-vuong-2099",
+    "source": "output/ma-vuong-2099",
+    "titleVi": "Ma Vương 2099",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Shinjuku Thành Phố Cyberpunk"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Thành Phố Điện Tử Ma Thuật-Akihabara"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Thành Phố Ngục Tù Địa Đàng-Yokohama"
+      }
+    },
+    "titleJp": "",
+    "author": "Daigo Murasaki",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 1- Shinjuku Thành Phố Cyberpunk - Minh họa bìa Chú thích: Đoạn Ma Vương nói thì có trong chap 1 rồi nên mình không dịch. Chỉ dịch thông tin về Machina nhé.:",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "mac-tran-vuong",
+    "source": "output/mac-tran-vuong",
+    "titleVi": "Mạc Trận Vương",
+    "volumeTitles": {
+      "Chương_34–50": {
+        "label": "Chương 34–50",
+        "title": ""
+      },
+      "Chương_51–100": {
+        "label": "Chương 51–100",
+        "title": ""
+      },
+      "Chương_101–150": {
+        "label": "Chương 101–150",
+        "title": ""
+      },
+      "Chương_151–200": {
+        "label": "Chương 151–200",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Onhu (온후)",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Cuộc chiến trong Hộp Thử Thách đã kết thúc một cách bất ngờ. Bầu trời bị chia cắt cùng với cơn rung chấn từ mặt đất.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "madan-no-ou-to-vanadis",
+    "source": "output/madan-no-ou-to-vanadis",
+    "titleVi": "Madan no Ou to Vanadis",
+    "volumeTitles": {
+      "Tập_12": {
+        "label": "Tập 12",
+        "title": ""
+      },
+      "Tập_13": {
+        "label": "Tập 13",
+        "title": ""
+      },
+      "Tập_14": {
+        "label": "Tập 14",
+        "title": ""
+      },
+      "Tập_15": {
+        "label": "Tập 15",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Tsukasa Kawaguchi",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Về khuya, chẳng còn bóng người ở sảnh chính cung điện và chỉ còn những người lính gác đứng dọc hành lang. Giờ này muộn đến mức chỉ còn những quan viên hiếm hoi làm việc đến khuya đi lại. Đêm nay, một sự kiện hiếm hoi lần đầu tiên diễn ra dọc hành lang tầng trệt trong cung điện hoàng gia.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "master-hunter-k",
+    "source": "output/master-hunter-k",
+    "titleVi": "Master Hunter K",
+    "volumeTitles": {
+      "Web_Novel": {
+        "label": "Web Novel",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "From Hell",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Sungjin vươn tay lên bầu trời, nhưng cậu đã không còn một chút sức lực nào cả. Ở đâu đó, giọng nói của “Người Điều Hành” vang lên. Quang cảnh mờ dần trong tầm nhìn của Sungjin, bóng tối dần bò vào trong góc nhìn của cậu. Giờ đây, khi sắp phải đối diện với cái chết, cậu cuối cùng cũng tìm thấy được sự yên bình.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "michihate-no-mukouno-hikari",
+    "source": "output/michihate-no-mukouno-hikari",
+    "titleVi": "Michihate no Mukouno Hikari",
+    "volumeTitles": {
+      "Quyển_01": {
+        "label": "Quyển 01",
+        "title": "Ánh Sáng Nơi Cuối Con Đường"
+      },
+      "Quyển_02": {
+        "label": "Quyển 02",
+        "title": "Hai Vị Thánh Và Lời Ước Hẹn Xa Cách"
+      }
+    },
+    "titleJp": "",
+    "author": "Akidzuki Asuka (秋月アスカ)",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Quyển 1 ~ Ánh Sáng Nơi Cuối Con Đường ~ - Giới Thiệu Nhân Vật Thánh nữ và hiệp sĩ,câu chuyện về cuộc gặp gỡ và biệt ly với một cô thôn nữ.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "moi-quan-he-giai-tri",
+    "source": "output/moi-quan-he-giai-tri",
+    "titleVi": "Mối Quan Hệ Giải Trí",
+    "volumeTitles": {
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": ""
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "AOI Sekina",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 2 - Chương 1: Bài toán tung xúc xắc (ngày 176) “Ê Banjo, cậu tung xúc xắc riết mà không biết chán à?”",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "mot-con-meo-hoang-bong-nhien-tro-nen-tro-nen-quan-quyt-lay-toi-va-khi-nhan-ra-thi-toi-da-tro-thanh-chu-cua-no-mat-roi",
+    "source": "output/mot-con-meo-hoang-bong-nhien-tro-nen-tro-nen-quan-quyt-lay-toi-va-khi-nhan-ra-thi-toi-da-tro-thanh-chu-cua-no-mat-roi",
+    "titleVi": "Một Con Mèo Hoang Bỗng Nhiên Trở Nên Trở Nên Quấn Quýt Lấy Tôi, Và Khi Nhận Ra Thì Tôi Đã Trở Thành Chủ Của Nó Mất Rồi",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Suzukure Koh",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Tập 1 - Chương 1: Khi Nói \"Ở Trong Hộp,\" Ý Là Con Mèo Hay Một Cô Gái? Yunokawa Riku nổi tiếng là một học sinh điềm tĩnh, lạnh lùng và nghiêm túc.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "mua-dong-tai-hien",
+    "source": "output/mua-dong-tai-hien",
+    "titleVi": "Mùa đông tái hiện",
+    "volumeTitles": {
+      "Chương_1–50": {
+        "label": "Chương 1–50",
+        "title": ""
+      },
+      "Chương_51–100": {
+        "label": "Chương 51–100",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Tuyết Lê Đôn Trà",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Cách biệt ròng rã 8 năm, Trương Thuật Đồng lại lần nữa trở về hòn đảo nhỏ nơi hắn lớn lên. Nhà tang lễ nằm ở phía nam hòn đảo, sát con đường vành đai ven hồ mới sửa.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "muon-to-mau-cho-cuoc-song-thuong-ngay-the-gioi-bang-anh",
+    "source": "output/muon-to-mau-cho-cuoc-song-thuong-ngay-the-gioi-bang-anh",
+    "titleVi": "Muốn Tô Màu Cho Cuộc Sống Thường Ngày (Thế Giới) Bằng Anh",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": ""
+      }
+    },
+    "titleJp": "",
+    "author": "Kei Shunme",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Khi tôi dồn sức mở cánh cửa sắt nặng nề dẫn ra sân thượng, một luồng gió mạnh ẩm ướt lập tức ập tới. Mái tóc để dài bết vào mặt như mạng nhện, chiếc váy đang mặc trên người cũng phần phật tung bay như đang cựa quậy. Tôi không kìm được mà nheo mắt lại. Trong tầm nhìn vừa mở ra lần nữa, tôi đã nhận ra bóng dáng của người mà mình đang tìm kiếm. Tôi định cất…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "neo-duong-xa-xam",
+    "source": "output/neo-duong-xa-xam",
+    "titleVi": "Nẻo Đường Xa Xăm",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "A Long Long Way"
+      }
+    },
+    "titleJp": "",
+    "author": "Sebastian Barry",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "“Không ai viết về các chiến hào trong Thế chiến thứ nhất hay hơn Sebastian Barry. Bằng văn phong tàn nhẫn mà hiệu quả, ông đã cho thấy và ca ngợi tinh thần anh hùng của những chàng trai trẻ đã ngã xuống nơi cánh đồng chết chóc ở Pháp. Tài năng lớn nhất của ông là khiến bạn đọc cảm thấy như ông đang tường thuật lại những sự kiện mà chính mình đã tận mắt…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "ngu-chieu-nhan-cua-chu-hoa-co",
+    "source": "output/ngu-chieu-nhan-cua-chu-hoa-co",
+    "titleVi": "Ngự Chiêu Nhân của Chu Hoa Cơ",
+    "volumeTitles": {
+      "Phần_01": {
+        "label": "Phần 01",
+        "title": "Quyển Thượng"
+      },
+      "Phần_02": {
+        "label": "Phần 02",
+        "title": "Quyển Hạ"
+      }
+    },
+    "titleJp": "",
+    "author": "Shirakawa Kouko",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "“Nhớ lấy, Huỳnh. Tuyệt đối không được để bất kỳ ai hay biết con là cốt nhục của vị quý nhân đó.” Mẹ đã dặn dò không biết bao nhiêu lần như vậy. “Vị quý nhân” mà bà nhắc tới chính là Tiên đế. Vị quân chủ đáng thương đã vong mạng dưới tay loạn thần tặc tử, khiến cho hoàng tộc máu mủ đều bị tàn sát không còn một ai.",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
+    ]
+  },
+  {
+    "slug": "nguoi-giay",
+    "source": "output/nguoi-giay",
+    "titleVi": "Người Giấy",
+    "volumeTitles": {
+      "Tiền_truyện": {
+        "label": "Tiền truyện",
+        "title": "Kẻ không còn đường quay đầu"
+      },
+      "Quyển_01": {
+        "label": "Quyển 01",
+        "title": "Kẻ mang ủy thác"
+      },
+      "Nhân_vật": {
+        "label": "Nhân vật",
+        "title": "Fanart - Commission"
+      }
+    },
+    "titleJp": "",
+    "author": "Xám",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Trong một căn hộ chung cư đóng kín, bóng tối tựa như một chiếc khăn dày, gói chặt toàn bộ căn nhà bằng sắc đen đến ngột ngạt. Ánh sáng tỏa ra từ chiếc màn hình của máy vi tính ở phía bàn làm việc không đủ sức thắp sáng toàn bộ không gian. Tuy vậy, nó vẫn đủ để soi rõ gương mặt hốc hác của một người đàn ông trung niên với đôi mắt xanh lục và làn da hơi…",
+    "tags": [
+      "Light Novel",
+      "Fantasy"
     ]
   }
 ]
