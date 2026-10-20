@@ -8,6 +8,18 @@ const PORT = 3000;
 // Serve static frontend
 app.use(express.static(path.join(__dirname, "public")));
 
+app.get("/images/:slug/:volume/:file", (req, res) => {
+  const filePath = path.join(__dirname, "output", req.params.slug, req.params.volume, "images", req.params.file);
+  if (fs.existsSync(filePath)) res.sendFile(filePath);
+  else res.status(404).send("Image not found");
+});
+
+app.get("/api/images/:slug/:volume", (req, res) => {
+  const imgDir = path.join(__dirname, "output", req.params.slug, req.params.volume, "images");
+  if (fs.existsSync(imgDir)) res.json(fs.readdirSync(imgDir).sort());
+  else res.json([]);
+});
+
 // Serve volume images: /images/Tập_1/illu_02.webp
 app.get("/images/:volume/:file", (req, res) => {
   const filePath = path.join(

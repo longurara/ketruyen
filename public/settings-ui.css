@@ -38,7 +38,8 @@
 .settings-body .hand-camera-entry { padding: 14px; border: 1px solid var(--line); border-radius: 14px; }
 .settings-body .settings-action { min-height: 44px; }
 @media (max-width: 1080px) {
-  .settings-panel { inset: auto 0 var(--reader-viewport-inset, 0px); width: 100%; max-height: calc(var(--reader-viewport-height, 100dvh) * .9); padding: 0; border-bottom: 0; }
+  .settings-panel { inset: auto 0 var(--reader-viewport-inset, 0px); width: 100%; max-height: calc(var(--reader-viewport-height, 100dvh) * .9); padding: 0; border-radius: 22px 22px 0 0; border-bottom: 0; }
+  .settings-panel.is-open { transform: translateY(var(--sheet-drag, 0)); }
   .settings-panel::before { display: none; }
   .settings-panel.is-sheet-expanded { max-height: calc(var(--reader-viewport-height, 100dvh) - 12px); }
   .settings-head { padding-top: 0; }

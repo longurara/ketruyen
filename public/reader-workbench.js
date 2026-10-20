@@ -70,7 +70,7 @@
     dialog.querySelector(".workbench-tabs").insertAdjacentHTML("afterend", '<label class="workbench-section-select"><select id="workbench-section" aria-label="Chọn tiện ích"></select></label><button type="button" class="btn-secondary workbench-return" id="workbench-library-return" hidden>← Về tiện ích</button>');
     panel.insertAdjacentHTML("afterend", '<div id="workbench-feature-slot" class="workbench-external" hidden></div><div id="workbench-library-slot" class="workbench-external" hidden></div>');
     const featureSlot = $("#workbench-feature-slot"), librarySlot = $("#workbench-library-slot");
-    featureSlot.append($("#tools-feedback"), $("#tools-panel")); librarySlot.append($("#library-tools-panel"), $("#library-feedback"));
+    featureSlot.append($("#tools-feedback"), $("#tools-panel")); librarySlot.append($("#library-feedback"), $("#library-tools-panel"));
     $("#reader-tools-dialog").hidden = true; $("#library-dialog").hidden = true;
     options.features.attachHost({ open: (tab, argument) => open(tab, argument), close, isOpen: () => dialog.open && FEATURE_TABS.includes(activeTab) && !libraryActive });
     options.library.attachHost({ show: showLibrary, close, isOpen: () => dialog.open && libraryActive });
@@ -85,7 +85,7 @@
     settings.innerHTML = '<h4 class="settings-section-title">Tiện ích sách</h4><p class="settings-hint">Bản đồ sách, xem trước, chú giải, sổ từ và hồ sơ đọc.</p><button type="button" class="btn-secondary settings-action" data-workbench="options">Tùy chỉnh tiện ích</button>';
     $("#settings-progress-section").before(settings);
     $("#reader-selection-tools").insertAdjacentHTML("beforeend", '<button type="button" data-workbench-selection="words">Chú giải / Lưu từ</button>');
-    const sideButton = document.createElement("button"); sideButton.type = "button"; sideButton.className = "side-settings-btn"; sideButton.dataset.workbench = "map"; sideButton.textContent = "Tiện ích đọc";
+    const sideButton = document.createElement("button"); sideButton.type = "button"; sideButton.className = "side-settings-btn"; sideButton.dataset.workbench = "map"; sideButton.innerHTML = '<span class="side-settings-glyph" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v16H4zM14 4h6v16h-6zM7 8h1M7 12h1M17 8h1M17 12h1"></path></svg></span>Tiện ích đọc';
     $("#btn-reader-listen").after(sideButton);
     function close() { if (!libraryActive || options.library.canClose()) options.surfaces.close(dialog); }
     dialog.querySelector(".tools-close").onclick = close;

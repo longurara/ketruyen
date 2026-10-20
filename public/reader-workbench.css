@@ -35,9 +35,9 @@ body[data-view="reader"] { --reader-floating-bottom: max(calc(24px + env(safe-ar
 body.is-listening[data-view="reader"] { --reader-floating-bottom: calc(150px + env(safe-area-inset-bottom)); }
 .reader-quick-menu { position: fixed; right: calc(76px + env(safe-area-inset-right)); bottom: var(--reader-floating-bottom); z-index: 75; font-family: var(--font-sans); }
 .reader-quick-menu[hidden], #reader-quick-actions[hidden], .reader-status-footer[hidden] { display: none; }
-#reader-quick-actions { display: grid; gap: 8px; position: absolute; bottom: calc(100% + 8px); right: 0; min-width: 190px; max-height: min(65dvh, calc(100dvh - var(--reader-floating-bottom) - var(--reader-quick-height, 46px) - 20px)); overflow: auto; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); box-shadow: 0 5px 20px #0002; }
+#reader-quick-actions { display: grid; gap: 8px; position: absolute; bottom: calc(100% + 8px); right: 0; min-width: 190px; max-height: min(65dvh, calc(100dvh - var(--reader-floating-bottom) - var(--reader-quick-height, 46px) - 20px)); overflow: auto; padding: 12px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--raised); box-shadow: var(--shadow-pop); }
 .reader-status-footer { position: fixed; bottom: 0; inset-inline: 0; text-align: center; padding: 8px 12px max(8px, env(safe-area-inset-bottom)); background: var(--bg); color: var(--text-muted); font: 12px/1.4 var(--font-sans); border-top: 1px solid var(--line); z-index: 65; pointer-events: none; }
 body.is-listening .reader-status-footer { display: none; }
-@media (min-width: 1081px) { body[data-view="reader"] .reader-top { bottom: var(--reader-floating-bottom); } }
+@media (min-width: 1081px) { body[data-view="reader"] .reader-top, body[data-view="reader"] .reader-toast { bottom: var(--reader-floating-bottom); } }
 @media (max-width: 1080px) { .reader-status-footer { bottom: calc(64px + env(safe-area-inset-bottom)); padding-bottom: 8px; } .reader-quick-menu { bottom: calc(106px + env(safe-area-inset-bottom)); right: 12px; } .workbench-panel { padding: 18px; } }
 @media (max-width: 600px) { .workbench-tabs { padding-inline: 14px; } .page-flip-preview { padding: 14px; } }

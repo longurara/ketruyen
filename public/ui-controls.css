@@ -1,6 +1,7 @@
 /* Shared controls for reader utilities. Playback controls keep their own styles. */
 body { --ui-danger-rgb: 148, 60, 54; }
 body[data-theme="dark"] { --ui-danger-rgb: 218, 153, 144; }
+textarea { font: inherit; color: inherit; }
 
 :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"] {
   appearance: none;
@@ -113,8 +114,9 @@ input[type="checkbox"]:not([role="switch"]):focus-visible { outline: 2px solid v
 select:disabled,
 input[type="checkbox"]:not([role="switch"]):disabled { opacity: .45; cursor: not-allowed; }
 
-.reader-aa-controls label { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px 12px; margin: 16px 0; }
-.reader-aa-controls label > :is(input, select) { grid-column: 1 / -1; }
+:is(.reader-aa-controls label, .hand-camera-settings label:not(.hand-camera-check), #layout-form label, .skim-label) { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px 12px; }
+.reader-aa-controls label { margin: 16px 0; }
+:is(.reader-aa-controls label, .hand-camera-settings label:not(.hand-camera-check), #layout-form label, .skim-label) > :is(input, select) { grid-column: 1 / -1; }
 :is(.reader-aa-controls, .hand-camera-settings) output,
 #layout-form output,
 .skim-label output {

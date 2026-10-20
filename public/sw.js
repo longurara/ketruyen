@@ -7,7 +7,8 @@
 // and picture seen stays readable offline. app.js uses the same cache names
 // for "Tải về đọc offline".
 
-const SHELL_CACHE = "tenshi-shell-v14";
+const SHELL_CACHE = "tenshi-shell-v15";
+const INDEX_URLS = ["/data/index.json", "/data/tinh-yeu-vo-hinh/index.json", "/data/arya-ban-ben/index.json"];
 const TEXT_CACHE = "tenshi-text-v1";
 const IMAGE_CACHE = "tenshi-img-v1";
 const FONT_CACHE = "tenshi-fonts-v1";
@@ -46,6 +47,7 @@ const SHELL = [
   "/data/series.json",
   "/data/index.json",
   "/data/tinh-yeu-vo-hinh/index.json",
+  "/data/arya-ban-ben/index.json",
   "/manifest.webmanifest",
   "/icons/icon.svg",
   "/icons/icon-192.png"
@@ -86,7 +88,7 @@ self.addEventListener("fetch", (event) => {
       event.respondWith(cacheFirst(request, TEXT_CACHE));
     } else if (url.pathname.startsWith("/img/") || url.pathname.startsWith("/icons/")) {
       event.respondWith(cacheFirst(request, IMAGE_CACHE));
-    } else if (url.pathname === "/data/index.json" || url.pathname === "/data/tinh-yeu-vo-hinh/index.json") {
+    } else if (INDEX_URLS.includes(url.pathname)) {
       // Prune only after all cached indexes have been considered.
       const fetched = networkFirst(request, SHELL_CACHE);
       event.respondWith(fetched);
@@ -143,7 +145,8 @@ async function pruneText() {
   const shell = await caches.open(SHELL_CACHE);
   const indexes = await Promise.all([
     shell.match("/data/index.json"),
-    shell.match("/data/tinh-yeu-vo-hinh/index.json")
+    shell.match("/data/tinh-yeu-vo-hinh/index.json"),
+    shell.match("/data/arya-ban-ben/index.json")
   ]);
   if (indexes.some((response) => !response)) return;
   const volumes = (await Promise.all(indexes.map((response) => response.json()))).flat();

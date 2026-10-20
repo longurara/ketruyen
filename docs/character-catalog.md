@@ -68,7 +68,7 @@ Tên nhân vật chính đã đối chiếu với [Thiên Sứ Nhà Bên](https:
 | Maruyama Takeshi | Bạn thân cùng lớp của Masachika; nhiệt tình, bộc trực và hay đi cùng Hikaru. | Tập 1 · Chương 2: Tớ không phải là kẻ cô độc, được chứ? |
 | Kiyomiya Hikaru | Bạn thân cùng lớp của Masachika; điềm tĩnh, hiền lành và thường đi cùng Takeshi. | Tập 1 · Chương 2: Tớ không phải là kẻ cô độc, được chứ? |
 | Kenzaki Touya | Hội trưởng hội học sinh Học viện Seirei; uy nghiêm, lôi cuốn và luôn dẫn dắt hội học sinh. | Tập 1 · Chương 5: Dừng lại! Đừng đánh nhau vì tôi chứ! |
-| Sarashina Chisaki | Phó hội trưởng hội học sinh Học viện Seirei; mạnh mẽ, giỏi võ và là bạn gái của Touya. | Tập 1 · Chương 8: ĐÚNG RỒ I, MÌNH LÀM ĐƯỢC MÀ |
+| Sarashina Chisaki | Phó hội trưởng hội học sinh Học viện Seirei; mạnh mẽ, giỏi võ và là bạn gái của Touya. | Tập 1 · Chương 8: ĐÚNG RỒI, MÌNH LÀM ĐƯỢC MÀ |
 | Kiryuuin Sumire | Đàn chị có mái tóc cuộn dọc đặc trưng thuộc câu lạc bộ Kendo. | Tập 1 · Lời bạt |
 | Kimishima Ayano | Người hầu thân cận phục vụ Yuki và gia tộc Suou; trầm mặc, ít biểu lộ cảm xúc nhưng hết mực tận tụy. | Tập 2 · Chương 1: Anh hiểu ý em mà? |
 | Taniyama Sayaka | Nữ sinh từng cạnh tranh chức hội trưởng hội học sinh sơ trung với Yuki; nghiêm túc và thẳng thắn. | Tập 2 · Chương 4: Vị của nó chỉ giống kem thôi sao? Thật vậy không đấy? |

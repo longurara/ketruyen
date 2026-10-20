@@ -312,7 +312,7 @@
       card.innerHTML = `
         <span class="book shelf-cover">${series.cover ? `<img src="${escapeHtml(series.cover)}" alt="Bìa ${escapeHtml(series.titleVi)}" loading="lazy">` : ""}</span>
         <span class="shelf-copy">
-          <span class="shelf-card-title">${escapeHtml(series.titleVi)}</span>
+          <span class="shelf-card-title${series.titleVi.length > 32 ? " is-long" : ""}">${escapeHtml(series.titleVi)}</span>
           <span class="shelf-card-author">${escapeHtml(series.author || "")}</span>
           <span class="shelf-card-meta">${series.personal ? `${escapeHtml(series.sourceFormat)} · Ebook cá nhân` : `${series.volumes} tập`} · ${series.chapters} chương</span>
           ${updates ? `<span class="chapter-update-badge">${updates} chương mới</span>` : ""}
@@ -1216,7 +1216,7 @@
 
   function hydrateSeriesMeta() {
     const totals = getSeriesTotals();
-    seriesTitleVi.textContent = SERIES_META.titleVi;
+    seriesTitleVi.textContent = SERIES_META.titleVi; seriesTitleVi.classList.toggle("is-long", SERIES_META.titleVi.length > 32);
     seriesTitleJp.textContent = SERIES_META.titleJp;
     seriesDescription.textContent = SERIES_META.description;
     metaAuthor.textContent = SERIES_META.author;
@@ -1300,22 +1300,37 @@
     const storyIndex = volume.chapters
       .slice(0, chapIdx + 1)
       .filter((item) => !item.isIllustration).length;
-    const numbered = chapter.title.match(/^Chương\s*(\d+)\s*[:：]\s*(.+)$/i);
-    const prefixed = chapter.title.match(/^(Ngoại truyện[^:：]*?)\s*[:：]\s*(.+)$/i);
+    const numbered = chapter.title.match(/^Chương\s*(\d+)\s*[:：\-–—]\s*(.+)$/i);
+    const prefixed = chapter.title.match(/^((?:Chương\s+mở\s+đầu|Lời\s+mở\s+đầu|Chương\s+đầu|Mở\s+đầu|Chương\s+kết|Phần\s+kết|Chương\s+bổ\s+sung|Ngoại\s+truyện[^:：\-–—]*?|Lời\s+bạt[^:：\-–—]*?))\s*[:：\-–—]\s*(.+)$/i);
+    const ssMatch = chapter.title.match(/^(SS\s*\d+)\s*[:：\-–—]?\s+(.+)$/i);
+    const volBonusMatch = chapter.title.match(/^Volume\s+(\d+(?:\.\d+)?)\s+Bonus\s+Short\s+Story\s*[:：\-–—]\s*(.+)$/i);
+    const fairBonusMatch = chapter.title.match(/^(Fair\s+bonus\s+ss|Phiên\s+bản\s+độc\s+quyền[^:：\-–—]*?)\s*[:：\-–—]\s*(.+)$/i);
+    const afterword = chapter.title.match(/^Lời\s+bạt(?:\s+của\s+tác\s+giả)?$/i);
 
     if (numbered) {
-      return { kicker: `Chương ${numbered[1]}`, title: numbered[2].trim(), num: parseInt(numbered[1], 10) };
+      const chapterNum = parseInt(numbered[1], 10);
+      return { kicker: `Chương ${chapterNum}`, title: numbered[2].trim(), num: chapterNum };
     }
 
     if (prefixed) {
-      return { kicker: prefixed[1].trim(), title: prefixed[2].trim(), num: storyIndex };
+      return { kicker: prefixed[1].trim(), title: prefixed[2].trim(), num: "✦" };
+    }
+    if (ssMatch) return { kicker: ssMatch[1].toUpperCase().replace(/\s+/g, ""), title: ssMatch[2].trim(), num: storyIndex };
+    if (volBonusMatch) return { kicker: `Ngoại truyện Tập ${volBonusMatch[1]}`, title: volBonusMatch[2].trim(), num: storyIndex };
+    if (fairBonusMatch) return { kicker: fairBonusMatch[1].trim(), title: fairBonusMatch[2].trim(), num: storyIndex };
+    if (afterword) {
+      return { kicker: "Lời bạt", title: chapter.title.trim(), num: "✦" };
     }
 
     return { kicker: null, title: chapter.title.trim(), num: storyIndex };
   }
 
   function formatChapterPlace(volume, label) {
-    return [volume.name, label.kicker].filter(Boolean).join(" · ");
+    return [volume.name, hasDistinctKicker(label) ? label.kicker : null].filter(Boolean).join(" · ");
+  }
+
+  function hasDistinctKicker(label) {
+    return Boolean(label.kicker && !label.title.toLowerCase().startsWith(label.kicker.toLowerCase()));
   }
 
   function getVolumeProgress(volIdx) {
@@ -2012,7 +2027,7 @@
 
     if (readingProgress && readingProgress.volIdx === volIdx) {
       const label = getChapterLabel(volume, readingProgress.chapIdx);
-      return `Đang đọc dở: ${[label.kicker, label.title].filter(Boolean).join(" — ")}`;
+      return `Đang đọc dở: ${(hasDistinctKicker(label) ? [label.kicker, label.title] : [label.title]).filter(Boolean).join(" — ")}`;
     }
 
     return finished > 0 ? `Đã đọc ${finished}/${volume.chapters.length} mục.` : "";
@@ -2054,7 +2069,7 @@
         : label.num;
       const meta = [];
 
-      if (!chapter.isIllustration && label.kicker && !label.kicker.startsWith("Chương")) meta.push(escapeHtml(label.kicker));
+      if (!chapter.isIllustration && hasDistinctKicker(label) && !/^Chương\s+\d+$/i.test(label.kicker)) meta.push(escapeHtml(label.kicker));
       if (!chapter.isIllustration && chapter.words) meta.push(`~${readingMinutes(chapter.words)} phút`);
       if (imageCount > 0) meta.push(chapter.isIllustration ? `${imageCount} ảnh` : `${imageCount} ảnh minh họa`);
       if (isResume && partial) meta.push(`đã đọc ${partial}%`);
@@ -2140,7 +2155,7 @@
     section.innerHTML = `
       <header class="reader-head">
         <p class="reader-breadcrumb">${escapeHtml(formatChapterPlace(volume, label))}</p>
-        <${headingTag} class="reader-stage-title">${escapeHtml(label.title)}</${headingTag}>
+        <${headingTag} class="reader-stage-title${label.title.length > 48 ? " is-long" : ""}">${escapeHtml(label.title)}</${headingTag}>
         <p class="reader-meta">${SERIES_META.sourceFormat === "PDF" ? `PDF · ${chapIdx + 1}/${volume.chapters.length} trang` : chapter.isIllustration
           ? `${chapter.images.length} ảnh minh họa`
           : `Khoảng ${readingMinutes(chapter.words)} phút đọc`}</p>
@@ -2423,7 +2438,7 @@
       const label = getChapterLabel(volume, chapIdx);
       option.value = String(chapIdx);
       if (chapter.isIllustration) option.textContent = label.title;
-      else if (label.kicker) option.textContent = `${label.kicker}: ${label.title}`;
+      else if (hasDistinctKicker(label)) option.textContent = `${label.kicker}: ${label.title}`; else if (label.kicker) option.textContent = label.title;
       else option.textContent = `${label.num}. ${label.title}`;
       option.selected = chapIdx === activeIndex;
       readerChapterSelect.appendChild(option);

@@ -155,7 +155,7 @@
       const label = { want: "Muốn đọc", reading: "Đang đọc", done: "Đã đọc" }[status(series)];
       if (label || row(series).groups.length) {
         const tags = document.createElement("span"); tags.className = "shelf-book-tags";
-        tags.textContent = [label, ...row(series).groups].filter(Boolean).join(" · "); card.querySelector(".shelf-copy").append(tags);
+        tags.textContent = [label, ...row(series).groups].filter(Boolean).join(" · "); card.querySelector(".shelf-card-action").before(tags);
       }
       item.append(card, actions); return item;
     }

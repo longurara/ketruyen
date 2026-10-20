@@ -757,10 +757,10 @@
           "Chisaki Sarashina"
         ],
         "note": "Phó hội trưởng hội học sinh Học viện Seirei; mạnh mẽ, giỏi võ và là bạn gái của Touya.",
-        "gate": "Tập_1\u001fChương 8: ĐÚNG RỒ I, MÌNH LÀM ĐƯỢC MÀ",
+        "gate": "Tập_1\u001fChương 8: ĐÚNG RỒI, MÌNH LÀM ĐƯỢC MÀ",
         "appearance": {
           "volume": "Tập 1",
-          "chapter": "Chương 8: ĐÚNG RỒ I, MÌNH LÀM ĐƯỢC MÀ"
+          "chapter": "Chương 8: ĐÚNG RỒI, MÌNH LÀM ĐƯỢC MÀ"
         }
       },
       {

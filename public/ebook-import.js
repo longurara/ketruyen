@@ -533,6 +533,11 @@
     document.querySelector("#btn-import-ebook").addEventListener("click", () => dialog.showModal());
     document.querySelector("#ebook-close").addEventListener("click", () => { if (!busy) dialog.close(); });
     dialog.addEventListener("cancel", (event) => { if (busy) event.preventDefault(); });
+    dialog.addEventListener("click", (event) => {
+      if (busy || event.target !== dialog) return;
+      const rect = dialog.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
+    });
     dialog.addEventListener("close", () => {
       token++; draft = null; drafts = []; rows = []; queue.innerHTML = ""; preview.hidden = true; input.value = ""; status.textContent = ""; submit.disabled = true;
       if (lastSaved) { const slug = lastSaved; lastSaved = null; onSaved(slug); }

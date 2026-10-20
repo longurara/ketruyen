@@ -892,7 +892,12 @@ body.is-chrome-hidden .reader-bottom-nav {
 
 .shelf-card-title {
   font-family: var(--font-serif);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
   font-size: clamp(1.35rem, 2.1vw, 1.8rem);
+  text-wrap: balance;
   font-weight: 600;
   line-height: 1.25;
 }
@@ -1002,6 +1007,18 @@ body.is-chrome-hidden .reader-bottom-nav {
   margin-top: 14px;
   font-family: var(--font-serif);
   font-size: clamp(2.6rem, 5vw, 4.1rem);
+}
+
+.shelf-card-title.is-long {
+  font-size: clamp(1.2rem, 1.65vw, 1.45rem);
+}
+
+.hero-title.is-long {
+  font-size: clamp(2rem, 3.3vw, 2.75rem);
+  line-height: 1.12;
+}
+
+.hero-title {
   font-weight: 600;
   line-height: 1.04;
   letter-spacing: -0.025em;
@@ -1939,6 +1956,10 @@ mark.search-hit {
 }
 
 .reader-sidebar-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
   padding-top: 20px;
   border-top: 1px solid var(--line);
   font-family: var(--font-serif);
@@ -2119,7 +2140,16 @@ mark.search-hit {
 }
 
 .reader-stage-title {
-  max-width: 22ch;
+  max-width: 26ch;
+}
+
+.reader-stage-title.is-long {
+  max-width: 32ch;
+  font-size: clamp(1.5rem, 2.6vw, 2.05rem);
+  line-height: 1.24;
+}
+
+.reader-stage-title {
   margin: 16px auto 0;
   font-family: var(--font-serif);
   font-size: clamp(1.8rem, 3.4vw, 2.6rem);
@@ -3211,6 +3241,11 @@ body[data-theme="dark"] .settings-progress-card {
     font-size: 1.8rem;
   }
 
+  .hero-title.is-long {
+    font-size: 1.38rem;
+    line-height: 1.2;
+  }
+
   .hero-subtitle {
     margin-top: 6px;
     font-size: 13px;
@@ -3356,6 +3391,7 @@ body[data-theme="dark"] .settings-progress-card {
   }
 
   /* The back button already leads out; the mark only crowds the title. */
+  body[data-view="home"] .brand-mark,
   body[data-view="volume"] .brand-mark,
   body[data-view="reader"] .brand-mark {
     display: none;
