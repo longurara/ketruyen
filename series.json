@@ -354,6 +354,107 @@
     ]
   },
   {
+    "slug": "soi-va-gia-vi",
+    "source": "output/soi-va-gia-vi",
+    "titleVi": "Sói Và Gia Vị",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Sói và Gia Vị - Tập 1"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Sói và Gia Vị - Tập 2"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Sói và Gia Vị - Tập 3"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Sói và Gia Vị - Tập 4"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Sói và Gia Vị - Tập 5"
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": "Sói và Gia Vị - Tập 6"
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": "Những Thanh Sắc Ven Đường (Side Colors)"
+      },
+      "Tập_08": {
+        "label": "Tập 08",
+        "title": "Thị Trấn Đối Lập (Phần Đầu)"
+      }
+    },
+    "titleJp": "Ookami to Koushinryou (狼と香辛料 / Spice and Wolf)",
+    "author": "Hasekura Isuna",
+    "illustrator": "Juu Ayakura",
+    "status": "Đang cập nhật",
+    "description": "Chàng thương nhân rong Kraft Lawrence tình cờ gặp gỡ Holo — nữ thần sói thông thái trông coi mùa màng suốt hàng trăm năm dưới hình hài một thiếu nữ mang đôi tai và chiếc đuôi sói. Cùng nhau rong ruổi trên chiếc xe ngựa chất đầy hàng hóa qua những đô thị trung cổ sầm uất để tìm đường về phương Bắc Yoitsu, cả hai bước vào những thương vụ gay cấn ngập tràn mưu lược và tình cảm ấm áp.",
+    "tags": [
+      "Fantasy",
+      "Adventure",
+      "Romance",
+      "Kinh tế",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "tiem-sach-cu-biblia",
+    "source": "output/tiem-sach-cu-biblia",
+    "titleVi": "Tiệm Sách Cũ Biblia",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Shioriko Và Những Vị Khách Kì Lạ"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Shioriko Và Đời Thường Bí Ẩn"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Shioriko Và Những Lời Chưa Ngỏ"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Shioriko Và Dung Nhan Hai Mặt"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Shioriko Và Cuộc Hội Ngộ Trong Câu Đố"
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": "Shioriko Và Định Mệnh Xoay Vòng"
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": "Shioriko Và Sân Khấu Bất Tận"
+      },
+      "Tập_08": {
+        "label": "Tập 08 (Ngoại truyện)",
+        "title": "Tobirako Và Những Vị Khách Kỳ Lạ"
+      }
+    },
+    "titleJp": "Biblia Koshodou no Jiken Techou (ビブリア古書堂の事件手帖)",
+    "author": "Mikami En",
+    "illustrator": "Nakano",
+    "status": "Hoàn thành",
+    "description": "Nép mình nơi góc phố yên bình ở Kamakura là tiệm sách cũ Biblia của cô chủ trẻ Shinokawa Shioriko — người vốn nhút nhát, kiệm lời nhưng lại sở hữu kiến thức uyên bác cùng niềm đam mê mãnh liệt dành cho sách cổ. Cùng chàng nhân viên Goura Daisuke mắc chứng không thể đọc sách, Shioriko lần giở từng trang sách cũ để giải mã những bí mật và tâm tư sâu kín của những vị khách ghé thăm.",
+    "tags": [
+      "Mystery",
+      "Đời thường",
+      "Romance",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
     "slug": "khi-hikaru-con-tren-the-gian-nay",
     "source": "output/khi-hikaru-con-tren-the-gian-nay",
     "titleVi": "Khi Hikaru Còn Trên Thế Gian Này...",
@@ -3242,6 +3343,28 @@
       "Drama",
       "Đời thường",
       "Light Novel"
+    ]
+  },
+  {
+    "slug": "hieu-anh-nishiura-o-enoshima",
+    "source": "output/hieu-anh-nishiura-o-enoshima",
+    "titleVi": "Hiệu Ảnh Nishiura Ở Enoshima",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Hiệu Ảnh Nishiura Ở Enoshima"
+      }
+    },
+    "titleJp": "Enoshima Nishiura Shashinkan (江ノ島西浦写真館)",
+    "author": "Mikami En",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Sau khi người bà qua đời, Katsuragi Mayu tìm đến hiệu ảnh Nishiura hơn một trăm năm tuổi nằm trên hòn đảo Enoshima để thu dọn di vật. Những bức ảnh cũ còn lưu lại trong tiệm dần hé mở những câu chuyện bí ẩn, dịu dàng và đầy hoài niệm vượt qua dòng thời gian.",
+    "tags": [
+      "Mystery",
+      "Đời thường",
+      "Chữa lành",
+      "Văn học Nhật Bản"
     ]
   }
 ]
