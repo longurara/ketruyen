@@ -9,22 +9,37 @@
     "illustrator": "Hanekoto",
     "status": "Đang cập nhật",
     "description": "Amane sống một mình trong căn hộ cạnh bên Shiina Mahiru, cô gái hoàn hảo đến mức được ví như thiên sứ. Từ một cuộc gặp dưới mưa, khoảng cách giữa hai người dần thay đổi theo những ngày rất đỗi bình thường.",
-    "tags": ["Romance", "Đời thường", "Học đường", "Light Novel"]
+    "tags": [
+      "Romance",
+      "Đời thường",
+      "Học đường",
+      "Light Novel"
+    ]
   },
   {
     "slug": "tinh-yeu-vo-hinh",
     "source": "output/tinh-yeu-vo-hinh",
     "titleVi": "Tình yêu vô hình dưới màn đêm trong vắt",
     "volumeTitles": {
-      "Tập_1": { "label": "Tập 01", "title": "Tình yêu vô hình dưới màn đêm trong vắt" },
-      "Tập_2": { "label": "Tập 02", "title": "Tình yêu vô hình nơi trời khuya rực rỡ" }
+      "Tập_1": {
+        "label": "Tập 01",
+        "title": "Tình yêu vô hình dưới màn đêm trong vắt"
+      },
+      "Tập_2": {
+        "label": "Tập 02",
+        "title": "Tình yêu vô hình nơi trời khuya rực rỡ"
+      }
     },
     "titleJp": "",
     "author": "Nanigashi Shima",
     "illustrator": "",
     "status": "",
     "description": "Một đêm tháng Tư ở Tokyo, Kakeru Sorano, một sinh viên đại học, gặp Koharu Fuyutsuki, cô gái luôn mỉm cười tỏa ra sự ấm áp trái ngược hẳn với tính hướng nội của cậu. Nhưng có một điều cậu không hề biết: cô đã mất đi thị lực từ lâu. Dù vậy, cô vẫn ngày ngày đến trường, tham gia câu lạc bộ, có thêm nhiều người bạn mới và mơ ước một ngày được tự bắn pháo hoa.",
-    "tags": ["Romance", "Drama", "Light Novel"]
+    "tags": [
+      "Romance",
+      "Drama",
+      "Light Novel"
+    ]
   },
   {
     "slug": "arya-ban-ben",
@@ -35,6 +50,3041 @@
     "illustrator": "Momoco",
     "status": "Đang cập nhật",
     "description": "Ngồi cạnh Kuze Masachika là Alisa Mikhailovna Kujou — cô nữ sinh mang hai dòng máu Nga - Nhật xinh đẹp, lạnh lùng và luôn đứng đầu trường. Đôi khi nàng công chúa tóc bạc ấy lại lẩm bẩm những lời ngọt ngào bằng tiếng Nga để trêu cậu, hoàn toàn không hề biết rằng Masachika nghe hiểu tiếng Nga như tiếng mẹ đẻ.",
-    "tags": ["Romance", "Comedy", "Học đường", "Light Novel"]
+    "tags": [
+      "Romance",
+      "Comedy",
+      "Học đường",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "high-school-dxd",
+    "source": "output/high-school-dxd",
+    "titleVi": "High School DxD",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Ác Quỷ của khu trường học cũ"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Trận chiến với Phoenix ở trường"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Excaliburs dưới ánh trăng sân trường"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Ma cà rồng trong lớp học khóa kín"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Người canh cửa khóa huấn luyện dưới Địa ngục"
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": "Vị thánh đằng sau phòng tập thể dục"
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": "Trận chiến Ragnarok sau giờ học"
+      },
+      "Tập_08": {
+        "label": "Tập 08",
+        "title": "Công việc của một con Quỷ"
+      },
+      "Tập_09": {
+        "label": "Tập 09",
+        "title": "Hỗn loạn trong chuyến du lịch của Trường"
+      },
+      "Tập_10": {
+        "label": "Tập 10",
+        "title": "Trái tim sư tử của lễ hội trường"
+      },
+      "Tập_11": {
+        "label": "Tập 11",
+        "title": "Uroboros và bài kiểm tra thăng cấp"
+      },
+      "Tập_12": {
+        "label": "Tập 12",
+        "title": "Bài học bổ túc của những Anh Hùng"
+      },
+      "Tập_13": {
+        "label": "Tập 13",
+        "title": "Ise SOS"
+      },
+      "Tập_14": {
+        "label": "Tập 14",
+        "title": "Những Phù Thủy Tư Vấn Hướng Nghiệp"
+      },
+      "Tập_15": {
+        "label": "Tập 15",
+        "title": "Hiệp Sĩ Bóng Đêm của Sunny Spot"
+      },
+      "Tập_16": {
+        "label": "Tập 16",
+        "title": "Buổi học ngoại khóa của Daywalker"
+      },
+      "Tập_17": {
+        "label": "Tập 17",
+        "title": "Giáo viên huấn luyện Valkyrie"
+      },
+      "Tập_18": {
+        "label": "Tập 18",
+        "title": "Thiên Thần Vui Vẻ trong ngày Giáng Sinh"
+      },
+      "Tập_19": {
+        "label": "Tập 19",
+        "title": "Cuộc tổng tuyển cử của Durandal"
+      },
+      "Tập_20": {
+        "label": "Tập 20",
+        "title": "Buổi Tư Vấn Hướng Nghiệp của Belial"
+      },
+      "Tập_21": {
+        "label": "Tập 21",
+        "title": "Ngày điểm danh của Lucifer"
+      },
+      "Tập_22": {
+        "label": "Tập 22",
+        "title": "Gremory trong Lễ Tốt Nghiệp"
+      }
+    },
+    "titleJp": "High School DxD (ハイスクールD×D)",
+    "author": "Ichiei Ishibumi",
+    "illustrator": "Miyama-Zero",
+    "status": "Hoàn thành",
+    "description": "Hyoudou Issei, một nam sinh trung học bình thường, bị sát hại ngay trong buổi hẹn hò đầu tiên bởi một thiên thần sa ngã. Cậu được Rias Gremory — đàn chị tóc đỏ xinh đẹp nhất trường kiêm chủ nhân gia tộc ác quỷ cấp cao Gremory — hồi sinh thành ác quỷ quyến thuộc của cô, mở đầu những trận chiến nảy lửa giữa Ác quỷ, Thiên thần và Thiên thần sa ngã.",
+    "tags": [
+      "Action",
+      "Fantasy",
+      "Comedy",
+      "Romance",
+      "Học đường",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "grimgar-ao-anh-va-tro-tan",
+    "source": "output/grimgar-ao-anh-va-tro-tan",
+    "titleVi": "Grimgar - Ảo Ảnh Và Tro Tàn",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Level 01",
+        "title": "Thì thầm, niệm chú, cầu nguyện và thức tỉnh"
+      },
+      "Tập_02": {
+        "label": "Level 02",
+        "title": "Thứ không quan trọng ư, làm gì có"
+      },
+      "Tập_03": {
+        "label": "Level 03",
+        "title": "Dẫu buộc phải nhận thức rằng thế gian này chẳng như mong đợi"
+      },
+      "Tập_04": {
+        "label": "Level 04",
+        "title": "Người dẫn dắt và người được dẫn dắt"
+      },
+      "Tập_05": {
+        "label": "Level 05",
+        "title": "Đừng cười nữa mà hãy nghe đây"
+      },
+      "Tập_06": {
+        "label": "Level 06",
+        "title": "Theo đuổi vinh quang phù phiếm"
+      },
+      "Tập_07": {
+        "label": "Level 07",
+        "title": "Cầu vồng phương xa"
+      },
+      "Tập_08": {
+        "label": "Level 08",
+        "title": "Và chúng ta chờ đón ngày mai"
+      },
+      "Tập_09": {
+        "label": "Level 09",
+        "title": "Hiện tại ở nơi đây, hướng về miền xa thẳm"
+      },
+      "Tập_10": {
+        "label": "Level 10",
+        "title": "Bản tình ca không điểm đến"
+      },
+      "Tập_11": {
+        "label": "Level 11",
+        "title": "Ngày ấy ta đã mơ trên mỗi nẻo đưởng"
+      },
+      "Tập_12": {
+        "label": "Level 12",
+        "title": "Đó là khởi đầu của truyền thuyết xoay quanh đảo và rồng"
+      },
+      "Tập_13": {
+        "label": "Level 13",
+        "title": "Trái tim, mở ra, cánh cửa mới"
+      },
+      "Tập_14": {
+        "label": "Level 14",
+        "title": "[parano_mania]"
+      }
+    },
+    "titleJp": "Hai to Gensou no Grimgar",
+    "author": "Ao Jyumonji",
+    "illustrator": "Eiri Shirai",
+    "status": "Đang cập nhật",
+    "description": "Khi Haruhiro tỉnh dậy trong bóng tối, cậu không nhớ mình là ai, đến từ đâu hay vì sao lại ở thế giới mang tên Grimgar này. Cùng những người bạn đồng cảnh ngộ yếu ớt nhất, cậu phải lập thành một tổ đội lính tình nguyện tập sự và chật vật chiến đấu giành giật sự sống qua từng ngày.",
+    "tags": [
+      "Fantasy",
+      "Adventure",
+      "Action",
+      "Drama",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "khi-hikaru-con-tren-the-gian-nay",
+    "source": "output/khi-hikaru-con-tren-the-gian-nay",
+    "titleVi": "Khi Hikaru Còn Trên Thế Gian Này...",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Aoi"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Yuugao"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Waka Murasaki"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Oborodukiyo"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Suetsumuhana"
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": "Asagao"
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": "Utsusemi"
+      },
+      "Tập_08": {
+        "label": "Tập 08",
+        "title": "Hanachirusato"
+      },
+      "Tập_09": {
+        "label": "Tập 09",
+        "title": "Rokujou"
+      },
+      "Tập_10": {
+        "label": "Tập 10",
+        "title": "Fujitsubo"
+      }
+    },
+    "titleJp": "Hikaru ga Chikyuu ni Itakoro......",
+    "author": "Nomura Mizuki",
+    "illustrator": "Takeoka Miho",
+    "status": "Hoàn thành",
+    "description": "Koremitsu Akagi vốn có vẻ ngoài dữ dằn khiến ai nấy đều xa lánh. Người bạn duy nhất bắt chuyện với cậu là “Hoàng tử” hào hoa Mikado Hikaru lại đột ngột qua đời, rồi biến thành hồn ma chỉ mình Koremitsu nhìn thấy và nhờ cậu hoàn thành những tâm nguyện còn dang dở với các cô gái Hikaru từng hứa hẹn.",
+    "tags": [
+      "Romance",
+      "Mystery",
+      "Học đường",
+      "Drama",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "co-dien-bo-hyouka",
+    "source": "output/co-dien-bo-hyouka",
+    "titleVi": "Cổ Điển Bộ (Hyouka)",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Kem Đá"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Thằng Khờ"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Trình Tự Kudryavka"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Búp Bê Đi Đường Vòng"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Khoảng Cách Giữa Hai Người"
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": "Dù Được Ban Đôi Cánh"
+      }
+    },
+    "titleJp": "Koten-bu Series (Hyouka)",
+    "author": "Honobu Yonezawa",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Oreki Houtarou — nam sinh tôn thờ phương châm tiết kiệm năng lượng “Việc gì không cần làm thì không làm, việc gì phải làm thì làm cho nhanh” — gia nhập Câu lạc bộ Cổ Điển theo lời chị gái. Tại đây, cậu gặp gỡ cô tiểu thư giàu trí tò mò Chitanda Eru cùng câu nói quen thuộc “Mình tò mò lắm!”, cuốn cậu vào những bí ẩn đời thường đầy cuốn hút nơi trường học.",
+    "tags": [
+      "Mystery",
+      "Đời thường",
+      "Học đường",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "holmes-o-kyoto",
+    "source": "output/holmes-o-kyoto",
+    "titleVi": "Holmes Ở Kyoto",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "epub"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Hồ sơ vụ án đồ thật đồ giả"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Tâm tư lẩn khuất cõi trần ai"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Buổi tiệc trà kì bí"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Yến tiệc của Sherlockian và bão tố mùa xuân"
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": "Nỗi thấp thỏm non xanh"
+      }
+    },
+    "titleJp": "Kyoto Teramachi Sanjou no Holmes",
+    "author": "Mai Mochizuki",
+    "illustrator": "",
+    "status": "Đang cập nhật",
+    "description": "Nằm lẻ loi tại một góc phố mua sắm Teramachi Sanjo ở Kyoto là cửa hàng đồ cổ “Kura”. Từ một sự việc tình cờ, nữ sinh cấp ba Mashiro Aoi đã quen biết cháu trai chủ cửa hàng ấy, tên là Yagashira Kiyotaka, rồi sau đó, cô bé bắt đầu làm thêm tại đây. Kiyotaka là một người ăn nói dịu dàng, cư xử hoà nhã, nhưng lại sắc sảo đến đáng sợ. Anh được gọi là “Holmes của phố Teramachi”. Aoi cùng Kiyotaka nhận được rất nhiều yêu cầu liên quan tới các món cổ vật mà khách hàng mang tới...",
+    "tags": [
+      "Mystery",
+      "Romance",
+      "Đời thường",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "duoc-su-tu-su",
+    "source": "output/duoc-su-tu-su",
+    "titleVi": "Dược Sư Tự Sự",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Dược Sư Tự Sự - Tập 1"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Dược Sư Tự Sự - Tập 2"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Dược Sư Tự Sự - Tập 3"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Dược Sư Tự Sự - Tập 4"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Dược Sư Tự Sự - Tập 5"
+      }
+    },
+    "titleJp": "Kusuriya no Hitorigoto",
+    "author": "Natsu Hyuuga",
+    "illustrator": "Touko Shino",
+    "status": "Đang cập nhật",
+    "description": "(Thèm ăn xiên nướng ở mấy hàng bán rong quá đi mất.) Ngẩng đầu nhìn lên bầu trời âm u đầy mây mù, Miêu Miêu trút một tiếng thở dài.",
+    "tags": [
+      "Mystery",
+      "Historical",
+      "Drama",
+      "Romance",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "benh-an-cua-than-linh",
+    "source": "output/benh-an-cua-than-linh",
+    "titleVi": "Bệnh Án Của Thần Linh",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Bệnh Án Của Thần Linh 1"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Bệnh Án Của Thần Linh 2"
+      }
+    },
+    "titleJp": "Kamisama no Karute",
+    "author": "Natsukawa Sosuke",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Trẻ trung và tài năng, tương lai xán lạn bày ra trước mắt, nhưng sẵn tính khác người, chàng bác sĩ Kurihara Ichito đã vứt bỏ cơ hội thăng tiến ở văn phòng y tế đại học mà đâm đầu vào làm việc tại bệnh viện Honjou xứ nhà quê, hòng lánh xa chốn đông đúc, xô bồ. Đầy ắp những khắc khoải nhân sinh, nhưng đồng thời nồng ấm tình người và bừng sáng niềm lạc quan tuổi trẻ, câu chuyện về người bác sĩ do một bác sĩ chấp bút đã làm rung động bao trái tim độc giả, trở thành một trong những cuốn sách bán chạy tại Nhật Bản và được dựng thành phim điện ảnh.",
+    "tags": [
+      "Đời thường",
+      "Drama",
+      "Y khoa",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "hanzawa-naoki",
+    "source": "output/hanzawa-naoki",
+    "titleVi": "Hanzawa Naoki",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Hanzawa Naoki 1"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Hanzawa Naoki 2"
+      }
+    },
+    "titleJp": "",
+    "author": "Ikeido Jun",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Ra mắt lần đầu với tiểu thuyết Hatsuru sokonaki, tác phẩm giúp ông giành giải thưởng Edogawa Ranpo lần thứ 44 và là tiền để cho thành công của ông với tư cách nhà văn. Các tác phẩm của Ikeido – thường lấy bối cảnh trong giới tài chính và kinh doanh – cũng gây được tiếng vang và mang về cho ông nhiều giải thưởng danh giá khác như: Giải thưởng văn học…",
+    "tags": [
+      "Drama",
+      "Trinh thám",
+      "Thương trường",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "nha-tro-chim-hoang-yen",
+    "source": "output/nha-tro-chim-hoang-yen",
+    "titleVi": "Nhà Trọ Chim Hoàng Yến",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Bầy Chim Nơi Khu Vườn Hoang Phế"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Đôi Cánh Hướng Tới Những Vì Sao"
+      }
+    },
+    "titleJp": "",
+    "author": "Saki Murayama",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Nhà trọ Chim Hoàng Yến – một căn nhà cổ mang phong cách châu Âu – là nơi sinh sống của những con người mang trong mình vết thương lòng. Vào đêm Giáng Sinh đầy tuyết trắng, mẹ đột ngột biến mất, bị đuổi khỏi nhà, cô bé Suga Akane đã tình cờ đến với Nhà trọ Chim Hoàng Yến. Akane rất thích vẽ tranh và tài năng của cô được một người sống trong nhà trọ, là cựu biên tập viên truyện tranh chú ý. Trong phòng mới của cô xuất hiện hồn ma của Reiji – một tác giả truyện tranh thiên tài nhưng yểu mệnh… Đây là tập mở đầu của một câu chuyện nhẹ nhàng nhưng cũng đầy mạnh mẽ.",
+    "tags": [
+      "Đời thường",
+      "Chữa lành",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "diem-tinh-va-nong-nhiet",
+    "source": "output/diem-tinh-va-nong-nhiet",
+    "titleVi": "Điềm Tĩnh Và Nồng Nhiệt",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Bản Đỏ",
+        "title": "Điềm Tĩnh Và Nồng Nhiệt ~ Đỏ (Ekuni Kaori)"
+      },
+      "Tập_02": {
+        "label": "Bản Lam",
+        "title": "Điềm Tĩnh Và Nồng Nhiệt ~ Lam (Tsuji Hitonari)"
+      }
+    },
+    "titleJp": "Reisei toounetsu no Aida",
+    "author": "Ekuni Kaori, Tsuji Hitonari",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Cả đôi đồng tử ấy, cả giọng nói ấy, cả nụ cười đôi khi phủ bóng cô độc ấy. Nếu như một ngày Junsei chết ở nơi nào đó, chắc chắn tôi sẽ cảm nhận được. Dù chúng tôi có ở cách xa nhau đến đâu.",
+    "tags": [
+      "Romance",
+      "Drama",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "giua-luc-tan-cung-co-don",
+    "source": "output/giua-luc-tan-cung-co-don",
+    "titleVi": "Giữa Lúc Tận Cùng Cô Đơn",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Chú Chó Đã Chỉ Cho Tôi Những Điều Quý Giá!"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Chú Mèo Đã Chỉ Cho Tôi Những Điều Quý Giá!"
+      }
+    },
+    "titleJp": "",
+    "author": "Koto Takimori",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Nơi tôi thuộc về là đâu? Tôi khóc ở đâu được đây? Có lẽ tôi sẽ không phải đổ nước mắt thêm nữa. Có lẽ tôi sẽ không phải khóc suốt đời vì ai đó nữa. Là vì tôi không có gia đình. Là vì tôi không có ai ở bên cạnh để cùng cười, cùng khóc. Tôi thường nghĩ như vậy khi lạc giữa cô đơn. Cho tới một hôm tôi gặp chú chó đó…",
+    "tags": [
+      "Đời thường",
+      "Chữa lành",
+      "Drama",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "nhan-gui-nguoi-toi-da-yeu",
+    "source": "output/nhan-gui-nguoi-toi-da-yeu",
+    "titleVi": "Nhắn Gửi Người Tôi Đã Yêu",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Nhắn Gửi Tất Cả Các Em, Những Người Tôi Đã Yêu"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Nhắn Gửi Một Tôi, Người Đã Yêu Em"
+      }
+    },
+    "titleJp": "Boku ga Aishita Subete no Kimi e / Kimi wo Aishita Hitori no Boku e",
+    "author": "Otono Yomoji",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Thông qua hai câu chuyện đặt ở hai thế giới với những khả năng khác nhau, tác giả Otono Yomoji sẽ mang đến cho người đọc nhiều điều để suy ngẫm về tình yêu, về cuộc sống, và về thế giới đang diễn ra xung quanh mình. Nhắn gửi tất cả các em, những người tôi đã yêu là câu chuyện về một tình yêu mang đầy tính triết lý: Ta ở thế giới song song có còn là ta nữa không? Người ta yêu ở thế giới song song, có còn là người ấy không? Nếu mỗi thế giới là một khả năng, liệu ta có nguyện yêu tất cả những khả năng của người ấy? Tuy là hai câu chuyện khác nhau ở hai thế giới khác nhau, thế nhưng khi đọc Nhắn gửi một tôi, người đã yêu em và Nhắn gửi tất cả các em, những người tôi đã yêu, người đọc sẽ tìm thấy trong cả hai tác phẩm nhiều chi tiết gắn kết, bổ sung cho nhau, giúp cho cả hai trở nên trọn vẹn.",
+    "tags": [
+      "Romance",
+      "Sci-Fi",
+      "Drama",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "31-tuoi-thi-da-lam-sao",
+    "source": "output/31-tuoi-thi-da-lam-sao",
+    "titleVi": "31 tuổi thì đã làm sao",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "31 tuổi thì đã làm sao"
+      }
+    },
+    "titleJp": "",
+    "author": "Fumio Yamamoto",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Giờ đây tôi đã 31 tuổi, à không, tôi mới chỉ 31 tuổi! \"Cô ấy đã 31 tuổi, phần bụng dưới trong bộ lễ phục size nhỏ vẫn rất phẳng phiu, khó có thể tưởng tượng rằng đó đã là mẹ một đứa trẻ. Dáng người cô ấy rất cao, mỗi lần gặp mặt là một lần tóc của cô ấy trở nên ngắn hơn, và đến nay đã là một mái tóc siêu ngắn. Một sự hấp dẫn mất cân bằng toát ra khiến người ta khó đoán được cô ấy trưởng thành rồi hay vẫn là thơ trẻ. Không thể coi cô ấy là một mỹ nhân, nhưng cũng lại rất thông minh, và dễ chịu. \"Tại sao chúng mình không lấy nhau?\" Nghe thấy câu hỏi của tôi, cô ấy mỉm cười. \"Câu này năm nào anh cũng nói đấy\".",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "ame-yuki-nhung-dua-con-cua-soi",
+    "source": "output/ame-yuki-nhung-dua-con-cua-soi",
+    "titleVi": "Ame & Yuki - Những đứa con của sói",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Ame & Yuki - Những đứa con của sói"
+      }
+    },
+    "titleJp": "",
+    "author": "Hosoda Mamoru",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "“Nếu có nhà riêng thì thật là tốt. Sẽ được nói tôi về rồi đây, tháo giày, rửa mặt rửa tay rồi ngả người trên ghế. Cảm giác chắc hẳn rất dễ chịu. Tôi sẽ đóng một cái giá sách. Khi nó đầy tôi lại đóng giá mới. Làm gì cũng được vì đó là nhà của mình mà.”",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "anh-se-di-tim-em-tren-chiec-xe-dap-hong",
+    "source": "output/anh-se-di-tim-em-tren-chiec-xe-dap-hong",
+    "titleVi": "Anh sẽ đi tìm em trên chiếc xe đạp hỏng",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Anh sẽ đi tìm em trên chiếc xe đạp hỏng"
+      }
+    },
+    "titleJp": "",
+    "author": "Ichikawa Takuji",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Anh sẽ đi tìm em trên chiếc xe đạp hỏng. Nương theo giọng nói của em, anh cứ thế nhấn bàn đạp hướng về nơi phương trời xa thật xa. Và rồi tới một lúc nào đó, chắc chắn anh sẽ tìm thấy em. Anh hứa đấy. Vì thế từ giờ cho tới ngày đó, chúng mình phải tạm chia xa vậy. Tạm biệt em, người vợ yêu dấu của anh…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "ao-anh-cua-thanh-xuan",
+    "source": "output/ao-anh-cua-thanh-xuan",
+    "titleVi": "Ảo Ảnh Của Thanh Xuân",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Ảo Ảnh Của Thanh Xuân"
+      }
+    },
+    "titleJp": "",
+    "author": "Inui Kurumi",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Từ đầu đến cuối là một câu chuyện tình yêu thuần túy giữa nam nữ thanh niên với đủ mọi cung bậc từ mới mẻ đắm say đến quen thuộc, từ thay đổi vì nhau đến vì bản thân mà không muốn thay đổi nữa. NHƯNG, bằng nghệ thuật kể chuyện tài tình kinh hồn, tác giả đã cất giấu một bí mật ngàn lớp sau lưng mối tình phổ biến này. Phải đọc tuần tự đến hết truyện, bạn mới nhận ra bí mật đó, và càng nghĩ kĩ về nó, bạn càng lún chân xuống chiều sâu của câu chuyện, vỡ vạc những bí ẩn tác giả đã cài cắm trong bao nhiêu tình tiết đằng trước.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "ba-ngoai-phu-thuy-va-mua-he-tap-su",
+    "source": "output/ba-ngoai-phu-thuy-va-mua-he-tap-su",
+    "titleVi": "Bà ngoại phù thủy và mùa hè tập sự",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Bà ngoại phù thủy và mùa hè tập sự"
+      }
+    },
+    "titleJp": "",
+    "author": "Kaho Nashiki",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Khi quyết định theo đuổi khóa “đào tạo phù thủy” dưới quyền của “phù thủy phương Tây”, trái tim tôi đã được chữa lành. Và mong bạn cũng tìm được sự bình yên khi là chính mình, giống như tôi, theo cách mà phù thủy của tôi từng dạy: “Sao ta không thay đổi linh hoạt hơn? Nếu cháu muốn tìm được một nơi giúp bản thân mình tận hưởng được cuộc sống nhẹ nhàng, thì có gì mà phải hối hận chứ. Xương rồng không cần thiết phải sinh trưởng trong nước, hoa sen cũng chẳng thể nở giữa không trung. Gấu trắng chọn Bắc Cực để sinh sống chứ đâu phải Hawaii. Ai còn có thể đổ trách nhiệm lên đầu gấu trắng?”",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "belle-rong-va-cong-chua-tan-nhang",
+    "source": "output/belle-rong-va-cong-chua-tan-nhang",
+    "titleVi": "Belle: Rồng và công chúa tàn nhang",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Belle: Rồng và công chúa tàn nhang"
+      }
+    },
+    "titleJp": "",
+    "author": "Mamoru Hosoda",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Sinh năm 1967 tại tỉnh Toyama. Năm 1991, gia nhập công ty Điện ảnh Toei (nay là Toei Animation). Làm việc với tư cách họa sĩ hoạt họa và đạo diễn, sau chuyển sang làm tự do. Là đạo diễn của phim Cô gái vượt thời gian (2006) và Cuộc chiến mùa hè (2009), nổi tiếng cả trong và ngoài Nhật Bản. Năm 2011, thành lập công ty sản xuất phim hoạt hình riêng là…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "bong-bong",
+    "source": "output/bong-bong",
+    "titleVi": "Bong Bóng",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Bong Bóng"
+      }
+    },
+    "titleJp": "",
+    "author": "Nonami Asa",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Cuốn sách này kể về một anh chàng bơ vơ, lạc lối trong chính tuổi trẻ của mình. Không nhà, không người thân, không gì hết. Một bà cụ giản dị nơi vùng núi hẻo lánh và một chú chó nghịch ngợm. Câu chuyện ấy thủ thỉ như cuộc đời, nhẹ nhàng như trái tim người bà ấy nhưng đủ khiến ta rơi nước mắt. Nếu hỏi tôi Bong Bóng là gì? Thì đó là câu chuyện của niềm tin, niềm tin mà những va đập của cuộc đời hình như khiến chúng ta, nhất là những người trẻ ít nhiều mất mát. Niềm tin về những điều tốt đẹp, nho nhỏ mà đủ khiến ta rơi nước mắt. Nếu hỏi tôi Bong Bóng là gì? Thì đây là câu chuyện đẫm chất Nhật, nơi một miền núi Nhật với lối sống Nhật chậm chậm mà yêu thương.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "bo-cong-anh",
+    "source": "output/bo-cong-anh",
+    "titleVi": "Bồ Công Anh",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Bồ Công Anh"
+      }
+    },
+    "titleJp": "",
+    "author": "Kawabata Yasunari",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Đưa ta vào một cõi huyền bí mơ hồ và buồn thương, đưa ta vào đáy vực của tâm hồn không đáy mà con người mang lấy giữa đời, đưa ta vào một tâm tưởng dường như điên đảo dường như không. Ngôn từ nào có thể làm điều đó. Với tôi, dường như có một ngôn từ như thế ở Kawabata Yasunari trong tiểu thuyết của bi cảm và u huyền mang tên là Bồ Công Anh (Tanpopo) -…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "buom-duoi-nhan",
+    "source": "output/buom-duoi-nhan",
+    "titleVi": "Bướm Đuôi Nhạn",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Bướm Đuôi Nhạn"
+      }
+    },
+    "titleJp": "",
+    "author": "Mitsutaka Yuuki",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Kuroha lần đầu nhìn thấy bướm đuôi nhạn tại một quầy bar trong thế giới ảo mà cô đang tham gia. Bướm đuôi nhạn là loài bướm di trú nhiều ở châu Âu, còn thứ Kuroha nhìn thấy là một hình vẽ ở trên tường được phối theo tông màu trắng và tím đậm. Nhưng thứ ấn tượng nhất đối với Kuroha không chỉ là mê cung rối rắm trên cánh bướm, mà còn là sự trùng hợp ngẫu nhiên. Bướm đuôi nhạn chính là cô - Kuroha ngoài đời thực và Ageha trong thế giới ảo.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "cacao-ngay-thu-nam",
+    "source": "output/cacao-ngay-thu-nam",
+    "titleVi": "Ca Cao Ngày Thứ Năm",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Ca Cao Ngày Thứ Năm"
+      }
+    },
+    "titleJp": "",
+    "author": "Michiko Aoyama",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Cacao ngày thứ Năm là 12 câu chuyện về những con người có mối liên kết tuy vô hình nhưng lại bền chặt với nhau. Chúng ta thường mải miết đi tìm giá trị của hạnh phúc, vì cứ ngỡ rằng hạnh phúc phải là một điều gì đó lớn lao. Những điều giản dị, nhỏ nhặt hàng ngày thường hay bị bỏ qua, bởi chúng diễn ra thường xuyên đến mức tự bản thân con người cho rằng đó là lẽ dĩ nhiên nên chẳng buồn để ý. Cacao ngày thứ Năm sẽ giúp độc giả nhận ra rằng hạnh phúc thực chất đến từ những điều giản dị trong cuộc sống.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "cau-be-va-quai-vat",
+    "source": "output/cau-be-va-quai-vat",
+    "titleVi": "Cậu bé và quái vật",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Cậu bé và quái vật"
+      }
+    },
+    "titleJp": "",
+    "author": "Mamoru Hosoda",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "“Ngươi… có muốn đi cùng ta không?” Mùa hè năm 9 tuổi, khi đang lang thang một mình ở Shibuya, Ren theo chân một người đàn ông đội mũ trùm đầu và lạc vào Jutengai. Đây là thế giới quái vật, tách biệt với thế giới con người. Người đàn ông nọ cũng là quái vật! Gã quái vật tự xưng là Kumatetsu còn đặt cho Ren cái tên Kyuta và tuyên bố cậu là đệ tử của gã…!?",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "cau-chuyen-tuong-lai-ma-toi-bo-lo",
+    "source": "output/cau-chuyen-tuong-lai-ma-toi-bo-lo",
+    "titleVi": "Câu chuyện tương lai mà tôi bỏ lỡ",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Câu chuyện tương lai mà tôi bỏ lỡ"
+      }
+    },
+    "titleJp": "",
+    "author": "Ruka Kosaka",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Năm hai mươi tuổi, Matsuri không may mắc một căn bệnh nan y với tỷ lệ người mắc là một trên hàng chục nghìn người. Cô được biết rằng thời gian còn lại của mình chỉ còn mười năm. Ngay cả khi muốn bắt đầu làm một điều gì đó, cô cũng đành phải lựa chọn từ bỏ giữa chừng. Nỗi sợ hãi về cái chết giảm dần khi cô chấp nhận từ bỏ tương lai của mình, bình thản chậm rãi sống qua ngày. Về sau cô tìm thấy niềm đam mê của mình và say sưa làm việc, đồng thời quyết định sẽ không yêu bất kỳ ai. Cho đến khi cô gặp lại Manabe Kazuto, người bạn học cùng lớp hồi tiểu học của mình...",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "chu-cho-ho-menh",
+    "source": "output/chu-cho-ho-menh",
+    "titleVi": "Chú Chó Hộ Mệnh",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Chú Chó Hộ Mệnh"
+      }
+    },
+    "titleJp": "",
+    "author": "Hase Seishu",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Sau khi mất việc do thảm hoạ động đất – sóng thần, Nakagaki Kazumasa giờ phải làm việc phi pháp để có tiền lo cho mẹ mình. Một ngày nọ, anh tình cờ gặp một con chó hoang đói khát trước cửa hàng tiện lợi. Có vẻ nó tên là Tamon, và bị lạc chủ. Chú chó thông minh ấy ngay lập tức cuốn hút Kazumasa, và chẳng mấy chốc anh đã coi nó là thần hộ mệnh của mình. Nhưng Tamon luôn nhìn về phía Nam. Nó đang tìm kiếm điều gì? Nó muốn đi đâu? Tamon đã trải qua một chuyến hành trình dài năm năm đưa nó đến với nhiều mảnh đời khác nhau, và trở thành món quà cho tất cả những ai chào đón nó vào cuộc sống của họ. Đây là câu chuyện rực rỡ về sức mạnh của tình bạn và tình yêu thương vô hạn.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "chu-cho-tu-than",
+    "source": "output/chu-cho-tu-than",
+    "titleVi": "Chú Chó Tử Thần",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Chú Chó Tử Thần"
+      }
+    },
+    "titleJp": "",
+    "author": "Mikito Chinen",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "“Tử thần” bị cách chức… à nhầm, được phái xuống mặt đất trong hình dạng một chú chó. Một tình yêu bi kịch trong chiến tranh. Vụ án giết người đã xảy ra trong ngôi nhà từ nhiều năm trước. Một họa sĩ mất đi khả năng vẽ mà mình vốn tự hào. Để cứu những con người đang ngày càng tiến gần cái chết ấy khỏi “lưu luyến” với trần gian, Leo từng bước làm sáng tỏ những bí ẩn trong quá khứ để gỡ bỏ khúc mắc trong lòng của họ. Nhưng những hành động đó của Leo vô tình mang tới một nguy cơ không thể lường trước cho bệnh viện kỳ lạ mà chú đang cư ngụ.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "chu-tiem-banh-chien-binh-va-co-phuc-vu-nguoi-may-3",
+    "source": "output/chu-tiem-banh-chien-binh-va-co-phuc-vu-nguoi-may-3",
+    "titleVi": "Chủ tiệm bánh chiến binh và Cô phục vụ người máy 3",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Chủ tiệm bánh chiến binh và Cô phục vụ người máy 3"
+      }
+    },
+    "titleJp": "",
+    "author": "SOW",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Anh ta luôn nói những lời vô ích, là một kẻ ồn ào. “Gì đây, em nhìn tôi như vậy, nhất định phải khiến em cười mới được.”",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "det-ang-may-troi",
+    "source": "output/det-ang-may-troi",
+    "titleVi": "Dệt Áng Mây Trời",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Dệt Áng Mây Trời"
+      }
+    },
+    "titleJp": "",
+    "author": "Ibuki Yuki",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "“Đời người tựa như một cuộn len, thoạt nhìn chỉ thấy rối nùi, nhưng nếu mỗi ngày chịu khó đan một ít, thì cuộn len rối ấy sẽ dần trở thành một món đồ gọn gàng đẹp đẽ như ta hằng mong muốn.” “Điều quan trọng nhất là cần có một trái tim chân thành, cảm nhận được vẻ đẹp của những thứ đẹp đẽ.” “Làm việc thật cẩn thận.” “Tạo ra những thứ có ích cho đời.”",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "den-luot-ban-lam-than-roi-day",
+    "source": "output/den-luot-ban-lam-than-roi-day",
+    "titleVi": "Đến lượt bạn làm thần rồi đấy",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Đến lượt bạn làm thần rồi đấy"
+      }
+    },
+    "titleJp": "",
+    "author": "Michiko Aoyama",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Bạn có từng nghĩ bản thân sẽ thay đổi hoàn toàn chỉ sau một cuộc gặp gỡ, một cuộc gặp gỡ với Thần? Chúng ta thường cảm thấy nhàm chán và đôi lần bất mãn với cuộc sống thực tại. Những khó khăn rào cản như nhiều viên đá chắn đường, làm bạn té ngã hay khiến bạn tức giận. Nhưng nếu một ngày, bạn bỗng nhận được “quyền năng” của một vị thần trong tay, liệu bạn có hạnh phúc?",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "dieu-bi-mat",
+    "source": "output/dieu-bi-mat",
+    "titleVi": "Điều Bí Mật",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Điều Bí Mật"
+      }
+    },
+    "titleJp": "",
+    "author": "Yoru Sumino",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "“Ta nắm trong tay sức mạnh khủng khiếp, hây, hủy diệt thế giới này!” “Này, thế là sao? Nếu cậu có sức mạnh đến thế thì phải sớm nói ra chứ?”",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "dua-con-cua-thoi-tiet",
+    "source": "output/dua-con-cua-thoi-tiet",
+    "titleVi": "Đứa con của thời tiết",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Đứa con của thời tiết"
+      }
+    },
+    "titleJp": "",
+    "author": "Shinkai Makoto",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Đứa con của thời tiết phác ra thương yêu cô đọng giữa hoang mang của đô thị lớn và ngặt nghèo hơn, là giữa hoang mang của một thời đại biến đổi khí hậu bấp bênh. Vì một sự cố tình cờ, Hina được tạo hóa ban cho năng lực đặc biệt: làm nắng. Năng lực ấy càng thêm nhiệm màu khi đặt vào bối cảnh Nhật Bản hứng mưa triền miên, mưa đến mức vòm trời âm u trở thành cơm bữa, nước dâng gặm dần các đảo, và Tokyo có nguy cơ biến thành đô thị kênh đào.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "hoang-hon-roi-xuong",
+    "source": "output/hoang-hon-roi-xuong",
+    "titleVi": "Hoàng Hôn Rơi Xuống",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Hoàng Hôn Rơi Xuống"
+      }
+    },
+    "titleJp": "",
+    "author": "Ekuni Kaori",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Tôi ngẩng mặt khỏi cuốn sách, xoay người nhìn Kengo. Anh có vẻ nghiêm túc đến kỳ lạ. Tôi bình thản hỏi lại anh, có lẽ do khi ấy tôi thậm chí không ngờ nổi Kengo có ý chuyển đi một mình - anh muốn chúng tôi chia tay. Tôi và anh chung sống đã tám năm.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "hoc-vien-4-mua-suikousha",
+    "source": "output/hoc-vien-4-mua-suikousha",
+    "titleVi": "Học Viện 4 Mùa Suikousha",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Học Viện 4 Mùa Suikousha"
+      }
+    },
+    "titleJp": "",
+    "author": "Akira Ishino",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Dưới ngòi bút của Akira Ishino, Học viện 4 mùa Suikousha được khắc họa như một thế giới riêng đầy kỳ ảo, cuốn hút. Một ngôi trường kỳ lạ với những học sinh có siêu năng lực đặc biệt. Từng chương truyện sẽ mở ra những khung cảnh mơ hồ nhưng đầy ấn tượng, ghép lại thành một bức tranh tổng thể mang tên bốn mùa: Xuân, Hạ, Thu, Đông. Akira Ishino - Sinh năm…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "i-love-letter-nhung-canh-thu",
+    "source": "output/i-love-letter-nhung-canh-thu",
+    "titleVi": "I Love Letter - Những Cánh Thư",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "I Love Letter - Những Cánh Thư"
+      }
+    },
+    "titleJp": "",
+    "author": "Asano Atsuko",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "“Những cánh thư tay là công cụ gắn kết con người lại với nhau, một cách kỳ lạ và hoàn toàn khác biệt. Bởi ở đó chất chứa… không phải thứ cảm xúc có thể truyền tải qua email, cũng chẳng phải vấn đề có thể giải quyết bằng một cuộc điện thoại. Trên tất cả, đó là cầu nối trái tim với nhau.”",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "kim-ngu-co",
+    "source": "output/kim-ngu-co",
+    "titleVi": "Kim Ngư Cơ",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Kim Ngư Cơ"
+      }
+    },
+    "titleJp": "",
+    "author": "Hiroshi Ogiwara",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Thời khắc ngày tàn luôn khiến lòng người ngổn ngang. Nhất là lúc này, một ngày Chủ nhật của cái mùa mà tối rồi nhưng trời vẫn còn sáng.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "lanh-dia-anh-sang",
+    "source": "output/lanh-dia-anh-sang",
+    "titleVi": "Lãnh địa ánh sáng",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Lãnh địa ánh sáng"
+      }
+    },
+    "titleJp": "",
+    "author": "Yuko Tsushima",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Lãnh Địa Ánh Sáng là câu chuyện về cuộc sống của một người phụ nữ vừa ly thân với chồng, đang trong thời gian chuẩn bị để ra tòa ly hôn. Đây là quãng thời gian vô cùng khó khăn của cô. Sau khi quyết định ly thân, cô chuyển ra sống cùng con gái ba tuổi ở một căn hộ thuê ngoài. Đó là một căn hộ có cửa sổ trổ ra tứ phía, tràn ngập ánh sáng. Tình cờ sao, đây dường như là thế giới dành riêng cho hai mẹ con cô, khi cô đang muốn tránh mặt chồng, tránh mặt mẹ đẻ và sắp xếp lại cuộc sống để bước vào hành trình làm mẹ đơn thân đầy cô đơn, tủi thân, vất vả... của người phụ nữ vẫn còn yêu chồng và bị anh ta bỏ rơi.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "me-oi-me-co-hanh-phuc-khong",
+    "source": "output/me-oi-me-co-hanh-phuc-khong",
+    "titleVi": "Mẹ ơi, mẹ có hạnh phúc không?",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Mẹ ơi, mẹ có hạnh phúc không?"
+      }
+    },
+    "titleJp": "",
+    "author": "Moriya Takeshi",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Cao cả mà dung dị, chân thật mà sâu sắc, “Mẹ ơi, mẹ có hạnh phúc không?” là câu chuyện có thật về người mẹ của chính tác giả Moriya Takeshi. Cuộc đời của người mẹ ấy có đúng đắn và sai lầm, có hạnh phúc cùng vô vàn đổ vỡ với nhiều hơn 2 lần ly hôn. Một cuộc đời không được tô vẽ, hoàn hảo hay vĩ đại hóa...",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "mirai-den-tu-tuong-lai",
+    "source": "output/mirai-den-tu-tuong-lai",
+    "titleVi": "Mirai đến từ tương lai",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Mirai đến từ tương lai"
+      }
+    },
+    "titleJp": "",
+    "author": "Mamoru Hosoda",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Mamoru Hosoda sinh năm 1967 tại tỉnh Toyama. Năm 1991, gia nhập công ty Điện ảnh Toei (nay là Toei Animation).",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "mot-nua-chiec-va-li",
+    "source": "output/mot-nua-chiec-va-li",
+    "titleVi": "Một Nửa Chiếc Va Li",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Một Nửa Chiếc Va Li"
+      }
+    },
+    "titleJp": "",
+    "author": "Kondo Fumie",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Lỡ phải lòng một chiếc va li màu xanh ở chợ đồ cũ rồi mua luôn mà chẳng nghĩ suy, cô gái không ngờ đó chính là bước ngoặt của cuộc đời mình. Tạm rời xa những chuyến tàu đi làm đông nghẹt mỗi sáng, cô cùng chiếc va li tiến vào hành trình mới đầy màu sắc…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "mot-the-gioi-thieu-vang-tinh-yeu",
+    "source": "output/mot-the-gioi-thieu-vang-tinh-yeu",
+    "titleVi": "Một Thế Giới Thiếu Vắng Tình Yêu",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Một Thế Giới Thiếu Vắng Tình Yêu"
+      }
+    },
+    "titleJp": "",
+    "author": "Miura Shion",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "“Thực vật không có bộ não, cũng không có hệ thần kinh. Không hề mang trong mình khái niệm mà loài người gọi là “tình yêu”, thế nhưng chúng vẫn sinh sôi nảy nở, thích ứng với những môi trường khác nhau để sống sót trên địa cầu. Chẳng phải điều đó rất thần kì sao?” / Một Thế Giới Thiếu Vắng Tình Yêu không lạnh lẽo, khô khan mà bạn sẽ cảm nhận được những ánh sáng trong trẻo rực rỡ của tuổi trẻ, nhiệt huyết cháy hết mình cho đam mê và sở thích của bản thân. Ở thế giới đó, những người trẻ tuổi đang miệt mài theo đuổi những con đường riêng lại vô tình có những điểm giao nhau.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "mua-he-cua-quy-thai",
+    "source": "output/mua-he-cua-quy-thai",
+    "titleVi": "Mùa hè của quỷ thai",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Mùa hè của quỷ thai"
+      }
+    },
+    "titleJp": "",
+    "author": "Kyogoku Natsuhiko",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Lấy điểm rơi là Tokyo sau Thế chiến 2, khi ánh sáng văn minh chưa đẩy lùi hoàn toàn tư duy mê tín, MÙA HÈ CỦA QUỶ THAI là một tiểu thuyết trinh thám luân lý-triết lý-tâm lý, dựng ra một hiện thực đậm nét ma mị với những con người hậu chiến hoang mang đầy dị tật tinh thần.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "ngoi-nha-trong-ve-phia-bien-va-chuyen-ngay-sau",
+    "source": "output/ngoi-nha-trong-ve-phia-bien-va-chuyen-ngay-sau",
+    "titleVi": "Ngôi Nhà Trông Về Phía Biển & Chuyện Ngày Sau",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Ngôi Nhà Trông Về Phía Biển & Chuyện Ngày Sau"
+      }
+    },
+    "titleJp": "",
+    "author": "Mizuki Harada",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Được viết bằng những câu văn dung dị, nhẹ nhàng nhưng lại chứa đựng thông điệp chân thành và sâu sắc về cuộc sống, hãy đồng hành với nhân vật chính trong truyện để tìm ra câu trả lời và cùng anh khám phá, kiếm tìm một cách sống mới mẻ, trọn vẹn, cũng như ý nghĩa hơn trên cuộc đời này.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "nguyen-uoc-cuoi-trong-can-bep-yeu-thuong",
+    "source": "output/nguyen-uoc-cuoi-trong-can-bep-yeu-thuong",
+    "titleVi": "Nguyện Ước Cuối Trong Căn Bếp Yêu Thương",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Nguyện Ước Cuối Trong Căn Bếp Yêu Thương"
+      }
+    },
+    "titleJp": "",
+    "author": "Ibuki Yuki",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Sự ra đi đột ngột của bà Otomi, người vợ thứ hai của ông Ryohei, đã khiến ông chìm trong nỗi buồn và sự tuyệt vọng. Giữa lúc đó, vì chuyện gia đình, Yuriko, cô con gái mà ông hết mực yêu thương cũng bỏ nhà chồng về lại căn nhà giờ chỉ còn nỗi trống trải bủa vây. Nỗi đau chồng chất nỗi đau, hai cha con cũng chẳng thể trở thành niềm an ủi cho nhau. Đúng lúc ấy, Imoto, một người quen cũ của bà Otomi xuất hiện, mang theo món quà và di nguyện cuối cùng của bà. Và thật chẳng ngờ, nguyện ước cuối cùng lạ đời của người đã khuất rốt cuộc lại trở thành niềm động viên to lớn nhất giúp họ chấp nhận sự thật…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "nhat-ky-cua-konatsu-mugi",
+    "source": "output/nhat-ky-cua-konatsu-mugi",
+    "titleVi": "Nhật Ký Của Konatsu & Mugi",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Nhật Ký Của Konatsu & Mugi"
+      }
+    },
+    "titleJp": "",
+    "author": "Shungo Hida",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Bạn là người yêu chó ư? Hay bạn quý mến những chú mèo? Nhân một sự tình cờ, Mao đã nhận nuôi chú chó Konatsu ngay trước khi chú bị mang đi tiêu hủy. Sau những tháng ngày mệt mỏi với công việc và tình yêu không thuận lợi, sự xuất hiện của Konatsu đã dần dần thay đổi cuộc sống của Mao. Qua hai câu chuyện miêu tả cuộc sống ấm áp, êm đềm bên những sinh mệnh bé nhỏ gần gũi với con người, hy vọng cuốn sách sẽ mang đến cho độc giả những xúc cảm nhẹ nhàng và sâu lắng.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "nhat-ky-ke-co-don",
+    "source": "output/nhat-ky-ke-co-don",
+    "titleVi": "Nhật Ký Kẻ Cô Đơn",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Nhật Ký Kẻ Cô Đơn"
+      }
+    },
+    "titleJp": "",
+    "author": "Kota Nozomi",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Câu chuyện kể về một chàng trai mười tám tuổi tên là Shidou, vì không tìm ra ý nghĩa của cuộc sống nên đã liên tục suy ngẫm về cái chết. Cậu tự tìm cho mình một lý do để “được chết”, rằng bản thân đã hoàn thành rồi, giống như chuỗi domino đã hoàn thành, chỉ còn một công đoạn cuối cùng là kéo đổ nó mà thôi. Tình cờ tìm được một dòng quảng cáo trên mạng về…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "nhung-bua-com-hoai-niem-o-tram-meo-con",
+    "source": "output/nhung-bua-com-hoai-niem-o-tram-meo-con",
+    "titleVi": "Những Bữa Cơm Hoài Niệm Ở Trạm Mèo Con",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Những Bữa Cơm Hoài Niệm Ở Trạm Mèo Con"
+      }
+    },
+    "titleJp": "",
+    "author": "Yuta Takahashi",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Là một loài cá cao cấp với hương vị bình dị và thơm ngon, được đánh bắt ở các bãi đá hay vùng đá ngầm ngoài khơi, nơi có nguồn thức ăn phong phú. Bạn cũng có thể bắt gặp loài cá này ở vùng Uchibo, một địa danh thuộc tỉnh Chiba, Nhật Bản. Mùa đánh bắt kéo dài từ mùa hạ sang mùa đông. Cá mú rất ngon khi chế biến theo kiểu Yakishimozukuri[1], nướng với mầm…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "nhung-ke-mo-chu-trong-xuong-manga",
+    "source": "output/nhung-ke-mo-chu-trong-xuong-manga",
+    "titleVi": "Những Kẻ Mơ Chữ Trong Xưởng Manga",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Những Kẻ Mơ Chữ Trong Xưởng Manga"
+      }
+    },
+    "titleJp": "",
+    "author": "Fujino Chiya",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "“Chỗ này biến thành tiệm bánh mì vòng từ khi nào thế, Seiunsha xa xưa của cậu ấy.” Adachi đang đi bên cạnh Sasako bỗng dừng lại rồi kêu lên.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "nhung-ngay-mai-den-khong-co-cau-ke-ben",
+    "source": "output/nhung-ngay-mai-den-khong-co-cau-ke-ben",
+    "titleVi": "Những ngày mai đến không có cậu kề bên",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Những ngày mai đến không có cậu kề bên"
+      }
+    },
+    "titleJp": "",
+    "author": "Inujun",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Những người có tên trong danh sách này đều lần lượt qua đời… Tờ giấy này, phải chăng là “Danh sách tử thần”? Một ngày nọ, khi đang trên đường từ trường về nhà, tôi – Morisaki Naeno đã gặp Ryu – một cậu nhóc kỳ lạ đang bị lạc đường. Ryu nói rằng mình đang làm một công việc có tên “Xác nhận cái chết của con người”… Thật khó để tin được rằng đây lại là chuyện có thật. Thế nhưng, trong “Danh sách tử thần” mà Ryu đã vô ý đánh rơi lại có tên của một người cực kỳ quan trọng đối với tôi…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "nu-cuoi-cua-shoko",
+    "source": "output/nu-cuoi-cua-shoko",
+    "titleVi": "Nụ cười của Shoko",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Nụ cười của Shoko"
+      }
+    },
+    "titleJp": "",
+    "author": "Choi Eun-Young",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "“Nụ cười của Shoko” gồm 6 câu truyện ngắn, xoay quoanh cuộc đời của những người phụ nữ. Là tác phẩm giúp tác giả Choi Eun-Young giành giải “Tác giả trẻ mới xuất sắc” và giành được nhiều lời khen ngợi, đánh giá cao của các nhà phê bình về tính nhân văn.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "ong-mat-va-sam-ren",
+    "source": "output/ong-mat-va-sam-ren",
+    "titleVi": "Ong Mật Và Sấm Rền",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Ong Mật Và Sấm Rền"
+      }
+    },
+    "titleJp": "",
+    "author": "Riku Onda",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Được xây dựng ý tưởng, thu thập thông tin trong 10 năm và chắp bút trong 7 năm, Ong Mật Và Sấm Rền là cuốn tiểu thuyết thanh xuân lấy bối cảnh Cuộc thi Piano Quốc tế Yoshigae, khắc họa tài năng, số phận và âm nhạc của con người. Hội diễn Piano quốc tế Yoshigae diễn ra mỗi ba năm một lần, năm nay đã sang lần thứ sáu và là một hội diễn vô cùng danh tiếng. Tham gia cuộc thi này đều là những tài năng âm nhạc thật sự, nhưng họ lại đến đây với những mục tiêu khác nhau. Có người chọn đây là bước ngoặt quan trọng, một cú nhảy vọt trong sự nghiệp, có người lại ôm hi vọng làm bừng cháy lên niềm đam mê đang dần lụi tàn, lại có người chọn đây là dấu chấm hết cho niềm đam mê âm nhạc, một lần tỏa sáng rồi từ bỏ tất cả.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "o-mot-goc-nhan-gian",
+    "source": "output/o-mot-goc-nhan-gian",
+    "titleVi": "Ở một góc nhân gian",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Ở một góc nhân gian"
+      }
+    },
+    "titleJp": "",
+    "author": "Fumiyo Kono",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Trải ra suốt mười hai năm, tình tiết lúc bay nhanh như chuồn chuồn điểm nước, lúc dừng chậm như gió lặng ban trưa, những trang sách mỏng này tái dựng một cách truyền cảm tinh thần và đời sống người dân Nhật Bản thời tiền chiến-hậu chiến, quanh tâm điểm là trận ném bom nguyên tử xuống Hiroshima năm 1945. Mười hai năm trước, cô bé và cậu bé tình cờ quen nhau qua một lần gặp nạn và thoát nạn. Trong mười năm tiếp theo, họ trải qua nhịp sống bình tĩnh điểm chút lãng mạn tuổi hoa niên ở hậu phương. Khi chiến tranh leo thang, hậu phương dần bị đẩy lên thành tiền tuyến, khói lửa đập nát không khí bình tĩnh, tuổi trưởng thành xua đuổi mơ mộng hoa niên… cũng là lúc dòng đời xô đẩy cho họ gặp lại nhau, cùng tạo dựng một góc nhỏ chèo chống giữa nhân gian đầy biến động. Sử dụng cách kể lời ít ý nhiều, lấy nhỏ tả lớn, lồng ghép tưởng tượng vào hiện thực, Ở một góc nhân gian là cánh cửa mở vào giữa chiến địa hung tàn một cách nhẹ nhàng nhưng lại trực tiếp, kiên cường, và vô cùng thấm thía.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "phao-hoa-ngam-tu-duoi-hay-ben-canh",
+    "source": "output/phao-hoa-ngam-tu-duoi-hay-ben-canh",
+    "titleVi": "Pháo Hoa, Ngắm Từ Dưới Hay Bên Cạnh?",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Pháo Hoa, Ngắm Từ Dưới Hay Bên Cạnh?"
+      }
+    },
+    "titleJp": "",
+    "author": "Shunji Iwai, Hitoshi One",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Nguyên tác: SHUNJI IWAI: Sinh ngày 24 tháng Một năm 1963 tại thành phố Sendai. Phim điện ảnh Love Letter, Bướm phượng, Hana và Alice, Last Letter, 12 ngày của quái vật đã chết từ ngày thứ 8…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "phong-truyen-thong-hang-khong",
+    "source": "output/phong-truyen-thong-hang-khong",
+    "titleVi": "Phòng Truyền Thông Hàng Không",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Phòng Truyền Thông Hàng Không"
+      }
+    },
+    "titleJp": "",
+    "author": "Hiro Arikawa",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Inaba Rika là phóng viên của một đài truyền hình và chuyên đưa tin về Cơ quan Cảnh sát Quốc gia. Dù được đánh giá là một phóng viên đầy triển vọng nhưng niềm đam mê nhiệt huyết dành cho công việc của cô đôi khi làm phiền những người cô đưa tin và gây rắc rối cho chính cô. Hiện tại, khi đã làm phóng viên được 5 năm, mặc dù không muốn nhưng Rika phải chuyển sang làm quản lí cho một chương trình tin tức buổi tối. Cô được yêu cầu đưa tin về Lực lượng Phòng vệ Nhật Bản. Trong khi đó, Trung úy Sorai Daisuke ước muốn trở thành phi công chiến đấu. Khi giấc mơ sắp thành sự thật thì anh lại gặp tai nạn khiến chân bị thương và phải từ bỏ giấc mơ của mình. Sự việc đó khiến anh trở nên tuyệt vọng. Anh được chỉ định làm việc tại Phòng Truyền thông của lực lượng Không vệ. Bất chấp việc mọi người phản đối và sự thật rằng anh còn non trẻ trong nghề, cấp trên của anh vẫn yêu cầu anh hỗ trợ phóng viên Rika. Rika bắt đầu đến Phòng Truyền thông để lấy tin cho chương trình của cô. Cô cố gắng thu thập nhiều tin tức sốt dẻo với hy vọng đó sẽ là tấm vé để cô sớm lấy lại vị trí phóng viên của mình. Cũng từ đó mà Rika đã gây ra nhiều rắc rối…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "phu-thuy-the-he-satori",
+    "source": "output/phu-thuy-the-he-satori",
+    "titleVi": "Phù thủy thế hệ Satori",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Phù thủy thế hệ Satori"
+      }
+    },
+    "titleJp": "",
+    "author": "Fujimaru",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "\"Hojo Shizuku, 19 tuổi. Nhìn thế nào thì trông tôi cũng chỉ như một cô gái bình thường, thế nhưng… thật ra tôi chính là phù thủy cuối cùng của thời Bình Thành!\". Shizuku được kế thừa sức mạnh Phù thủy từ bà của mình. Đây là một câu chuyện về tình yêu và gia đình khiến trái tim ta rung động.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "quai-vat-trong-dem",
+    "source": "output/quai-vat-trong-dem",
+    "titleVi": "Quái vật trong đêm",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Quái vật trong đêm"
+      }
+    },
+    "titleJp": "",
+    "author": "Yoru Sumino & Nguyễn Thu Thủy",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Adachi có một bí mật không thể chia sẻ cùng ai. Ban ngày cậu là một nam sinh bình thường, nhưng khi đêm xuống, cậu lại biến thành một con quái vật đen sì có bộ dạng kì dị. / Chuyện gì sẽ xảy ra khi một người bạn học cùng lớp với Adachi – Yano Satsuki – nhìn thấu chân tướng của “quái vật”...? Rắc rối hơn, Yano còn là kẻ mà ban ngày cậu không được phép giao du trước mặt bạn bè… / “Quái vật trong đêm” là cuộc hành trình đi tìm bản ngã của một nam sinh mang hai thân phận: ban ngày là “con người”, ban đêm là “quái vật” – một tác phẩm độc đáo và giàu tính nhân văn.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "quan-an-tim-lai-tinh-yeu",
+    "source": "output/quan-an-tim-lai-tinh-yeu",
+    "titleVi": "Quán Ăn Tìm Lại Tình Yêu",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Quán Ăn Tìm Lại Tình Yêu"
+      }
+    },
+    "titleJp": "",
+    "author": "Ito Ogawa",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "\"Tìm lại tình yêu\" - nghe có vẻ xa xôi nhưng đó lại là câu chuyện có thật ở một quán ăn nhỏ vùng quê mang tên “Ốc sên”. Điều đặc biệt là quán ăn này chỉ có một bàn và không có thực đơn. Bởi cô chủ Rinko sẽ quyết định món ăn cho thực khách sau khi lắng nghe câu chuyện của họ. Thật kì lạ và quả nhiên kì diệu, những món ăn của Rinko đã trở thành thần dược cho trái tim những vị khách từng ghé qua nơi đây, và cũng là cho chính tâm hồn cô, trên hành trình tìm lại tình yêu tưởng chừng đã đánh mất..",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "seimei-va-hiromasa",
+    "source": "output/seimei-va-hiromasa",
+    "titleVi": "Seimei Và Hiromasa",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Seimei Và Hiromasa"
+      }
+    },
+    "titleJp": "",
+    "author": "Baku Yumemakura",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Một là âm dương sư tài ba, nghe đồn do hồ ly sinh ra nên vừa quyến rũ vừa tinh quái. Còn một là võ quan có tâm hồn nghệ sĩ, vừa chính trực vừa mộng mơ. Cùng với nhau, họ đi qua nhiều đêm trắng, đan qua những cảnh đời uẩn khúc giữa kinh thành Heian huyền ảo, ở cái thời con người còn chung đụng với quỷ ma.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "ta-chi-gap-nhau-vao-ban-dem",
+    "source": "output/ta-chi-gap-nhau-vao-ban-dem",
+    "titleVi": "Ta Chỉ Gặp Nhau Vào Ban Đêm",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Ta Chỉ Gặp Nhau Vào Ban Đêm"
+      }
+    },
+    "titleJp": "",
+    "author": "Ichikawa Takuji",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Sau khi nghe Hayakawa Misako nói rằng từng nhìn thấy một “bóng ma” trong phòng đặt chân đế xích đạo của đài thiên văn, chúng tôi – những người bạn cùng lớp của cô, đã quyết định đi vào khu rừng nhỏ ấy vào ban đêm. Sau lần đó, Hayakawa bị coi là một kẻ dối trá và bắt đầu bị cô lập ở trường. Để có thể giúp cô gái lúc nào cũng cười ngượng ngập trong nỗi sợ hãi ấy có thể nở một nụ cười chân thật từ tận đáy lòng, tôi đã quyết định nói dối Hayakawa… Cuốn sách này là một tuyển tập những câu chuyện sưởi ấm trái tim bạn, nhẹ nhàng như một ngôi sao.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "tam-biet-phao-hoa",
+    "source": "output/tam-biet-phao-hoa",
+    "titleVi": "Tạm biệt pháo hoa",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Tạm biệt pháo hoa"
+      }
+    },
+    "titleJp": "",
+    "author": "Shunji Iwai",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Sinh ngày 24 tháng Một năm 1963 tại thành phố Sendai. Phim điện ảnh Love Letter, Bướm phượng, Hana và Alice, Last Letter, 12 ngày của quái vật đã chết từ ngày thứ 8...",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "thoi-khac-chung-ta-khong-the-quay-tro-lai",
+    "source": "output/thoi-khac-chung-ta-khong-the-quay-tro-lai",
+    "titleVi": "Thời khắc chúng ta không thể quay trở lại",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Thời khắc chúng ta không thể quay trở lại"
+      }
+    },
+    "titleJp": "",
+    "author": "Atsuko Asano",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Người lớn thường cười và cho rằng chúng mình chỉ là những đứa trẻ, nhưng đâu phải vậy. Mọi người đều sẽ bị tổn thương, hoang mang, phiền muộn vì những điều tưởng chừng có thể cười xòa cho qua giống như người lớn vẫn nghĩ.",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "tiem-det-hoi-uc-an-trong-suong",
+    "source": "output/tiem-det-hoi-uc-an-trong-suong",
+    "titleVi": "Tiệm Dệt Hồi Ức Ẩn Trong Sương",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Tiệm Dệt Hồi Ức Ẩn Trong Sương"
+      }
+    },
+    "titleJp": "",
+    "author": "Yuta Takahashi",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Ra khỏi nhà chờ, phía trước ga đang được sửa sang lại đẹp như một khu tham quan. Những tấm áp phích đang được dán khắp nơi. Có tấm giới thiệu các địa điểm du lịch, có tấm chỉ dẫn đến cửa hàng và bệnh viện địa phương. Năm nay, Makoto Uyama đã hai mươi tám tuổi. Đây là lần đầu tiên cô đến thăm thị trấn miền núi này. Cô đi một mình, chẳng có ai làm bạn đồng…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "uoc-duoc-cung-cau-ngam-lai-phao-hoa-ngay-ay",
+    "source": "output/uoc-duoc-cung-cau-ngam-lai-phao-hoa-ngay-ay",
+    "titleVi": "Ước Được Cùng Cậu Ngắm Lại Pháo Hoa Ngày Ấy",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Ước Được Cùng Cậu Ngắm Lại Pháo Hoa Ngày Ấy"
+      }
+    },
+    "titleJp": "",
+    "author": "Kana Asazawa",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Trên con dốc mà chỉ cần chạy là không thể dừng chân lại ấy, tôi nhanh chóng rảo bước, mỗi bước chạy lại làm mùi hương cây cỏ tản mát ra xung quanh. Bãi sông ngày hè rực rỡ màu xanh lục, xanh da trời và màu trắng của những đám mây, ngay cả những tia nắng phản chiếu từ mặt sông cũng thật rực rỡ, nếu có thêm gió nữa, trái tim tôi hẳn sẽ càng đập rộn như một…",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "vao-dem-trang-xanh-toi-lai-yeu-em-them-lan-nua",
+    "source": "output/vao-dem-trang-xanh-toi-lai-yeu-em-them-lan-nua",
+    "titleVi": "Vào đêm trăng xanh, tôi lại yêu em thêm lần nữa",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Vào đêm trăng xanh, tôi lại yêu em thêm lần nữa"
+      }
+    },
+    "titleJp": "",
+    "author": "Mii Hirose",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Dưới ánh trăng, khuôn mặt nhìn nghiêng của em hiện lên, xinh đẹp vô cùng. Tựa như đã tìm thấy được thứ ánh sáng lấp lánh mà mình vẫn mải miết kiếm tìm,",
+    "tags": [
+      "Văn học Nhật Bản",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "no-game-no-life",
+    "source": "output/no-game-no-life",
+    "titleVi": "No Game No Life",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Anh Em Game Thủ Sẽ Cùng Chinh Phục Thế Giới Thần Tiên"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Có Vẻ Anh Em Game Thủ Đã Để Mắt Tới Đất Nước Kemonomimi"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Hình Như Một Trong Hai Anh Em Game Thủ Đã Biến Mất...?"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Hai Anh Em Game Thủ Đã Chạy Trốn Khỏi Trò Chơi Lãng Mạn Thực Tế"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Có Vẻ Như Hai Anh Em Game Thủ Ghét Trò Chơi Mới Này"
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": "Có Vẻ Như Cặp Đôi Game Thủ Đã Thách Thức Cả Thế Giới"
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": "Hai Anh Em Game Thủ Sẽ Bác Bỏ Cả Thế Giới"
+      },
+      "Tập_08": {
+        "label": "Tập 08",
+        "title": "Có Vẻ Như Hai Anh Em Game Thủ Sẽ Thừa Kế Chiến Lược"
+      },
+      "Tập_09": {
+        "label": "Tập 09",
+        "title": "Hình Như Hai Anh Em Game Thủ Nghỉ Ngơi Một Hồi"
+      },
+      "Tập_10": {
+        "label": "Tập 10",
+        "title": "Có Vẻ Hai Anh Em Game Thủ Phải Trả Giá Cho Quá Khứ"
+      }
+    },
+    "titleJp": "No Game No Life (ノーゲーム・ノーライフ)",
+    "author": "Yuu Kamiya",
+    "illustrator": "Yuu Kamiya",
+    "status": "Đang cập nhật",
+    "description": "Hai anh em ruột Sora và Shiro là những game thủ bất khả chiến bại dưới cái tên huyền thoại 『 』 (Trắng). Một ngày nọ, vị thần tự xưng là Tet triệu hồi họ tới Disboard — thế giới nơi mọi cuộc chiến, biên giới và mạng sống đều được quyết định bằng các trò chơi thay vì vũ lực.",
+    "tags": [
+      "Fantasy",
+      "Game",
+      "Comedy",
+      "Adventure",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "harry-potter",
+    "source": "output/harry-potter",
+    "titleVi": "Harry Potter (Trọn Bộ 7 Tập)",
+    "volumeTitles": {
+      "Tập_01": {
+        "label": "Tập 01",
+        "title": "Harry Potter và Hòn Đá Phù Thủy"
+      },
+      "Tập_02": {
+        "label": "Tập 02",
+        "title": "Harry Potter và Phòng Chứa Bí Mật"
+      },
+      "Tập_03": {
+        "label": "Tập 03",
+        "title": "Harry Potter và Tên Tù Nhân Ngục Azkaban"
+      },
+      "Tập_04": {
+        "label": "Tập 04",
+        "title": "Harry Potter và Chiếc Cốc Lửa"
+      },
+      "Tập_05": {
+        "label": "Tập 05",
+        "title": "Harry Potter và Hội Phượng Hoàng"
+      },
+      "Tập_06": {
+        "label": "Tập 06",
+        "title": "Harry Potter và Hoàng Tử Lai"
+      },
+      "Tập_07": {
+        "label": "Tập 07",
+        "title": "Harry Potter và Bảo Bối Tử Thần"
+      }
+    },
+    "titleJp": "Harry Potter",
+    "author": "J. K. Rowling",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Trọn bộ 7 tập tiểu thuyết huyền thoại về cậu bé phù thủy Harry Potter cùng hai người bạn thân Ron Weasley và Hermione Granger tại Trường Phù thủy và Pháp sư Hogwarts, trong cuộc hành trình đối đầu với Chúa tể Hắc ám Voldemort.",
+    "tags": [
+      "Fantasy",
+      "Adventure",
+      "Kinh điển",
+      "Văn học phương Tây"
+    ]
+  },
+  {
+    "slug": "1q84",
+    "source": "output/1q84",
+    "titleVi": "1Q84",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "1Q84"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Anthology containing: 1Q84 - Tập 1 1Q84 - Tập 2 1Q84 - Tập 3",
+    "tags": [
+      "Kỳ ảo",
+      "Romance",
+      "Bí ẩn",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "5-centimet-tren-giay",
+    "source": "output/5-centimet-tren-giay",
+    "titleVi": "5 Centimet Trên Giây",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "5 Centimet Trên Giây"
+      }
+    },
+    "titleJp": "",
+    "author": "Shinkai Makoto",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Mình đáng bị bỏ lại đơn độc thế này lắm. Tại sao mình không thể đem lại hạnh phúc cho ai hết, dù chỉ một chút, dù chỉ một người? 5cm/s không chỉ là vận tốc của những cánh anh đào rơi, mà còn là vận tốc khi chúng ta lặng lẽ bước qua đời nhau, đánh mất bao cảm xúc thiết tha nhất của tình yêu.",
+    "tags": [
+      "Romance",
+      "Drama",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "ban-tay-cho-em",
+    "source": "output/ban-tay-cho-em",
+    "titleVi": "Bàn Tay Cho Em",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Bàn Tay Cho Em"
+      }
+    },
+    "titleJp": "",
+    "author": "Ichikawa Takuji",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Hiro và Satomi, hai đứa trẻ tự chơi và chăm sóc nhau trong căn hộ tập thể nghèo khi mẹ chúng đi làm cả ngày. Maho, cô gái 24 tuổi hay ốm, đầy tự ti sợ hãi bỗng gặp hai bố con Yasuo mang tâm hồn bị tổn thương, xa lánh người đời.",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "ben-kia-may-troi-la-noi-hen-uoc",
+    "source": "output/ben-kia-may-troi-la-noi-hen-uoc",
+    "titleVi": "Bên Kia Mây Trời Là Nơi Hẹn Ước",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Bên Kia Mây Trời Là Nơi Hẹn Ước"
+      }
+    },
+    "titleJp": "",
+    "author": "Shinkai Makoto, Kanoh Arata",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Tôi và cậu, đôi bạn thân rất thân, niềm thân ái thắm thiết bền lâu. Hai đứa hiểu nhau mà chẳng cần nói trọn một câu. Có chung nhau những sở thích vô cùng khác lạ. Rồi tình thân tiêu tan sau một ngày mùa hạ, khi cô ấy đến rồi đi không để lại lời nào. Giữa biển người mênh mông, Takuya và Hiroki trở nên gắn kết nhờ có chung những kĩ năng và sở thích khác hẳn cộng đồng. Nghĩ nhiều, làm nhiều, nói ít… Mấy năm thân thiết của hai cậu được ghi dấu bằng những lúc âm thầm đứng cạnh nhau trên sân ga đợi tàu đi học, âm thầm cùng chế tác chiếc máy bay chở ước vọng tương lai, âm thầm sẻ chia những tật xấu phải che mắt người ngoài, âm thầm cảm nhận nét đẹp của một cô gái, và âm thầm cả khi phát hiện ra nhau lại tiếp tục chung sở thích về một người. Người ấy không chỉ gây xáo trộn tâm tư, mà có lẽ còn sẽ gây chia rẽ tình bạn thân thiết của hai cậu… Trên vụn nắng lấp lánh mặt ao xanh, trong tiếng vĩ cầm réo rắt, tơ lòng mong manh của một cô bé và hai cậu bé đã lặng lẽ dệt nên những canh vải vô cùng phức tạp, không thể gỡ ra chỉ bằng cách đơn giản là quyết định ai ở bên ai.",
+    "tags": [
+      "Romance",
+      "Sci-Fi",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "bien-nien-ky-chim-van-day-cot",
+    "source": "output/bien-nien-ky-chim-van-day-cot",
+    "titleVi": "Biên Niên Ký Chim Vặn Dây Cót",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Biên Niên Ký Chim Vặn Dây Cót"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "? ngo?i � Tokyo, m?t ngu?i d�n �ng t�n l� Toru Okada t�m ki?m con m�o m?t t�ch. R?i ch?ng m?y ch?c v? anh cung bi?n m?t theo. Trong cu?c t�m ki?m d�, xu?t hi?n bao s? ki?n xoay quanh nh?nh nh�n v?t b� hi?m: m?t thi?u n? mu?i s�u c� v?n d? v? t�m l�, m?t b� d?ng, m?t c� di?m tinh th?n, m?t ch�nh tr? gia suy d?i du?c d?i ch�ng y�u th�ch, m?t c?u chi?n binh m�i m�i b? kh?ng ho?ng b?i nh?ng g� d� ch?ng ki?n du?c trong �?i chi?n II� Th?c t?i v� phi th?c t?i d� dan c�i nhau trong b?c tranh �m ?nh v? x� h?i v� t�m linh Nh?t B?n nh?ng nam cu?i th? k? XX. V� th? gi?i tinh th?n, c�n th?c hon c? d�ng th�c m�nh m�ng nh?ng di?u k? qu?c trong t�c ph?m, l� noi m� nh�n v?t c?a Murakami hi?n l�n, khi?n ta l?ng di b?i s? gi�u c�, v?a s�ng r� v?a u t?i, c?a c�c c?m gi�c. Tr?i nghi?m n?i tr?ng r?ng b?i hu v�, t? trong m?t c�i gi?ng c?n, Toru Okada d� vuon d?y d? gi�nh l?i cu?c s?ng c?a m�nh. T�c ph?m da phong c�ch c?a Murakami, cung l� cu?n ti?u thuy?t du?c k? v?ng nh?t, cu?i c�ng d� chinh ph?c nh?ng ai c�n h? nghi t�i nang c?a �ng nhu m?t trong nh?ng ti?u thuy?t gia dung c?m v� s�ng t?o nh?t m� nu?c Nh?t t?ng s?n sinh ra trong th?i d?i n�y.",
+    "tags": [
+      "Kỳ ảo",
+      "Tâm lý",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "bo-con-ca-gai",
+    "source": "output/bo-con-ca-gai",
+    "titleVi": "Bố Con Cá Gai",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Bố Con Cá Gai"
+      }
+    },
+    "titleJp": "",
+    "author": "Cho Chang In",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Lúc này tôi đang ngắm nhìn ông bố ngốc của tôi. Ngoài khung cửa sổ, mưa đang rơi. Tí tách tí tách. Mưa rơi từ sáng. Và bây giờ là buổi tối rồi.",
+    "tags": [
+      "Cảm động",
+      "Gia đình",
+      "Văn học Hàn Quốc"
+    ]
+  },
+  {
+    "slug": "bon-co-con-gai-nha-bac-si-march-little-women",
+    "source": "output/bon-co-con-gai-nha-bac-si-march-little-women",
+    "titleVi": "Bốn Cô Con Gái Nhà Bác Sĩ March (Little Women)",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Bốn Cô Con Gái Nhà Bác Sĩ March (Little Women)"
+      }
+    },
+    "titleJp": "",
+    "author": "Louisa May Alcott",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Lễ Giáng sinh sẽ không phải là lễ Giáng sinh nếu chúng ta không có quà. - Jo vừa lẩm bẩm vừa nằm dài ra tấm thảm. - Thật khủng khiếp khi người ta không giàu nữa. - Meg vừa thở dài vừa nhìn vào chiếc áo dài của mình.",
+    "tags": [
+      "Kinh điển",
+      "Gia đình",
+      "Đời thường"
+    ]
+  },
+  {
+    "slug": "cay-cam-ngot-cua-toi",
+    "source": "output/cay-cam-ngot-cua-toi",
+    "titleVi": "Cây Cam Ngọt Của Tôi",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Cây Cam Ngọt Của Tôi"
+      }
+    },
+    "titleJp": "",
+    "author": "José Mauro de Vasconcelos",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "“Vị chua chát của cái nghèo hòa trộn với vị ngọt ngào khi khám phá ra những điều khiến cuộc đời này đáng số một tác phẩm kinh điển của Brazil.” - Booklist “Một cách nhìn cuộc sống gần như hoàn chỉnh từ con mắt trẻ thơ… có sức mạnh sưởi ấm và làm tan nát cõi lòng, dù người đọc ở lứa tuổi nào.” - The National Hãy làm quen với Zezé, cậu bé tinh nghịch siêu hạng đồng thời cũng đáng yêu bậc nhất, với ước mơ lớn lên trở thành nhà thơ cổ thắt nơ bướm. Chẳng phải ai cũng công nhận khoản “đáng yêu” kia đâu nhé. Bởi vì, ở cái xóm ngoại ô nghèo ấy, nỗi khắc khổ bủa vây đã che mờ mắt người ta trước trái tim thiện lương cùng trí tưởng tượng tuyệt vời của cậu bé con năm tuổi. Có hề gì đâu bao nhiêu là hắt hủi, đánh mắng, vì Zezé đã có một người bạn đặc biệt để trút nỗi lòng: cây cam ngọt nơi vườn sau. Và cả một người bạn nữa, bằng xương bằng thịt, một ngày kia xuất hiện, cho cậu bé nhạy cảm khôn sớm biết thế nào là trìu mến, thế nào là nỗi đau, và mãi mãi thay đổi cuộc đời cậu. Mở đầu bằng những thanh âm trong sáng và kết thúc lắng lại trong những nốt trầm hoài niệm, Cây cam ngọt của tôi khiến ta nhận ra vẻ đẹp thực sự của cuộc sống đến từ những điều giản dị như bông hoa trắng của cái cây sau nhà, và rằng cuộc đời thật khốn khổ nếu thiếu đi lòng yêu thương và niềm trắc ẩn. Cuốn sách kinh điển này bởi thế không ngừng khiến trái tim người đọc khắp thế giới thổn thức, kể từ khi ra mắt lần đầu năm 1968 tại Brazil.",
+    "tags": [
+      "Cảm động",
+      "Kinh điển",
+      "Gia đình"
+    ]
+  },
+  {
+    "slug": "cay-vi-cam-ave-maria",
+    "source": "output/cay-vi-cam-ave-maria",
+    "titleVi": "Cây Vĩ Cầm Ave Maria",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Cây Vĩ Cầm Ave Maria"
+      }
+    },
+    "titleJp": "",
+    "author": "Kagawa Yoshiko",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Cô bé 14 tuổi Asuka bắt gặp một cây vĩ cầm phát ra âm thanh kì lạ ở cửa hàng nhạc cụ. Đó là đồ vật của Hannah, cô bé người Do Thái từng là thành viên dàn nhạc ở Trại tập trung Auschwitz. Dù trong hoàn cảnh khắc nghiệt đến thế nào, Hannah vẫn luôn nghĩ tới bạn bè và không bao giờ quên lòng nhiệt thành dành cho âm nhạc. Tình cảm của Hannah chạm tới cả trái tim của cô bé Nhật Bản Asuka… Một câu chuyện cảm động sinh ra từ một cây vĩ cầm đã kinh qua ngọn lửa chiến tranh, bị vận mệnh bất hạnh trêu đùa.",
+    "tags": [
+      "Cảm động",
+      "Âm nhạc",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "chien-binh-cau-vong",
+    "source": "output/chien-binh-cau-vong",
+    "titleVi": "Chiến Binh Cầu Vồng",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Chiến Binh Cầu Vồng"
+      }
+    },
+    "titleJp": "",
+    "author": "Andrea Hirata",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Andrea Hirata là nhà văn Indonesia ăn khách nhất từ trước đến nay. Tác phẩm đầu tay của ông, Chiến binh cầu vồng (tiếng Indonesia là Laskar Pelangi) dựa trên câu chuyện có thực về thời thơ ấu của chính nhà văn. Ngay từ lần xuất bản đầu tiên năm 2005, cuốn sách về mơ ước và cuộc đấu tranh bền bỉ của thầy trò trường Muhammadiyah để gìn giữ quyền giáo dục…",
+    "tags": [
+      "Cảm động",
+      "Đời thường",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "chu-be-mang-pyjama-soc",
+    "source": "output/chu-be-mang-pyjama-soc",
+    "titleVi": "Chú Bé Mang Pyjama Sọc",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Chú Bé Mang Pyjama Sọc"
+      }
+    },
+    "titleJp": "",
+    "author": "John Boyne",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Rất khó miêu tả câu chuyện về Chú bé mang pyjama sọc này. Thường thì chúng tôi vẫn tiết lộ vài chi tiết về cuốn sách trên bìa, nhưng trong trường hợp này chúng tôi nghĩ làm như vậy sẽ làm hỏng cảm giác đọc của bạn. Chúng tôi nghĩ điều quan trọng là bạn nên đọc mà không biết trước nó kể về điều gì. “Đây là những gì tiểu thuyết nên làm: giới thiệu ta đến…",
+    "tags": [
+      "Cảm động",
+      "Lịch sử",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "chuoc-toi",
+    "source": "output/chuoc-toi",
+    "titleVi": "Chuộc Tội",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Chuộc Tội"
+      }
+    },
+    "titleJp": "",
+    "author": "Minato Kanae",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Vương Hải Yến (dịch) Emily, Sae, Maki, Akiko, Yuka – năm cô bé cùng nhau đến trường chơi bóng chuyền song chỉ có bốn về được nhà, với tư cách là bốn nhân chứng của một vụ giết người tàn nhẫn gây chấn động. Nhưng trở về an toàn không có nghĩa là bình an sống tiếp. Truyện hấp dẫn, bố cục thực sự lạ lẫm với việc tập hợp các các đoạn \"hồi ký\". _NQK",
+    "tags": [
+      "Trinh thám",
+      "Tâm lý",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "chuyen-ve-co-gai-ay",
+    "source": "output/chuyen-ve-co-gai-ay",
+    "titleVi": "Chuyện Về Cô Gái Ấy",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Chuyện Về Cô Gái Ấy"
+      }
+    },
+    "titleJp": "",
+    "author": "Ichikawa Takuji",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Khi tịch dương chạm vào đường chân trời, chúng tôi trao nhau nụ hôn đầu tiên. Một nụ hôn như trong ước nguyện. Hành tinh xanh vẫn yên lặng chuyển động, màn đêm dần kéo đến từ phía trời Đông. Chúng tôi cùng hẹn ước tình yêu giữa khoảnh khắc giao nhau của ánh sáng và bóng tối.",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "colorful",
+    "source": "output/colorful",
+    "titleVi": "Colorful",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Colorful"
+      }
+    },
+    "titleJp": "",
+    "author": "Mori Eto",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Linh hồn của tôi - một kẻ đã chết - đang dật dờ trôi dạt đến nơi tối tăm nào đó, bỗng một thiên sứ mang khuôn mặt lạ hoắc thình lình xuất hiện, dang rộng đôi tay chắn ngay trước mặt. Thiên sứ nở nụ cười rạng rỡ đúng chất thần tiên.",
+    "tags": [
+      "Chữa lành",
+      "Học đường",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "cua-chuot-va-cua-nguoi",
+    "source": "output/cua-chuot-va-cua-nguoi",
+    "titleVi": "Của Chuột Và Của Người",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Của Chuột Và Của Người"
+      }
+    },
+    "titleJp": "",
+    "author": "John Steinbeck",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Phía Nam Soledad chừng mấy dặm, dòng sông Salinas đổ xuống theo sát sườn đồi, nước xanh thẳm và ấm nhờ phơi mình trên bãi cát vàng lấp lánh ánh nắng trước khi êm ả chảy vào một cái hồ nhỏ hẹp. Một bên bờ là những sườn đồi vàng ánh nhô lên, soải mình đến tận những vách núi đá Gabilan, bờ sông bên kia cây cỏ um tùm, hễ vào tiết xuân rặng liễu lại xanh rờn…",
+    "tags": [
+      "Kinh điển",
+      "Cảm động",
+      "Văn học phương Tây"
+    ]
+  },
+  {
+    "slug": "cuoc-san-cuu-hoang",
+    "source": "output/cuoc-san-cuu-hoang",
+    "titleVi": "Cuộc Săn Cừu Hoang",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Cuộc Săn Cừu Hoang"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Đánh máy: cockroach, tamnk, sunus111, canhenxanh_001, broken, Yatrau, HoanXtq, shyaoran3009, ngochungpham. Soát lỗi: hi_iamcoming, songuyento, hanh_nguyen_bg, Nem",
+    "tags": [
+      "Kỳ ảo",
+      "Bí ẩn",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "dai-gia-gatsby",
+    "source": "output/dai-gia-gatsby",
+    "titleVi": "Đại Gia Gatsby",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Đại Gia Gatsby"
+      }
+    },
+    "titleJp": "",
+    "author": "F. Scott Fitzgerald",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Thể loại: 100 Cuốn sách giá trị nhất thế giới, Tiểu thuyết, Văn học phương Tây Fitzgerald sinh ngày 24 tháng 9 năm 1896 ở thành phố Saint Paul, tiểu bang Minnesota, Hoa Kỳ, trong một gia đình trung lưu người Irish. Tên của ông được đặt theo tên của một người trong giòng họ rất nổi tiếng, Francis Scott Key, là người đã sáng tác ra lời của bài quốc ca của…",
+    "tags": [
+      "Kinh điển",
+      "Văn học phương Tây"
+    ]
+  },
+  {
+    "slug": "dem-truong-tam-toi",
+    "source": "output/dem-truong-tam-toi",
+    "titleVi": "Đêm Trường Tăm Tối",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Đêm Trường Tăm Tối"
+      }
+    },
+    "titleJp": "",
+    "author": "Tử Kim Trần",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Nắng chiếu rực rỡ, ga Quảng trường văn hoá hồ Tây tuyến tàu điện ngầm số 1 thành phố Hàng Châu. Trên đoạn giữa con đường phía ngoài ga tàu điện ngầm có một cột đèn giao thông, lúc này, một gã đàn ông đang kéo một chiếc va-li hành lí rất lớn, kiên nhẫn đứng ở chỗ rẽ đợi tín hiệu đèn xanh.",
+    "tags": [
+      "Trinh thám",
+      "Tâm lý",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "dieu-ky-dieu-cua-tiem-tap-hoa-namiya",
+    "source": "output/dieu-ky-dieu-cua-tiem-tap-hoa-namiya",
+    "titleVi": "Điều Kỳ Diệu Của Tiệm Tạp Hóa Namiya",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Điều Kỳ Diệu Của Tiệm Tạp Hóa Namiya"
+      }
+    },
+    "titleJp": "",
+    "author": "Higashino Keigo",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Sinh năm 1958 tại Osaka, là nhà văn trinh thám hàng đầu hiện nay tại Nhật Bản. Năm 1985, Higashino Keigo giành được giải Edogawa Rampo lần thứ 31 cho tác phẩm trinh thám hay nhất với tiểu thuyết Giờ tan học. Các năm sau đó, Higashino Keigo liên tục được đề cử vô số giải thưởng văn học lớn. Năm 1999, ông đoạt giải Mystery Writers of Japan Inc với tiểu…",
+    "tags": [
+      "Kỳ ảo",
+      "Chữa lành",
+      "Cảm động",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "em-se-den-cung-con-mua",
+    "source": "output/em-se-den-cung-con-mua",
+    "titleVi": "Em Sẽ Đến Cùng Cơn Mưa",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Em Sẽ Đến Cùng Cơn Mưa"
+      }
+    },
+    "titleJp": "",
+    "author": "Ichikawa Takuji",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "�H�m nay l� l?n d?u ti�n ch�ng m�nh g?p nhau v?i d�i gi?y c� c? v� c� g�t. Cung ph?i n�i th�m, h�m nay cung l� l?n d?u ti�n anh th?y em m?c chi?c v�y li?n m�u d? s?m. L?n d?u ti�n anh th?y em t� son. L?n d?u ti�n anh th?y m�i t�c em dung dua m?i l?n em nghi�ng d?u, l?n d?u ti�n anh c?m th?y b?n ch?n kh�ng y�n khi n�i chuy?n v?i em. T?t c? d?u l� l?n d?u ti�n, d?n n?i m� kh� t�m du?c m?t th? kh�ng ph?i l?n d?u ti�n.�",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "giet-chi-huy-doi-ky-si",
+    "source": "output/giet-chi-huy-doi-ky-si",
+    "titleVi": "Giết Chỉ Huy Đội Kỵ Sĩ",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Giết Chỉ Huy Đội Kỵ Sĩ"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Rời khỏi người vợ đã đơn phương đòi ly hôn, “tôi” - chàng họa sĩ vẽ chân dung ba mươi sáu tuổi lang thang khắp nẻo đường rồi dừng chân tại một biệt thự nằm giữa khu rừng âm u trên đỉnh ngọn núi trông về phía biển, và sống tiếp tại đó trong nỗi cô đơn thăm thẳm. Không lâu sau, con cú đại bàng trên gác mái và tiếng chuông kỳ quái lúc đêm khuya đã khơi mào một chuỗi hiện tượng bí ẩn, dẫn dụ “tôi” bước vào chuyến phiêu lưu tâm linh huyền hoặc.",
+    "tags": [
+      "Kỳ ảo",
+      "Bí ẩn",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "hai-so-phan",
+    "source": "output/hai-so-phan",
+    "titleVi": "Hai Số Phận",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Hai Số Phận"
+      }
+    },
+    "titleJp": "",
+    "author": "Jeffrey Archer",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "• “Một bậc thầy về nghệ thuật hòa trộn các yếu tố kinh tế, chính trị và quyền lực trong cùng một cuốn tiểu thuyết.” • \"Khả năng xây dựng cốt truyện của Archer chỉ có thể được miêu tả bằng hai chữ Thiên Tài.”",
+    "tags": [
+      "Kinh điển",
+      "Drama",
+      "Văn học phương Tây"
+    ]
+  },
+  {
+    "slug": "hay-cham-soc-me",
+    "source": "output/hay-cham-soc-me",
+    "titleVi": "Hãy Chăm Sóc Mẹ",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Hãy Chăm Sóc Mẹ"
+      }
+    },
+    "titleJp": "",
+    "author": "Shin Kyung Sook",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Cả gia đình cô tập trung ở nhà anh cả Hyong-chol. Sau khi cân nhắc kỹ lưỡng, mọi người quyết định soạn tờ rơi để đi phát ở nơi có người nhìn thấy mẹ lần cuối cùng. Việc đầu tiên là thảo tờ rơi. Tờ rơi là giải pháp quen thuộc trong trường hợp này. Gia đình có người lạc vốn chẳng làm được gì nhiều, huống hồ người bị lạc không phải ai khác mà chính là mẹ.…",
+    "tags": [
+      "Cảm động",
+      "Gia đình",
+      "Văn học Hàn Quốc"
+    ]
+  },
+  {
+    "slug": "hoa-tren-mo-algernon",
+    "source": "output/hoa-tren-mo-algernon",
+    "titleVi": "Hoa Trên Mộ Algernon",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Hoa Trên Mộ Algernon"
+      }
+    },
+    "titleJp": "",
+    "author": "Daniel Keyes",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Bất cứ ai có hiểu biết thông thường sẽ đều nhớ rằng sự hoang mang trong ánh mắt có hai dạng và xuất phát từ hai nguyên nhân, hoặc là do vừa từ trong ánh sáng đi ra ngoài hoặc từ ngoài đi vào ánh sáng, điều này hoàn toàn đúng với đôi mắt của tâm trí, vốn chẳng khác là bao so với đôi mắt của thể xác; khi thấy ai đó có cái nhìn bối rối và yếu ớt, người nào…",
+    "tags": [
+      "Cảm động",
+      "Kinh điển",
+      "Tâm lý"
+    ]
+  },
+  {
+    "slug": "kafka-ben-bo-bien",
+    "source": "output/kafka-ben-bo-bien",
+    "titleVi": "Kafka Bên Bờ Biển",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Kafka Bên Bờ Biển"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Tên sách: Kafka bên bờ biển (Kafka on the shore) Dịch theo bản tiếng Anh, Kafka on the Shore, của Philip Gabriel; tham khảo bản tiếng Pháp, Kafka sur le rivage, của Corinne Atlan.",
+    "tags": [
+      "Kỳ ảo",
+      "Tâm lý",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "ke-trom-sach",
+    "source": "output/ke-trom-sach",
+    "titleVi": "Kẻ Trộm Sách",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Kẻ Trộm Sách"
+      }
+    },
+    "titleJp": "",
+    "author": "Markus Zusak",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Trong phần này, người kể chuyện của chúng ta sẽ giới thiệu: bản thân hắn – những sắc màu – và kẻ trộm sách",
+    "tags": [
+      "Cảm động",
+      "Lịch sử",
+      "Kinh điển"
+    ]
+  },
+  {
+    "slug": "khi-hoi-tho-hoa-thinh-khong",
+    "source": "output/khi-hoi-tho-hoa-thinh-khong",
+    "titleVi": "Khi Hơi Thở Hóa Thinh Không",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Khi Hơi Thở Hóa Thinh Không"
+      }
+    },
+    "titleJp": "",
+    "author": "Paul Kalanithi",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Group: “Hội những người thích đọc sách bằng Kindle” Chân thành cảm ơn các bạn đã tham gia đóng góp công sức cho Ebook trên. Hy vọng trong tương lai sẽ có nhiều bạn tham gia vì cộng đồng ebook nói chung và vì cộng đồng đọc sách bằng Kindle nói riêng.",
+    "tags": [
+      "Hồi ký",
+      "Cảm động",
+      "Y khoa"
+    ]
+  },
+  {
+    "slug": "khi-loi-thuoc-ve-nhung-vi-sao",
+    "source": "output/khi-loi-thuoc-ve-nhung-vi-sao",
+    "titleVi": "Khi Lỗi Thuộc Về Những Vì Sao",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Khi Lỗi Thuộc Về Những Vì Sao"
+      }
+    },
+    "titleJp": "",
+    "author": "John Green",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "“Kết hợp cũng đây - hàn gắn cũng đây - hủy hoại cũng đây - che đậy cũng đây - mà phát hiện cũng đây. Nhìn mà xem, lên đó rồi xuống đó, cuốn theo mọi thứ.” “Nước đó,” chú Hà Lan trả lời. “Chà, còn thời gian nữa.”",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "khong-gia-dinh",
+    "source": "output/khong-gia-dinh",
+    "titleVi": "Không Gia Đình",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Không Gia Đình"
+      }
+    },
+    "titleJp": "",
+    "author": "Hector Malot",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Héc-to Ma-lô (Hector Malot), sinh năm 1830 ở miền tây Bắc nước Pháp, là một nhà văn chuyên viết tiểu thuyết, được bạn đọc người Pháp yêu mến. Những tiểu thuyết của ông, như KHÔNG GIA ĐÌNH, TRONG GIA ĐÌNH, PÔNGPÔNG, RÔ-MANH CAN-BƠ-RI v.v... đều lành mạnh và hấp dẫn. Trong tiểu thuyết của Ma-lô, KHÔNG GIA ĐÌNH nổi tiếng hơn cả. Nó đã được giải thưởng của…",
+    "tags": [
+      "Kinh điển",
+      "Cảm động",
+      "Phiêu lưu"
+    ]
+  },
+  {
+    "slug": "khu-vuon-ngon-tu",
+    "source": "output/khu-vuon-ngon-tu",
+    "titleVi": "Khu Vườn Ngôn Từ",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Khu Vườn Ngôn Từ"
+      }
+    },
+    "titleJp": "",
+    "author": "Shinkai Makoto",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Typing: Bảo Trân, Nguyễn Hoài Linh, NNTL, Yemilk, P.T, Chua Trần, Xuan_an, LovePurple703 Ebolic là dự án chế bản ebook do Bookaholic thực hiện. Chúng tôi hoạt động hoàn toàn phi lợi nhuận và dựa trên tinh thần tự nguyện, với mục đích mang đến cho độc giả những đầu sách hay và lan tỏa văn hóa đọc cho cộng đồng. Chúng tôi khuyến khích độc giả mua sách in,…",
+    "tags": [
+      "Romance",
+      "Đời thường",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "lang-nghe-gio-hat",
+    "source": "output/lang-nghe-gio-hat",
+    "titleVi": "Lắng Nghe Gió Hát",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Lắng Nghe Gió Hát"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Lắng nghe gió hát diễn ra vào khoảng thời gian từ ngày 8 đến 28 tháng 8 năm 1970. Truyện Lắng nghe gió hát xoay quanh nhân vật chính là một sinh viên không rõ tên và cậu bạn của cậu tên Chuột; địa điểm hai người thường lui tới là quán bar tên Jay's Bar. Nhiều tác phẩm của ông đã dịch ra tiếng Việt và được người đọc Việt Nam ưa thích, như:",
+    "tags": [
+      "Đời thường",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "mot-lit-nuoc-mat",
+    "source": "output/mot-lit-nuoc-mat",
+    "titleVi": "Một Lít Nước Mắt",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Một Lít Nước Mắt"
+      }
+    },
+    "titleJp": "",
+    "author": "Kito Aya",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Một tâm hồn nhạy cảm. Một gia đình ấm áp. Một căn bệnh hiểm nghèo. Một cơ thể tật nguyền. Đó là những gì Kito Aya có trong hơn 20 năm cuộc đời. Với Aya, tương lai của cô là một con đường hẹp, và càng ngày nó càng trở nên hẹp hơn. Căn bệnh ngăn trở Aya khỏi tất cả những ước mơ và dự định, thậm chí việc tự mình bước ra ngoài phố để đi tới hiệu sách cũng trở thành một khao khát cháy bỏng. Hơn 6 năm kiên trì viết nhật ký, cô kể về những cảm nhận và suy tư của bản thân trong suốt quãng thời gian chứng kiến cơ thể mình từng bước từng bước gánh lấy một số phận đau đớn. Nhưng từ trong nước mắt và tật nguyền, cuộc tìm kiếm giá trị bản thân của cô đã làm rúng động cả Nhật Bản.",
+    "tags": [
+      "Hồi ký",
+      "Cảm động",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "nana-du-ky",
+    "source": "output/nana-du-ky",
+    "titleVi": "Nana Du Ký",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Nana Du Ký"
+      }
+    },
+    "titleJp": "",
+    "author": "Hiro Arikawa",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "NHỮNG CHUYỆN XẢY RA TRƯỚC KHI CHÚNG TÔI LÊN ĐƯỜNG “Tôi là một con mèo. Một con mèo chưa có tên.” Nghe đâu có một ngài mèo rất vĩ đại nào đó đã từng nói như thế*.",
+    "tags": [
+      "Cảm động",
+      "Chữa lành",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "nang-va-con-meo-cua-nang",
+    "source": "output/nang-va-con-meo-cua-nang",
+    "titleVi": "Nàng Và Con Mèo Của Nàng",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Nàng Và Con Mèo Của Nàng"
+      }
+    },
+    "titleJp": "",
+    "author": "Shinkai Makoto, Naruki Nagasawa",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Đỗ Nguyên (dịch) Tác phẩm giành giải thưởng quan trọng trong “Cuộc Thi Kỹ Xảo Hoạt Họa” của PROJECT TEAM DOGA Nàng và con mèo của nàng là câu chuyện được chuyển thể dựa theo bộ phim hoạt hình dài 5 phút đầu tiên của Shinkai. Nhẹ nhàng, yên ắng và trải đều như hơi thở, Nàng và con mèo của nàng là một bài hát ru đằm thắm dành cho những ai đang bươn chải ngược xuôi, hối hả theo đuổi dòng đời chảy siết. Ru tâm hồn những người con xa xứ, những người quá đỗi bộn bề suy tư. Đó là câu chuyện kể về Miyu, cô gái trẻ sống cùng con mèo của mình – Chobi. Khi Miyu phải học cách thích nghi với thế giới của những người trưởng thành, cô phát hiện ra cùng lúc sự tự do cũng như nỗi cô đơn bắt đầu len lỏi đan xen vào cuộc sống vốn dĩ đơn giản của mình. Và Chobi bắt đầu khám phá được thế giới bên ngoài qua những hành động của cô chủ. Thời gian trôi qua chậm rãi trong nhịp sống của Miyu và Chobi, nhưng sự khắc nghiệt của thế giới sớm bắt kịp và tìm đến họ.",
+    "tags": [
+      "Đời thường",
+      "Chữa lành",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "neu-gap-nguoi-ay-cho-toi-gui-loi-chao",
+    "source": "output/neu-gap-nguoi-ay-cho-toi-gui-loi-chao",
+    "titleVi": "Nếu Gặp Người Ấy, Cho Tôi Gửi Lời Chào",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Nếu Gặp Người Ấy, Cho Tôi Gửi Lời Chào"
+      }
+    },
+    "titleJp": "",
+    "author": "Ichikawa Takuji",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Cả hai im lặng một lúc, tôi nghe được cả tiếng ro ro của máy nén khí khi thổi ô xi vào bể thủy sinh. Xung quanh phảng phất thứ mùi như mùi của khu rừng vừa tạnh mưa. Karin gọi tên tôi. Tôi có cảm giác như chỗ mỏng nhất của lớp da bao bọc trái tim bị rách toác, một thứ gì đó vừa được giải phóng ra.",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "ngan-mat-troi-ruc-ro",
+    "source": "output/ngan-mat-troi-ruc-ro",
+    "titleVi": "Ngàn Mặt Trời Rực Rỡ",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Ngàn Mặt Trời Rực Rỡ"
+      }
+    },
+    "titleJp": "",
+    "author": "Khaled Hosseini",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Lần đầu tiên nghe thấy từ harami, Mariam mới năm tuổi. Đó là một ngày thứ Năm. Chắc là thế rồi, vì Mariam nhớ hôm đó mình rất bồn chồn và lo lắng, mà cô bé chỉ như vậy vào thứ Năm, ngày bố Jalil đến kolba* thăm cô. Trước đó, trong lúc chờ đợi đến khoảnh khắc khi cuối cùng cô cũng được nhìn thấy bố vẫy tay băng qua cánh đồng cỏ rập rờn cao ngang gối,…",
+    "tags": [
+      "Cảm động",
+      "Drama",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "ngay-dep-troi-de-xem-kangaroo",
+    "source": "output/ngay-dep-troi-de-xem-kangaroo",
+    "titleVi": "Ngày Đẹp Trời Để Xem Kangaroo",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Ngày Đẹp Trời Để Xem Kangaroo"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Tiếp cận văn chương Haruki từ các truyện ngắn là cách hay nhất, bởi tương quan khăng khít giữa hai thể loại, như đã nói trên đây, hơn nữa, sự phong phú trong đề tài và văn phong Haruki có thể lĩnh hội được nhanh chóng, dễ dàng và tiện lợi từ tuyển tập những truyện ngắn nồng súc và đa dạng, hơn là truyện dài. Hy vọng rằng những truyện ngắn được tuyển dịch…",
+    "tags": [
+      "Truyện ngắn",
+      "Đời thường",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "ngam",
+    "source": "output/ngam",
+    "titleVi": "Ngầm",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Ngầm"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Th�ng Ba nam 1995, th? d� Tokyo c?a Nh?t B?n rung chuy?n b?i m?t cu?c t?n c�ng v� ti?n kho�ng h?u trong l?ch s? nu?c n�y nh?m v�o nh?ng thu?ng d�n � h�nh kh�ch c?a h? th?ng t�u di?n ng?m Tokyo. Ch? mu?i hai ngu?i ch?t, nhung h�ng ng�n ngu?i d� b? thuong, trong d� c� nhi?u ngu?i b? t?n thuong vinh vi?n. Kh?ng khi?p hon, d�y l� v? t?n c�ng b?ng vu kh� h�a h?c, do m?t t? ch?c t? xung l� gi�o ph�i Aum Shinrikyo ch? t?o, l�n k? ho?ch v� ti?n h�nh. �u?c m� t? l� m?t t�c ph?m b�o ch� d?m ch?t van chuong, Ng?m d� kh?ng d?nh cho c�i t�i nang c?a Murakami � v?n h?u nhu kh�ng c?n tranh c�i trong linh v?c ti?u thuy?t � ? th? lo?i phi hu c?u. Trong lo?t ph?ng v?n v?i 34 n?n nh�n c?a v? t?n c�ng v� 8 th�nh vi�n c?a Gi�o ph�i Aum, Murakami d� dem l?i cho ch�ng ta ch�n dung v? nh?ng con ngu?i ? c? hai ph�a, b?c n�o cung r� r�ng, bi?u hi?n nhu ch�nh h? b?ng xuong b?ng th?t, v?i nh?ng quan di?m c� nh�n m?nh m?, kh�ng h? b? b�p m�o d? ph?c v? cho b?t k? m?c d�ch g�. Ng?m dem l?i c�i nh�n kh�ch quan v? v? t?n c�ng, d?ng th?i c? g?ng c?t nghia s? ki?n kinh ho�ng d� b?ng c�ch nh�n s�u hon v�o nh?ng b?t ?n c?a h? th?ng x� h?i dang du?c duy tr� trong th?i hi?n d?i, b?t ?n d?ng sau v? b? ngo�i b�nh l?ng c?a m?i c� nh�n, v� con du?ng d?n d?n t?i �c c?a nh?ng k? kh�ng ph� h?p ho?c d� t? ch?i cu?c ch?y dua b?t th�nh c?a ch? nghia v?t ch?t nhung l?i c?n ki?t ni?m tin v�o nh?ng di?u t?t d?p kh�c.",
+    "tags": [
+      "Tài liệu",
+      "Tâm lý",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "nguoi-dan-ong-mang-ten-ove",
+    "source": "output/nguoi-dan-ong-mang-ten-ove",
+    "titleVi": "Người Đàn Ông Mang Tên Ove",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Người Đàn Ông Mang Tên Ove"
+      }
+    },
+    "titleJp": "",
+    "author": "Fredrik Backman",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Người Đàn Ông Mang Tên Ove là cuốn sách về tình yêu thương giữa những người trong gia đình, bạn bè, hàng xóm láng giềng và về những giá trị đã được xác lập mà Ove, đơn giản là người duy trì những giá trị đó. Người Đàn Ông Mang Tên Ove thu hút độc giả không từ những châm biếm mà từ câu chuyện yêu thương lấp lánh bên trong. Đằng sau ông Ove với vẻ bề ngoài…",
+    "tags": [
+      "Cảm động",
+      "Chữa lành",
+      "Đời thường"
+    ]
+  },
+  {
+    "slug": "nguoi-dua-dieu",
+    "source": "output/nguoi-dua-dieu",
+    "titleVi": "Người Đua Diều",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Người Đua Diều"
+      }
+    },
+    "titleJp": "",
+    "author": "Khaled Hosseini",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Tôi đã trở thành tôi như ngày hôm nay từ tuổi mười hai, vào một ngày lạnh lẽo, ảm đạm mùa đông năm 1975. Tôi nhớ chính xác lúc đó đang khom người sau bức tường đất sụp đổ, nhòm trộm vào lối nhỏ gần khe suối đóng băng. Thời đó lâu lắm rồi, nhưng tôi biết những gì người ta nói về quá khứ, mà tôi đã học được, về việc anh có thể chôn vùi nó đi, là một điều…",
+    "tags": [
+      "Cảm động",
+      "Kinh điển",
+      "Drama"
+    ]
+  },
+  {
+    "slug": "nguoi-tinh-sputnik",
+    "source": "output/nguoi-tinh-sputnik",
+    "titleVi": "Người Tình Sputnik",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Người Tình Sputnik"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Ngày 4 tháng Mười năm 1957, Liên Xô phóng vệ tinh nhân tạo đầu tiên trên thế giới, Sputnik I, từ Trung Tâm Vũ Trụ Baikonor thuộc nước cộng hòa Kazakhstan. Sputnik có đường kính 58cm, nặng 83,6 kg và bay vòng quanh Trái đất 96 phút 12 giây. Ngày 3 tháng Mười một cùng năm, Sputnik II được phóng thành công, mang theo chú chó Laika. Laika trở thành sinh vật…",
+    "tags": [
+      "Romance",
+      "Tâm lý",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "nhay-nhay-nhay",
+    "source": "output/nhay-nhay-nhay",
+    "titleVi": "Nhảy Nhảy Nhảy",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Nhảy Nhảy Nhảy"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Một ám ảnh khôn nguôi về một chốn vừa xác định vừa bí ẩn - Khách sạn Cá Heo, cùng tiếng khóc âm u não nuột của một người đàn bà trong bóng tối của giấc mơ: chừng đó là đủ để lôi chàng trai xưng tôi - nhân vật chính của chúng ta - vào một cuộc phiêu lưu mới, nơi anh sẽ vừa chứng kiến vừa bị dính mắc vào một mê cung của những cái chết bất ngờ và những vận hành của một thứ mưu đồ có sẵn mà nhiều lúc hình như quá mạnh, không thể hiểu so với anh. Và trong cõi mê cung ấy anh gặp lại Người Cừu, gặp những con người anh chưa bao giờ nghĩ là sẽ gặp, và rồi sẽ cố hết sức tìm lại người đàn bà từng có lúc anh yêu, sẽ làm tất cả những gì trong sức mình để cứu nàng, để níu giữ nàng…",
+    "tags": [
+      "Kỳ ảo",
+      "Bí ẩn",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "nhung-dua-tre-duoi-theo-tinh-tu",
+    "source": "output/nhung-dua-tre-duoi-theo-tinh-tu",
+    "titleVi": "Những Đứa Trẻ Đuổi Theo Tinh Tú",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Những Đứa Trẻ Đuổi Theo Tinh Tú"
+      }
+    },
+    "titleJp": "",
+    "author": "Shinkai Makoto, Asahi Akisaka",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Đuổi theo tinh tú… Cũng không khác gì hái sao trên trời, ngụ ý những ước mơ không thể chạm tới. Biết không chạm tới mà vẫn mải miết theo đuổi, là hành động thường chỉ bắt gặp ở tâm hồn không chịu tuyệt vọng như trẻ thơ. Người ngoài nhìn vào thấy rất ngẩn ngơ, nhưng ấm lạnh ra sao chỉ người trong cuộc biết. Giống như người đàn ông vợ chết, cả quãng đời còn lại chỉ ráo riết tìm đường xuống địa ngục phục sinh nàng… Giống như cô bé vì chút tình mới chớm với một anh chàng, mà nồng nhiệt băng mình vào hành trình không thấy ngày mai dưới lòng đất… Bởi nếu không buông bỏ nhịp sống an toàn dù chỉ chốc lát, để đuổi theo những ước mơ dù vô vọng nhất và đối mặt với cảm xúc của mình ở chặng cuối hành trình, thì cuộc đời họ cũng không còn ý nghĩa gì nữa.",
+    "tags": [
+      "Fantasy",
+      "Adventure",
+      "Light Novel"
+    ]
+  },
+  {
+    "slug": "nhung-ky-vong-lon-lao",
+    "source": "output/nhung-ky-vong-lon-lao",
+    "titleVi": "Những Kỳ Vọng Lớn Lao",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Những Kỳ Vọng Lớn Lao"
+      }
+    },
+    "titleJp": "",
+    "author": "Charles Dickens",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Lê Đình Chi (dịch) & F. W. Pailthorpe (minh họa) Tại một vùng đầm lầy nước Anh, cậu bé mồ côi Pip, bất chấp cuộc sống nghèo khó ở lò rèn, vẫn không ngừng mơ được trở thành một quý ông. Số phận đưa cậu tới những cuộc gặp gỡ kỳ lạ nhất, với một tên tù trốn trại, với một bà cô già giàu có nghiệt ngã chôn mình trong dinh thự, với Estella mà sắc đẹp chỉ có thể so với chính sự kiêu ngạo của nàng. Giữa các cuộc gặp gỡ đó là một điều còn phi thường hơn: Pip được hứa hẹn sẽ được thừa kế một gia sản khổng lồ từ một người ẩn danh, một gia sản vĩ đại cho phép cậu bước chân vào giới quý tộc như hằng mơ ước.",
+    "tags": [
+      "Kinh điển",
+      "Văn học phương Tây"
+    ]
+  },
+  {
+    "slug": "nhung-nguoi-khon-kho",
+    "source": "output/nhung-nguoi-khon-kho",
+    "titleVi": "Những Người Khốn Khổ",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Những Người Khốn Khổ"
+      }
+    },
+    "titleJp": "",
+    "author": "Victor Hugo",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Victor Hugo (26 tháng 2, 1802 tại Besançon - 22 tháng 5, 1885 tại Paris) là một nhà văn, nhà thơ, nhà viết kịch danh tiếng nhất của nước Pháp, là nhân vật dẫn đầu phong trào lãng mạn (The Romantic Movement) của nền văn chương Pháp. Victor Hugo là con út của ông Joseph Léopold Sigisbert Hugo (1773-182 và bà Sophie Trébuchet (1772-1821). Ông sinh năm 1802…",
+    "tags": [
+      "Kinh điển",
+      "Lịch sử",
+      "Văn học phương Tây"
+    ]
+  },
+  {
+    "slug": "noi-dau-roi-se-qua-di",
+    "source": "output/noi-dau-roi-se-qua-di",
+    "titleVi": "Nỗi Đau Rồi Sẽ Qua Đi",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Nỗi Đau Rồi Sẽ Qua Đi"
+      }
+    },
+    "titleJp": "",
+    "author": "Laura Tims",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Việc đi trên hành lang trường học thực sự đã trở nên đáng sợ hơn rất nhiều kể từ khi tôi buộc phải gắn bó cả cuộc đời với cây nạng. Tôi đứng nép bên cạnh cửa phòng học, mặc kệ dòng người lũ lượt đi qua, cảm thấy mình giống như một chiếc máy kéo với tốc độ tối đa 50km/h trên con đường cao tốc quy định tốc độ tối thiểu hơn 100km/h vậy. Tiếng chuông báo…",
+    "tags": [
+      "Cảm động",
+      "Tâm lý",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "noi-em-quay-ve-co-toi-dung-doi",
+    "source": "output/noi-em-quay-ve-co-toi-dung-doi",
+    "titleVi": "Nơi Em Quay Về Có Tôi Đứng Đợi",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Nơi Em Quay Về Có Tôi Đứng Đợi"
+      }
+    },
+    "titleJp": "",
+    "author": "Ichikawa Takuji",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Các cá nhân không hài lòng về group EFF và admin EFF vui lòng không đọc ebook này – tránh tự ngược.",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "phia-nam-bien-gioi-phia-tay-mat-troi",
+    "source": "output/phia-nam-bien-gioi-phia-tay-mat-troi",
+    "titleVi": "Phía Nam Biên Giới, Phía Tây Mặt Trời",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Phía Nam Biên Giới, Phía Tây Mặt Trời"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Tên sách: Phía Nam biên giới, phía Tây mặt trời \"Cuốn tiểu thuyết cảm động và sâu sắc nhất của ông\" – The Boston Globe",
+    "tags": [
+      "Romance",
+      "Tâm lý",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "rung-na-uy",
+    "source": "output/rung-na-uy",
+    "titleVi": "Rừng Na-Uy",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Rừng Na-Uy"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Mối tình sâu sắc nhất của bạn có gắn liền với một bài hát nào không? Một cảnh trí nào không? Như một căn phòng trong đêm mưa mùa hạ? Một chiều thu ngoài bìa rừng hoang vắng? Rừng Na-uy là tên một bài hát của nhóm nhạc Beatles nổi tiếng. Lời cả có những câu \"Tôi từng có một cô gái, mà có lẽ đúng hơn là cô ấy đã từng có tôi… Cô dẫn tôi vào phòng và bảo tôi…",
+    "tags": [
+      "Romance",
+      "Tâm lý",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "sau-con-dong-dat",
+    "source": "output/sau-con-dong-dat",
+    "titleVi": "Sau Cơn Động Đất",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Sau Cơn Động Đất"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Gô gái trăm phần trăm trong một sáng đẹp trời tháng Tư Tiếp cận văn chương Haruki từ các truyện ngắn là cách hay nhất, bởi tương quan khăng khít giữa hai thể loại, như đã nói trên đây, hơn nữa, sự phong phú trong đề tài và văn phong Haruki có thể lĩnh hội được nhanh chóng, dễ dàng và tiện lợi từ tuyển tập những truyện ngắn nồng súc và đa dạng, hơn là…",
+    "tags": [
+      "Truyện ngắn",
+      "Tâm lý",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "tam-anh-tinh-yeu-va-mot-cau-chuyen-khac",
+    "source": "output/tam-anh-tinh-yeu-va-mot-cau-chuyen-khac",
+    "titleVi": "Tấm Ảnh Tình Yêu Và Một Câu Chuyện Khác",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Tấm Ảnh Tình Yêu Và Một Câu Chuyện Khác"
+      }
+    },
+    "titleJp": "",
+    "author": "Ichikawa Takuji",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Ichikawa Takuji sinh năm 1962 tại Tokyo. Sau khi tốt nghiệp khoa Kinh tế trường Đại học Dokkyo, Nhật Bản, ông vào làm tại một công ty xuất bản nhưng được 3 tháng thì xin nghỉ việc và đi du lịch vòng quanh nước Nhật bằng xe máy. Sau đó ông làm tại một văn phòng nhỏ chuyên về thuế suốt 14 năm trước khi nghỉ hẳn để chuyên tâm vào công việc viết lách. Từ năm…",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "that-tich-khong-mua",
+    "source": "output/that-tich-khong-mua",
+    "titleVi": "Thất Tịch Không Mưa",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Thất Tịch Không Mưa"
+      }
+    },
+    "titleJp": "",
+    "author": "Lâu Vũ Tình",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Tình yêu giống như lần đầu được nếm thử quả khế mới chín, Chua chua chát chát, nhưng không kìm được, vẫn muốn nếm thêm lần nữa.",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Ngôn tình"
+    ]
+  },
+  {
+    "slug": "the-gioi-ket-thuc-diu-dang-den-the",
+    "source": "output/the-gioi-ket-thuc-diu-dang-den-the",
+    "titleVi": "Thế Giới Kết Thúc Dịu Dàng Đến Thế",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Thế Giới Kết Thúc Dịu Dàng Đến Thế"
+      }
+    },
+    "titleJp": "",
+    "author": "Ichikawa Takuji",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Câu chuyện bắt đầu từ khi đám mây xám trì xuất hiện phía trên một thị trấn hẻo lánh của Nhật, chiếu cột ánh sáng xanh lạnh xuống. Mọi vật bị ánh sáng xanh rọi vào sẽ đông cứng lại như đá hoa cương, lạnh ngắt và cũng tỏa ra sắc xanh lạnh. Dần dần, diện tích bị đóng băng lan rộng khắp trái đất. Mọi người cuống cuồng tìm về bên người thân yêu chờ đón giây phút cuối cùng. \"Yêu một ai đó là thế đấy. Trọn vẹn tất cả mọi thứ. Không kén chọn cái này hay cái kia. Dâng hiến cả cuộc đời mình. Tuyệt đối không nuối tiếc.\" Ai đọc sửa lỗi update tiếp. Mình hết hơi sức với cuốn này rồi, hiu hiu. _Quỳnh Quỳnh_",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "totto-chan-ben-cua-so",
+    "source": "output/totto-chan-ben-cua-so",
+    "titleVi": "Totto-Chan Bên Cửa Sổ",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Totto-Chan Bên Cửa Sổ"
+      }
+    },
+    "titleJp": "",
+    "author": "Tetsuko Kuroyanagi",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Họ rời con tàu Oâi-ma-chi tạu ga Gi-y-u-gao-ka, và người mẹ nắm tay Toot-tô-chan đi ra cổng soát vé. Tốt-tô-chan chưa đi tàu bao giờ nên em không muốn trả lại cái vé quý giá mà em đang nắm chặt trong tay. - Cháu giữ lại cái vé này được không? – Tốt-tô-chan hỏi người soát vé.",
+    "tags": [
+      "Cảm động",
+      "Đời thường",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "toi-noi-gi-khi-noi-ve-chay-bo",
+    "source": "output/toi-noi-gi-khi-noi-ve-chay-bo",
+    "titleVi": "Tôi Nói Gì Khi Nói Về Chạy Bộ",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Tôi Nói Gì Khi Nói Về Chạy Bộ"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "* Tựa gốc: Hashiru Koto Ni Tsuite Kataru Toki Ni Boku No Kataru Koto 6.      kuaNgo - soát chỉnh tả, typing và design layout chuẩn cho sách",
+    "tags": [
+      "Tản văn",
+      "Đời thường",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "toi-van-nghe-tieng-em-tham-goi",
+    "source": "output/toi-van-nghe-tieng-em-tham-goi",
+    "titleVi": "Tôi Vẫn Nghe Tiếng Em Thầm Gọi",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Tôi Vẫn Nghe Tiếng Em Thầm Gọi"
+      }
+    },
+    "titleJp": "",
+    "author": "Ichikawa Takuji",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Ichikawa Takuji sinh ngày mùng 7 tháng Mười năm 1962 tại Tokyo. Ông tốt nghiệp trường đại học Dokkyo. Cuốn tiểu thuyết đầu tay của ông, Separation, xuất bản năm 2002. Cuốn Em sẽ đến cùng cơn mưa (xuất bản tại Nhật với tên Ima Ainiyukimasu) in lần đầu năm 2003, là một trong những tiểu thuyết thành công nhất Nhật Bản, được chuyển thể thành truyện tranh,…",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "to-muon-an-tuy-cua-cau",
+    "source": "output/to-muon-an-tuy-cua-cau",
+    "titleVi": "Tớ Muốn Ăn Tụy Của Cậu",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Tớ Muốn Ăn Tụy Của Cậu"
+      }
+    },
+    "titleJp": "",
+    "author": "Yoru Sumino",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Đám tang cô bạn cùng lớp với tôi, Yamauchi Sakura, được cử hành trong một ngày u ám dường như chẳng phù hợp với cô ấy khi còn sống. Như để chứng minh cho giá trị cuộc sống của cô, mọi người ai nấy đều sụt sùi nước mắt không chỉ trong buổi lễ, mà còn buổi tối trước khi an táng nữa, nhưng cả hai buổi đó tôi đều không đi. Tôi ở trong nhà suốt thời gian ấy.",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Học đường",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "tra-hoa-nu",
+    "source": "output/tra-hoa-nu",
+    "titleVi": "Trà Hoa Nữ",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Trà Hoa Nữ"
+      }
+    },
+    "titleJp": "",
+    "author": "Alexandre Dumas con",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Người ta chỉ tạo nên nhân vật sau khi đã nghiên cứu kỹ con người. Cũng như, người ta chỉ nói được tiếng nước ngoài sau khi đã học hỏi nghiêm túc tiếng nói đó. Tôi chưa đến tuổi để đi vào sáng tạo. Tôi xin chỉ làm công việc của người kể chuyện.",
+    "tags": [
+      "Kinh điển",
+      "Romance",
+      "Văn học phương Tây"
+    ]
+  },
+  {
+    "slug": "tron-thoat-khoi-thuc-tai",
+    "source": "output/tron-thoat-khoi-thuc-tai",
+    "titleVi": "Trốn Thoát Khỏi Thực Tại",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Trốn Thoát Khỏi Thực Tại"
+      }
+    },
+    "titleJp": "",
+    "author": "Fumio Yamamoto",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Thân dẹp, dài từ 20-30 mm, phần miệng nằm giữa bụng. Sống dưới khe suối, thường được sử dụng trong các thí nghiệm tái sinh.",
+    "tags": [
+      "Tâm lý",
+      "Đời thường",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "truoc-ngay-em-den",
+    "source": "output/truoc-ngay-em-den",
+    "titleVi": "Trước Ngày Em Đến",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Trước Ngày Em Đến"
+      }
+    },
+    "titleJp": "",
+    "author": "Jojo Moyes",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Khi anh chui ra khỏi phòng tắm thì cô dậy rồi, cô đang chống tay lên gối và giở phần phật những cuốn sách bướm du lịch đặt bên cạnh giường anh. Mặc một chiếc áo phông của anh, mái tóc dài rối bời của cô tự nhiên gợi ra những ý nghĩ về đêm trước. Anh đứng đó, vừa tận hưởng khoảnh khắc hồi tưởng ngắn ngủi ấy vừa lau nước trên tóc bằng khăn tắm. Cô ngẩng…",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "tuoi-tho-du-doi",
+    "source": "output/tuoi-tho-du-doi",
+    "titleVi": "Tuổi Thơ Dữ Dội",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Tuổi Thơ Dữ Dội"
+      }
+    },
+    "titleJp": "",
+    "author": "Phùng Quán",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Phùng Quán (1932- 1995) Sinh tại Thừa Thiên - Huế. 13 tuổi tham gia Vệ quốc quân - chiến sĩ Trinh P sát Trung đoàn 101. (tiền thân là Trung đoàn Trần Cao Vân)",
+    "tags": [
+      "Kinh điển",
+      "Lịch sử",
+      "Văn học Việt Nam"
+    ]
+  },
+  {
+    "slug": "ve-em-bang-mau-noi-nho",
+    "source": "output/ve-em-bang-mau-noi-nho",
+    "titleVi": "Vẽ Em Bằng Màu Nỗi Nhớ",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Vẽ Em Bằng Màu Nỗi Nhớ"
+      }
+    },
+    "titleJp": "",
+    "author": "Tâm Phạm",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Sau bao nhiêu năm trở lại đây, mọi thứ vẫn không hề thay đổi gì nhiều. Vẫn con đường nhỏ vào khu chợ Việt Kiều, vẫn dòng người qua lại mua bán tấp nập, lũ trẻ trong xóm vui đùa cùng nhau một cách hồn nhiên. Tôi đang ngồi trong một quán hủ tiếu nhỏ, cái nơi mà nó đã từng gắn liền với tuổi thơ. Là những lúc phải ăn hủ tiếu vì chán cơm thèm phở theo đúng…",
+    "tags": [
+      "Romance",
+      "Cảm động",
+      "Văn học Việt Nam"
+    ]
+  },
+  {
+    "slug": "xa-ngoai-kia-noi-loai-tom-hat",
+    "source": "output/xa-ngoai-kia-noi-loai-tom-hat",
+    "titleVi": "Xa Ngoài Kia Nơi Loài Tôm Hát",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Xa Ngoài Kia Nơi Loài Tôm Hát"
+      }
+    },
+    "titleJp": "",
+    "author": "Delia Owens",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Trong nhiều năm, những tin đồn về \"Cô gái đồng lầy\" đã ám ảnh Barkley Cove, một thị trấn yên tĩnh trên bờ biển Bắc Carolina. Vì vậy, khi nơi này rúng động với cái chết đầy bí ẩn của Chase Andrew, người dân địa phương ngay lập tức đổ dồn nghi ngờ vào cô.",
+    "tags": [
+      "Cảm động",
+      "Bí ẩn",
+      "Tiểu thuyết"
+    ]
+  },
+  {
+    "slug": "xu-so-dieu-ky-tan-bao-va-chon-tan-cung-the-gioi",
+    "source": "output/xu-so-dieu-ky-tan-bao-va-chon-tan-cung-the-gioi",
+    "titleVi": "Xứ Sở Diệu Kỳ Tàn Bạo Và Chốn Tận Cùng Thế Giới",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Xứ Sở Diệu Kỳ Tàn Bạo Và Chốn Tận Cùng Thế Giới"
+      }
+    },
+    "titleJp": "",
+    "author": "Haruki Murakami",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "XỨ SỞ DIỆU KỲ TẠN BẠO VÀ CHỐN TẬN CÙNG THẾ GIỚI – Haruki Murakami",
+    "tags": [
+      "Kỳ ảo",
+      "Sci-Fi",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "xu-tuyet",
+    "source": "output/xu-tuyet",
+    "titleVi": "Xứ Tuyết",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Xứ Tuyết"
+      }
+    },
+    "titleJp": "",
+    "author": "Yasunari Kawabata",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Qua một đường hầm dài giữa hai vùng đất và thế là đã tới xứ tuyết. Chân trời trắng mờ dưới bóng đêm. Đoàn tàu chạy chậm dần rồi dừng lại ở một ga xép. Cô gái ngồi phía bên kia hành lang đứng lên mở ô cửa sổ trước mắt Shimamura. Cái lạnh của tuyết ùa vào toa tàu. Cúi người nhô ra ngoài đến hết cỡ, cô gái gọi rõ to ông trưởng ga.",
+    "tags": [
+      "Kinh điển",
+      "Romance",
+      "Văn học Nhật Bản"
+    ]
+  },
+  {
+    "slug": "your-name-ten-cau-la-gi",
+    "source": "output/your-name-ten-cau-la-gi",
+    "titleVi": "Your Name - Tên Cậu Là Gì?",
+    "volumeTitles": {
+      "Tập_1": {
+        "label": "Trọn bộ",
+        "title": "Your Name - Tên Cậu Là Gì?"
+      }
+    },
+    "titleJp": "",
+    "author": "Shinkai Makoto",
+    "illustrator": "",
+    "status": "Hoàn thành",
+    "description": "Sinh năm 1973 ở tỉnh Nagano. Là đạo diễn phim hoạt hình. Năm 2002, bộ phim ngắn Tiếng gọi từ vì sao xa do anh tự thực hiện đã thu hút rất nhiều sự chú ý. Sau đó, các tác phẩm Bên kia mây trời là nơi hò hẹn, 5 centimet trên giây, Đứa trẻ đuổi theo vì sao, Khu vườn ngôn từ lần lượt ra đời và nhận được khá nhiều giải thưởng trong nước. Tiểu thuyết do anh…",
+    "tags": [
+      "Romance",
+      "Fantasy",
+      "Light Novel"
+    ]
   }
 ]

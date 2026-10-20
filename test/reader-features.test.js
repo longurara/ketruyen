@@ -101,7 +101,9 @@ test("all built-in characters have valid story gates and future notes remain loc
   const fs = require("node:fs"), path = require("node:path");
   const publicPath = path.join(__dirname, "../public");
   const shelf = JSON.parse(fs.readFileSync(path.join(publicPath, "data/series.json"), "utf8"));
-  for (const series of shelf) {
+  const catalogSeries = shelf.filter((series) => characterCatalog.series[series.slug]);
+  assert.ok(catalogSeries.length >= 3);
+  for (const series of catalogSeries) {
     const defaults = characterCatalog.series[series.slug];
     const volumesData = JSON.parse(fs.readFileSync(path.join(publicPath, series.index), "utf8"));
     const entries = chapterEntries({ ...series, volumesData });

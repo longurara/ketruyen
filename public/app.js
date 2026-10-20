@@ -218,6 +218,37 @@
   const listenVoiceSelect = $("#listen-voice");
   const listenVoiceHint = $("#listen-voice-hint");
 
+  const seriesIndexRequests = new Map();
+
+  function ensureSeriesIndex(series) {
+    if (!series || series.personal || Array.isArray(series.volumesData)) {
+      return Promise.resolve(series);
+    }
+    if (!seriesIndexRequests.has(series.slug)) {
+      const request = fetch(series.index, { cache: "no-cache" })
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}: ${series.index}`);
+          return res.json();
+        })
+        .then((volumesData) => {
+          series.volumesData = volumesData;
+          readerFeatures?.syncSeries?.(series);
+          return series;
+        });
+      request.catch(() => {
+        if (seriesIndexRequests.get(series.slug) === request) seriesIndexRequests.delete(series.slug);
+      });
+      seriesIndexRequests.set(series.slug, request);
+    }
+    return seriesIndexRequests.get(series.slug);
+  }
+
+  function shouldPreloadSeriesIndex(series, index, activeSlugs) {
+    if (index === 0 || activeSlugs.has(series.slug)) return true;
+    const prefix = series.legacyStorage ? "tenshi" : `tenshi-${series.slug}`;
+    return Boolean(localStorage.getItem(`${prefix}-progress`) || localStorage.getItem(`${prefix}-chapters`));
+  }
+
   async function loadData() {
     try {
       const [catalog, ebooks] = await Promise.allSettled([
@@ -225,14 +256,28 @@
           const res = await fetch("/data/series.json", { cache: "no-cache" });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const seriesList = await res.json();
-          const indexes = await Promise.allSettled(seriesList.map(async (series, index) => {
-            const response = await fetch(series.index, { cache: "no-cache" });
-            if (!response.ok) throw new Error(`HTTP ${response.status}: ${series.index}`);
-            series.volumesData = await response.json();
+          const activeSlugs = new Set();
+          try {
+            const hashParts = decodeURIComponent(location.hash.replace(/^#\/?/, "")).split("/").filter(Boolean);
+            if (hashParts[0]) activeSlugs.add(hashParts[0]);
+          } catch (_) {}
+          try {
+            const lib = JSON.parse(localStorage.getItem("tenshi-library-v1"));
+            if (Array.isArray(lib?.marks)) lib.marks.forEach((m) => { if (m?.slug) activeSlugs.add(m.slug); });
+          } catch (_) {}
+          seriesList.forEach((series, index) => {
+            series.volumesData = null;
             series.legacyStorage = index === 0;
-            return series;
-          }));
-          return indexes.filter((result) => result.status === "fulfilled").map((result) => result.value);
+          });
+          await Promise.allSettled(
+            seriesList
+              .filter((series, index) => shouldPreloadSeriesIndex(series, index, activeSlugs))
+              .map((series) => ensureSeriesIndex(series))
+          );
+          if (seriesList[0] && !Array.isArray(seriesList[0].volumesData)) {
+            await ensureSeriesIndex(seriesList[0]);
+          }
+          return seriesList;
         })(),
         EbookImport.list()
       ]);
@@ -305,7 +350,7 @@
       const progressKey = series.legacyStorage ? "tenshi-progress" : `tenshi-${series.slug}-progress`;
       let progress = null;
       try { progress = JSON.parse(localStorage.getItem(progressKey)); } catch (error) {}
-      const volume = progress && series.volumesData[progress.volIdx];
+      const volume = progress && series.volumesData?.[progress.volIdx];
       const chapter = volume && volume.chapters[progress.chapIdx];
       const resume = chapter ? volume.name : "";
       const updates = readerFeatures ? readerFeatures.updates(series).length : 0;
@@ -338,10 +383,31 @@
   }
 
   function openSeries(seriesIdx) {
-    runEinkPageTurn(() => {
-      activateSeries(seriesIdx);
-      showView("home");
-    }, { lagMs: 120, totalMs: 740 });
+    const series = SERIES[seriesIdx];
+    if (!series) return;
+    if (Array.isArray(series.volumesData)) {
+      runEinkPageTurn(() => {
+        activateSeries(seriesIdx);
+        showView("home");
+      }, { lagMs: 120, totalMs: 740 });
+      return;
+    }
+    const token = ++pendingOpenToken;
+    document.body.classList.add("is-fetching");
+    ensureSeriesIndex(series)
+      .then(() => {
+        if (token !== pendingOpenToken) return;
+        runEinkPageTurn(() => {
+          activateSeries(seriesIdx);
+          showView("home");
+        }, { lagMs: 120, totalMs: 740 });
+      })
+      .catch(() => {
+        if (token === pendingOpenToken) showMessage("Không tải được mục lục truyện. Kiểm tra kết nối mạng rồi thử lại.");
+      })
+      .finally(() => {
+        if (token === pendingOpenToken) document.body.classList.remove("is-fetching");
+      });
   }
 
   // ------------------------------------------------------------
@@ -859,6 +925,7 @@
       }),
       legacyState: savedSeriesState,
       completed: (series) => {
+        if (!Array.isArray(series.volumesData)) return 0;
         const chapters = series === SERIES_META ? chapterState : savedSeriesState(series).chapters;
         return series.volumesData.reduce((sum, volume, volIdx) => sum + volume.chapters.filter((chapter, chapIdx) => !chapter.isIllustration && chapters[`${volIdx}:${chapIdx}`]?.done).length, 0);
       },
@@ -875,7 +942,7 @@
     libraryTools = LibraryTools.create({
       series: SERIES, context: () => ({ series: SERIES_META, view: currentView, volIdx: currentVolIdx, chapIdx: currentChapIdx }),
       message: showMessage, renderShelf, openChapter,
-      openMark: (seriesIdx, mark) => { if (mark.type !== "bookmark") returnReaderPosition ||= captureReaderPosition(); activateSeries(seriesIdx); openChapter(mark.volIdx, mark.chapIdx, mark.type === "bookmark" ? { anchor: mark.anchor } : { hit: { p: mark.parts[0]?.p || 0 } }); },
+      openMark: async (seriesIdx, mark) => { if (seriesIdx < 0 || !SERIES[seriesIdx]) return; try { await ensureSeriesIndex(SERIES[seriesIdx]); } catch (_) { showMessage("Không tải được mục lục truyện."); return; } if (mark.type !== "bookmark") returnReaderPosition ||= captureReaderPosition(); activateSeries(seriesIdx); openChapter(mark.volIdx, mark.chapIdx, mark.type === "bookmark" ? { anchor: mark.anchor } : { hit: { p: mark.parts[0]?.p || 0 } }); },
       capturePosition: () => { recordReadingPosition(); return captureReaderPosition()?.anchor || null; },
       deleteBook: (book) => ebookUI?.deleteBook(book),
       preservePosition: preserveReaderPosition
@@ -889,7 +956,7 @@
       characters: () => readerFeatures.characterList(), reached: () => readerFeatures.reached(),
       marks: () => libraryTools.getMarks(), progress: () => chapterState, bookmark: () => libraryTools.quickBookmark(), openMarks: () => libraryTools.openMarks(),
       canReturn: () => Boolean(returnReaderPosition), returnToReadingPosition,
-      openSource: (term) => { const seriesIdx = SERIES.findIndex((s) => s.slug === term.slug); if (seriesIdx < 0 || !SERIES[seriesIdx].volumesData[term.volIdx]?.chapters[term.chapIdx]) { showMessage("Sách hoặc chương gốc không còn trên kệ."); return; } returnReaderPosition ||= captureReaderPosition(); activateSeries(seriesIdx); openChapter(term.volIdx, term.chapIdx, { hit: { p: term.p } }); },
+      openSource: async (term) => { const seriesIdx = SERIES.findIndex((s) => s.slug === term.slug); if (seriesIdx < 0) { showMessage("Sách hoặc chương gốc không còn trên kệ."); return; } try { await ensureSeriesIndex(SERIES[seriesIdx]); } catch (_) { showMessage("Không tải được mục lục truyện."); return; } if (!SERIES[seriesIdx].volumesData?.[term.volIdx]?.chapters[term.chapIdx]) { showMessage("Sách hoặc chương gốc không còn trên kệ."); return; } returnReaderPosition ||= captureReaderPosition(); activateSeries(seriesIdx); openChapter(term.volIdx, term.chapIdx, { hit: { p: term.p } }); },
       preservePosition: preserveReaderPosition,
       getSettings: () => ({ fontSize, lineHeight, fontFamily, theme, imageMode, eink: einkEnabled, continuous: continuousEnabled, tap: tapPagingEnabled, layout: libraryTools.getLayout() }),
       applySettings: (settings) => { fontSize = settings.fontSize; localStorage.setItem("tenshi-font-size", String(fontSize)); applyFontSize(); setLineHeight(settings.lineHeight); setFontFamily(settings.fontFamily); setTheme(settings.theme); setImageMode(settings.imageMode); setEink(settings.eink ? "on" : "off"); setTapPaging(settings.tap ? "on" : "off"); setContinuous(settings.continuous ? "on" : "off"); libraryTools.setLayout(settings.layout); }
@@ -1174,16 +1241,18 @@
         closeLightbox();
       }
     });
-    window.addEventListener("popstate", () => {
+    window.addEventListener("popstate", async () => {
       if (!lightbox.hidden) {
         lightboxPushed = false;
         hideLightbox();
         return;
       }
       // Back/forward overrides a chapter still waiting on its text.
-      pendingOpenToken += 1;
+      const token = ++pendingOpenToken;
       document.body.classList.remove("is-fetching");
-      applyRoute(parseRoute(location.hash));
+      const route = await resolveHashRoute(location.hash);
+      if (token !== pendingOpenToken) return;
+      applyRoute(route);
     });
 
     document.addEventListener("keydown", (event) => {
@@ -1300,7 +1369,8 @@
     const storyIndex = volume.chapters
       .slice(0, chapIdx + 1)
       .filter((item) => !item.isIllustration).length;
-    const numbered = chapter.title.match(/^Chương\s*(\d+)\s*[:：\-–—]\s*(.+)$/i);
+    const numbered = chapter.title.match(/^Chương\s*(\d+)(?:\s*[:：\-–—.]\s*|\s+)(.+)$/i);
+    const lifeMatch = chapter.title.match(/^(Life\s*-?\d+(?:\.\d+)?|New\s+Life|Extra\s+Life)(?:\s*[:：\-–—.]\s*(.+))?$/i);
     const prefixed = chapter.title.match(/^((?:Chương\s+mở\s+đầu|Lời\s+mở\s+đầu|Chương\s+đầu|Mở\s+đầu|Chương\s+kết|Phần\s+kết|Chương\s+bổ\s+sung|Ngoại\s+truyện[^:：\-–—]*?|Lời\s+bạt[^:：\-–—]*?))\s*[:：\-–—]\s*(.+)$/i);
     const ssMatch = chapter.title.match(/^(SS\s*\d+)\s*[:：\-–—]?\s+(.+)$/i);
     const volBonusMatch = chapter.title.match(/^Volume\s+(\d+(?:\.\d+)?)\s+Bonus\s+Short\s+Story\s*[:：\-–—]\s*(.+)$/i);
@@ -1316,6 +1386,7 @@
       return { kicker: prefixed[1].trim(), title: prefixed[2].trim(), num: "✦" };
     }
     if (ssMatch) return { kicker: ssMatch[1].toUpperCase().replace(/\s+/g, ""), title: ssMatch[2].trim(), num: storyIndex };
+    if (lifeMatch) return { kicker: lifeMatch[1].replace(/\s+/g, " "), title: (lifeMatch[2] || lifeMatch[1]).trim(), num: storyIndex };
     if (volBonusMatch) return { kicker: `Ngoại truyện Tập ${volBonusMatch[1]}`, title: volBonusMatch[2].trim(), num: storyIndex };
     if (fairBonusMatch) return { kicker: fairBonusMatch[1].trim(), title: fairBonusMatch[2].trim(), num: storyIndex };
     if (afterword) {
@@ -1802,7 +1873,7 @@
   // ------------------------------------------------------------
 
   function volumeSlug(volIdx, seriesIdx = activeSeriesIdx) {
-    return normalizeText(SERIES[seriesIdx].volumesData[volIdx].dirName).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    return normalizeText(SERIES[seriesIdx]?.volumesData?.[volIdx]?.dirName || "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   }
 
   function routeHash(route) {
@@ -1829,7 +1900,7 @@
     if (seriesIdx < 0) {
       const legacySeries = SERIES.findIndex((series) => series.legacyStorage);
       if (legacySeries < 0) return { view: "shelf" };
-      const legacyIdx = SERIES[legacySeries].volumesData.findIndex((_, i) => volumeSlug(i, legacySeries) === parts[0]);
+      const legacyIdx = (SERIES[legacySeries].volumesData || []).findIndex((_, i) => volumeSlug(i, legacySeries) === parts[0]);
       if (legacyIdx < 0) return { view: "shelf" };
       seriesIdx = legacySeries;
       volumePart = parts[0];
@@ -1837,11 +1908,26 @@
     }
     if (!volumePart) return { view: "home", seriesIdx };
     const volumes = SERIES[seriesIdx].volumesData;
+    if (!Array.isArray(volumes)) return { view: "home", seriesIdx };
     const volIdx = volumes.findIndex((_, i) => volumeSlug(i, seriesIdx) === volumePart);
     if (volIdx < 0) return { view: "home", seriesIdx };
     const chapIdx = /^\d+$/.test(chapterPart || "") ? parseInt(chapterPart, 10) : -1;
     if (!volumes[volIdx].chapters[chapIdx]) return { view: "volume", seriesIdx, volIdx };
     return { view: "reader", seriesIdx, volIdx, chapIdx };
+  }
+
+  async function resolveHashRoute(hash) {
+    let parts = [];
+    try {
+      parts = decodeURIComponent(hash.replace(/^#\/?/, "")).split("/").filter(Boolean);
+    } catch (_) {}
+    if (parts.length) {
+      const matched = SERIES.find((series) => series.slug === parts[0]);
+      if (matched && !Array.isArray(matched.volumesData)) {
+        try { await ensureSeriesIndex(matched); } catch (_) {}
+      }
+    }
+    return parseRoute(hash);
   }
 
   function currentRoute() {
@@ -1866,6 +1952,21 @@
   // Show whatever the URL points at (back/forward, or the first load).
   function applyRoute(route, options) {
     if (routeHash(route) === routeHash(currentRoute())) return;
+    if (route.view !== "shelf" && !Array.isArray(SERIES[route.seriesIdx]?.volumesData)) {
+      const token = ++pendingOpenToken;
+      document.body.classList.add("is-fetching");
+      ensureSeriesIndex(SERIES[route.seriesIdx])
+        .then(() => {
+          if (token === pendingOpenToken) applyRoute(route, options);
+        })
+        .catch(() => {
+          if (token === pendingOpenToken) showMessage("Không tải được mục lục truyện. Kiểm tra kết nối mạng rồi thử lại.");
+        })
+        .finally(() => {
+          if (token === pendingOpenToken) document.body.classList.remove("is-fetching");
+        });
+      return;
+    }
     if (route.view !== "shelf") activateSeries(route.seriesIdx);
 
     if (route.view === "reader" && !loadedVolumes.has(route.volIdx)) {
@@ -1904,7 +2005,7 @@
 
   async function restoreRoute() {
     window.history.scrollRestoration = "manual";
-    let route = parseRoute(location.hash);
+    let route = await resolveHashRoute(location.hash);
     if (route.view !== "shelf") activateSeries(route.seriesIdx);
 
     // Fetch a linked chapter's text behind the loading screen; if that fails
@@ -4150,10 +4251,11 @@
     const restored = holdAnchor(section, position.anchor);
     rememberReaderPosition(); return restored;
   }
-  function returnToReadingPosition() {
+  async function returnToReadingPosition() {
     const position = returnReaderPosition; if (!position) return;
     const seriesIdx = SERIES.findIndex((series) => series.slug === position.slug);
     if (seriesIdx < 0) { showMessage("Sách gốc không còn trên kệ."); return; }
+    try { await ensureSeriesIndex(SERIES[seriesIdx]); } catch (_) { showMessage("Không tải được mục lục truyện."); return; }
     returnReaderPosition = null;
     activateSeries(seriesIdx);
     openChapter(position.volIdx, position.chapIdx, { anchor: position.anchor });

@@ -87,7 +87,7 @@
       if (row(series).status) return row(series).status;
       try {
         const chapters = JSON.parse(localStorage.getItem(series.legacyStorage ? "tenshi-chapters" : `tenshi-${series.slug}-chapters`)) || {};
-        const entries = series.volumesData.flatMap((v, vi) => v.chapters.map((c, ci) => ({ c, id: `${vi}:${ci}` }))).filter((entry) => !entry.c.isIllustration);
+        const entries = (series.volumesData || []).flatMap((v, vi) => v.chapters.map((c, ci) => ({ c, id: `${vi}:${ci}` }))).filter((entry) => !entry.c.isIllustration);
         if (entries.length && entries.every((entry) => chapters[entry.id]?.done)) return "done";
       } catch (_) {}
       return progress(series).timestamp ? "reading" : "";
@@ -124,7 +124,7 @@
     function updateShelfResume(series) {
       const host = $("#shelf-resume");
       const recent = series.map((book) => ({ book, saved: progress(book) }))
-        .filter(({ book, saved }) => Number.isInteger(saved.volIdx) && Number.isInteger(saved.chapIdx) && Number(saved.timestamp) > 0 && book.volumesData[saved.volIdx]?.chapters[saved.chapIdx])
+        .filter(({ book, saved }) => Number.isInteger(saved.volIdx) && Number.isInteger(saved.chapIdx) && Number(saved.timestamp) > 0 && book.volumesData?.[saved.volIdx]?.chapters[saved.chapIdx])
         .sort((a, b) => Number(b.saved.timestamp) - Number(a.saved.timestamp))[0];
       host.hidden = !recent;
       if (!recent) { host.replaceChildren(); return; }
@@ -262,7 +262,7 @@
     function showMarks() {
       const current = ctx(), available = state.marks.filter((mark) => !markScope || mark.slug === markScope).sort((a, b) => b.createdAt - a.createdAt);
       show("Đánh dấu & Ghi chú", `<div class="tools-actions"><button type="button" id="bookmark-position" class="btn-primary"${current.view !== "reader" ? " disabled" : ""}>Lưu vị trí đang đọc</button></div><label>Sách<select id="marks-scope"><option value="">Tất cả sách</option>${options.series.map((book) => `<option value="${escape(book.slug)}"${book.slug === markScope ? " selected" : ""}>${escape(book.titleVi)}</option>`).join("")}</select></label><div class="saved-annotations">${available.length ? available.map((mark) => {
-        const book = options.series.find((s) => s.slug === mark.slug), chapter = book?.volumesData[mark.volIdx]?.chapters[mark.chapIdx];
+        const book = options.series.find((s) => s.slug === mark.slug), chapter = book?.volumesData?.[mark.volIdx]?.chapters[mark.chapIdx];
         return `<article class="tool-card"><h3>${mark.type === "bookmark" ? "🔖 " : ""}${escape(mark.label || "Đoạn đã tô màu")}</h3><p class="tools-hint">${escape(book?.titleVi || "Sách chưa có trên kệ")} · ${escape(chapter?.title || "")}</p>${mark.parts.length ? `<blockquote>${escape(mark.parts.map((p) => p.quote).join("\n").slice(0, 250))}</blockquote>` : ""}${mark.note ? `<p>${escape(mark.note)}</p>` : ""}<div class="tools-actions"><button type="button" class="btn-link" data-open-mark="${escape(mark.id)}"${chapter ? "" : " disabled"}>Đến vị trí</button><button type="button" class="btn-link" data-edit-mark="${escape(mark.id)}">Sửa / Xóa</button></div></article>`;
       }).join("") : '<p class="tools-empty">Chưa có đánh dấu. Bôi đen câu để tô màu hoặc lưu vị trí đang đọc.</p>'}</div>`);
       $("#bookmark-position").onclick = bookmark;

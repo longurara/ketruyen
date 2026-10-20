@@ -7,8 +7,8 @@
 // and picture seen stays readable offline. app.js uses the same cache names
 // for "Tải về đọc offline".
 
-const SHELL_CACHE = "tenshi-shell-v15";
-const INDEX_URLS = ["/data/index.json", "/data/tinh-yeu-vo-hinh/index.json", "/data/arya-ban-ben/index.json"];
+const SHELL_CACHE = "tenshi-shell-v17";
+const INDEX_PATTERN = /^\/data\/(?:[^/]+\/)?index\.json$/;
 const TEXT_CACHE = "tenshi-text-v1";
 const IMAGE_CACHE = "tenshi-img-v1";
 const FONT_CACHE = "tenshi-fonts-v1";
@@ -46,8 +46,6 @@ const SHELL = [
   "/reader-features.css",
   "/data/series.json",
   "/data/index.json",
-  "/data/tinh-yeu-vo-hinh/index.json",
-  "/data/arya-ban-ben/index.json",
   "/manifest.webmanifest",
   "/icons/icon.svg",
   "/icons/icon-192.png"
@@ -88,7 +86,7 @@ self.addEventListener("fetch", (event) => {
       event.respondWith(cacheFirst(request, TEXT_CACHE));
     } else if (url.pathname.startsWith("/img/") || url.pathname.startsWith("/icons/")) {
       event.respondWith(cacheFirst(request, IMAGE_CACHE));
-    } else if (INDEX_URLS.includes(url.pathname)) {
+    } else if (INDEX_PATTERN.test(url.pathname)) {
       // Prune only after all cached indexes have been considered.
       const fetched = networkFirst(request, SHELL_CACHE);
       event.respondWith(fetched);
@@ -143,11 +141,10 @@ async function staleWhileRevalidate(request, cacheName) {
 
 async function pruneText() {
   const shell = await caches.open(SHELL_CACHE);
-  const indexes = await Promise.all([
-    shell.match("/data/index.json"),
-    shell.match("/data/tinh-yeu-vo-hinh/index.json"),
-    shell.match("/data/arya-ban-ben/index.json")
-  ]);
+  const catalogRes = await shell.match("/data/series.json");
+  if (!catalogRes) return;
+  const catalog = await catalogRes.json();
+  const indexes = await Promise.all(catalog.map((s) => shell.match(s.index)));
   if (indexes.some((response) => !response)) return;
   const volumes = (await Promise.all(indexes.map((response) => response.json()))).flat();
   const keep = new Set(volumes.map((volume) => new URL(volume.text, self.location.origin).href));

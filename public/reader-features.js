@@ -11,7 +11,7 @@
   const identity = (volume, chapter) => `${volume.dirName}\u001f${chapter.title.normalize("NFC")}`;
 
   function chapterEntries(series) {
-    return series.volumesData.flatMap((volume, volIdx) => volume.chapters.map((chapter, chapIdx) => ({
+    return (series?.volumesData || []).flatMap((volume, volIdx) => volume.chapters.map((chapter, chapIdx) => ({
       id: identity(volume, chapter), volume, chapter, volIdx, chapIdx
     })));
   }
@@ -162,7 +162,8 @@
     const pronunciationRules = () => state.pronunciation[currentSeries().slug] || [];
     const duration = (seconds) => seconds < 3600 ? `${Math.floor(seconds / 60)} phút` : `${Math.floor(seconds / 3600)} giờ ${Math.floor(seconds % 3600 / 60)} phút`;
 
-    for (const series of seriesList) {
+    function syncSeries(series, shouldPersist = true) {
+      if (!series || !Array.isArray(series.volumesData)) return;
       const all = chapterEntries(series);
       if (!Array.isArray(state.catalog[series.slug])) state.catalog[series.slug] = all.map((entry) => entry.id);
       if (!Array.isArray(state.reached[series.slug])) state.reached[series.slug] = [];
@@ -171,6 +172,12 @@
       all.forEach((entry, i) => {
         if ((i <= progressIndex || old.chapters?.[`${entry.volIdx}:${entry.chapIdx}`]?.done) && !state.reached[series.slug].includes(entry.id)) state.reached[series.slug].push(entry.id);
       });
+      if (shouldPersist) persist();
+    }
+
+    for (const series of seriesList) {
+      if (!Array.isArray(state.reached[series.slug])) state.reached[series.slug] = [];
+      if (Array.isArray(series.volumesData)) syncSeries(series, false);
       const defaults = options.characterCatalog?.series[series.slug] || [];
       const merged = mergeCharacterCatalog(state.characters[series.slug], defaults, {
         slug: series.slug,
@@ -506,7 +513,7 @@
       const character = event.target.closest("[data-character-id]"); if (character) open("characters", character.dataset.characterId);
       const button = event.target.closest("[data-reader-feature]"); if (button) { if (button.dataset.readerFeature === "quotes") readSelection(); open(button.dataset.readerFeature); }
     });
-    return { open, renderEmbedded, attachHost: (host) => { embeddedHost = host; }, characterList: visibleCharacters, reached: () => [...(state.reached[currentSeries().slug] || [])], isOpen, updates, onView, openedChapter, completeChapter, decorateChapter, speech: (text) => applyPronunciation(text, pronunciationRules()) };
+    return { open, renderEmbedded, attachHost: (host) => { embeddedHost = host; }, characterList: visibleCharacters, reached: () => [...(state.reached[currentSeries().slug] || [])], isOpen, updates, syncSeries, onView, openedChapter, completeChapter, decorateChapter, speech: (text) => applyPronunciation(text, pronunciationRules()) };
   }
 
   return { create, chapterEntries, newChapters, applyPronunciation, dayKey, goalProgress, unlockedCharacters, mergeCharacterCatalog, wrapLines };

@@ -36,6 +36,13 @@ function ensureDir(dir) {
 // say nothing). Delete public/img/<volume> to rebuild one after a re-crawl.
 async function optimizeImage(src, dest, width) {
   if (!fs.existsSync(dest)) {
+    if (src.toLowerCase().endsWith(".webp") && width === READER_WIDTH) {
+      const srcMeta = await sharp(src).metadata();
+      if (!srcMeta.width || srcMeta.width <= width) {
+        fs.copyFileSync(src, dest);
+        return { w: srcMeta.width, h: srcMeta.height };
+      }
+    }
     await sharp(src)
       .resize({ width, withoutEnlargement: true })
       .webp({ quality: 80 })
@@ -150,18 +157,20 @@ async function buildSeries(config) {
     const destImgDir = path.join(IMG_DEST, volDirName);
     const optDir = path.join(OPT_DEST, volDirName);
 
-    // Scan & copy originals, then make the reader-size WebP copies.
+    // Scan & copy originals (legacy series only), then make reader-size WebP copies.
     const imageFiles = fs.existsSync(srcImgDir) ? fs.readdirSync(srcImgDir).sort() : [];
     const imageInfo = {};
     if (imageFiles.length) {
-      ensureDir(destImgDir);
+      if (config.legacyPaths) ensureDir(destImgDir);
       ensureDir(optDir);
     }
 
     for (const file of imageFiles) {
       const src = path.join(srcImgDir, file);
-      const dest = path.join(destImgDir, file);
-      if (!fs.existsSync(dest)) fs.copyFileSync(src, dest);
+      if (config.legacyPaths) {
+        const dest = path.join(destImgDir, file);
+        if (!fs.existsSync(dest)) fs.copyFileSync(src, dest);
+      }
 
       const base = path.parse(file).name;
       const size = await optimizeImage(src, path.join(optDir, `${base}.webp`), READER_WIDTH);
@@ -174,7 +183,11 @@ async function buildSeries(config) {
       const prefix = ch.isIllustration
         ? "illu"
         : `ch${String(idx + 1).padStart(2, "0")}`;
-      const chImages = imageFiles.filter((f) => f.startsWith(prefix));
+      const chImages = imageFiles.filter((f) =>
+        ch.isIllustration
+          ? f.startsWith("illu")
+          : f.startsWith(`${prefix}_`) || f.startsWith(`${prefix}.`)
+      );
       const text = ch.isIllustration
         ? { title: ch.title, content: "" }
         : cleanChapter(ch.title, ch.content);
