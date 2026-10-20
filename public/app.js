@@ -340,49 +340,93 @@
     volumeGrid.style.display = "";
   }
 
+  const SHELF_BATCH_SIZE = 60;
+  let shelfObserver = null;
+
+  function createShelfNode(series) {
+    const seriesIdx = SERIES.indexOf(series);
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "shelf-card";
+    const progressKey = series.legacyStorage ? "tenshi-progress" : `tenshi-${series.slug}-progress`;
+    let progress = null;
+    try { progress = JSON.parse(localStorage.getItem(progressKey)); } catch (error) {}
+    const volume = progress && series.volumesData?.[progress.volIdx];
+    const chapter = volume && volume.chapters[progress.chapIdx];
+    const resume = chapter ? volume.name : "";
+    const updates = readerFeatures ? readerFeatures.updates(series).length : 0;
+    card.innerHTML = `
+      <span class="book shelf-cover">${series.cover ? `<img src="${escapeHtml(series.cover)}" alt="Bìa ${escapeHtml(series.titleVi)}" loading="lazy">` : ""}</span>
+      <span class="shelf-copy">
+        <span class="shelf-card-title${series.titleVi.length > 32 ? " is-long" : ""}">${escapeHtml(series.titleVi)}</span>
+        <span class="shelf-card-author">${escapeHtml(series.author || "")}</span>
+        <span class="shelf-card-meta">${series.personal ? `${escapeHtml(series.sourceFormat)} · Ebook cá nhân` : `${series.volumes} tập`} · ${series.chapters} chương</span>
+        ${updates ? `<span class="chapter-update-badge">${updates} chương mới</span>` : ""}
+        <span class="shelf-card-description">${escapeHtml(series.description || "")}</span>
+        <span class="shelf-card-action">${resume ? `Đang đọc dở · ${escapeHtml(resume)}` : series.personal ? "Mở sách" : "Xem bộ truyện"} <span aria-hidden="true">→</span></span>
+      </span>
+    `;
+    card.addEventListener("click", () => openSeries(seriesIdx));
+    if (libraryTools) {
+      return libraryTools.shelfItem(series, card);
+    }
+    if (series.personal) {
+      const item = document.createElement("div");
+      item.className = "ebook-shelf-item";
+      const remove = document.createElement("button");
+      remove.type = "button"; remove.className = "btn-link ebook-delete";
+      remove.textContent = "Xóa ebook"; remove.setAttribute("aria-label", `Xóa ebook ${series.titleVi}`);
+      remove.addEventListener("click", () => ebookUI?.deleteBook(series));
+      item.append(card, remove);
+      return item;
+    }
+    return card;
+  }
+
   function renderShelf() {
+    if (shelfObserver) {
+      shelfObserver.disconnect();
+      shelfObserver = null;
+    }
     shelfGrid.innerHTML = "";
     const ordered = libraryTools ? libraryTools.filterSeries(SERIES) : SERIES;
-    const frag = document.createDocumentFragment();
-    ordered.forEach((series) => {
-      const seriesIdx = SERIES.indexOf(series);
-      const card = document.createElement("button");
-      card.type = "button";
-      card.className = "shelf-card";
-      const progressKey = series.legacyStorage ? "tenshi-progress" : `tenshi-${series.slug}-progress`;
-      let progress = null;
-      try { progress = JSON.parse(localStorage.getItem(progressKey)); } catch (error) {}
-      const volume = progress && series.volumesData?.[progress.volIdx];
-      const chapter = volume && volume.chapters[progress.chapIdx];
-      const resume = chapter ? volume.name : "";
-      const updates = readerFeatures ? readerFeatures.updates(series).length : 0;
-      card.innerHTML = `
-        <span class="book shelf-cover">${series.cover ? `<img src="${escapeHtml(series.cover)}" alt="Bìa ${escapeHtml(series.titleVi)}" loading="lazy">` : ""}</span>
-        <span class="shelf-copy">
-          <span class="shelf-card-title${series.titleVi.length > 32 ? " is-long" : ""}">${escapeHtml(series.titleVi)}</span>
-          <span class="shelf-card-author">${escapeHtml(series.author || "")}</span>
-          <span class="shelf-card-meta">${series.personal ? `${escapeHtml(series.sourceFormat)} · Ebook cá nhân` : `${series.volumes} tập`} · ${series.chapters} chương</span>
-          ${updates ? `<span class="chapter-update-badge">${updates} chương mới</span>` : ""}
-          <span class="shelf-card-description">${escapeHtml(series.description || "")}</span>
-          <span class="shelf-card-action">${resume ? `Đang đọc dở · ${escapeHtml(resume)}` : series.personal ? "Mở sách" : "Xem bộ truyện"} <span aria-hidden="true">→</span></span>
-        </span>
-      `;
-      card.addEventListener("click", () => openSeries(seriesIdx));
-      if (libraryTools) {
-        const item = libraryTools.shelfItem(series, card);
-        frag.appendChild(item);
-      } else if (series.personal) {
-        const item = document.createElement("div");
-        item.className = "ebook-shelf-item";
-        const remove = document.createElement("button");
-        remove.type = "button"; remove.className = "btn-link ebook-delete";
-        remove.textContent = "Xóa ebook"; remove.setAttribute("aria-label", `Xóa ebook ${series.titleVi}`);
-        remove.addEventListener("click", () => ebookUI?.deleteBook(series));
-        item.append(card, remove); frag.appendChild(item);
-      } else frag.appendChild(card);
-    });
-    shelfGrid.appendChild(frag);
-    if (!ordered.length) shelfGrid.innerHTML = '<p class="tools-empty">Không tìm thấy sách phù hợp.</p>';
+    if (!ordered.length) {
+      shelfGrid.innerHTML = '<p class="tools-empty">Không tìm thấy sách phù hợp.</p>';
+      return;
+    }
+    let renderedCount = 0;
+    const appendNextBatch = () => {
+      const slice = ordered.slice(renderedCount, renderedCount + SHELF_BATCH_SIZE);
+      if (!slice.length) return;
+      const frag = document.createDocumentFragment();
+      slice.forEach((series) => frag.appendChild(createShelfNode(series)));
+      renderedCount += slice.length;
+      const sentinel = shelfGrid.querySelector(".shelf-load-sentinel");
+      if (sentinel) shelfGrid.insertBefore(frag, sentinel);
+      else shelfGrid.appendChild(frag);
+      if (renderedCount >= ordered.length && sentinel) {
+        if (shelfObserver) {
+          shelfObserver.disconnect();
+          shelfObserver = null;
+        }
+        sentinel.remove();
+      }
+    };
+    appendNextBatch();
+    if (renderedCount < ordered.length && typeof IntersectionObserver === "function") {
+      const sentinel = document.createElement("div");
+      sentinel.className = "shelf-load-sentinel";
+      sentinel.setAttribute("aria-hidden", "true");
+      sentinel.style.height = "1px";
+      sentinel.style.gridColumn = "1 / -1";
+      shelfGrid.appendChild(sentinel);
+      shelfObserver = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) appendNextBatch();
+      }, { rootMargin: "600px 0px" });
+      shelfObserver.observe(sentinel);
+    } else if (renderedCount < ordered.length) {
+      while (renderedCount < ordered.length) appendNextBatch();
+    }
   }
 
   function openSeries(seriesIdx) {

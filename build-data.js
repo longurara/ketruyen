@@ -158,7 +158,10 @@ async function buildSeries(config) {
     const optDir = path.join(OPT_DEST, volDirName);
 
     // Scan & copy originals (legacy series only), then make reader-size WebP copies.
-    const imageFiles = fs.existsSync(srcImgDir) ? fs.readdirSync(srcImgDir).sort() : [];
+    const activeImgDir = fs.existsSync(srcImgDir) ? srcImgDir : optDir;
+    const imageFiles = fs.existsSync(activeImgDir)
+      ? fs.readdirSync(activeImgDir).filter((f) => !f.endsWith(".cover.webp")).sort()
+      : [];
     const imageInfo = {};
     if (imageFiles.length) {
       if (config.legacyPaths) ensureDir(destImgDir);
@@ -166,7 +169,7 @@ async function buildSeries(config) {
     }
 
     for (const file of imageFiles) {
-      const src = path.join(srcImgDir, file);
+      const src = path.join(activeImgDir, file);
       if (config.legacyPaths) {
         const dest = path.join(destImgDir, file);
         if (!fs.existsSync(dest)) fs.copyFileSync(src, dest);
@@ -207,7 +210,7 @@ async function buildSeries(config) {
       const first = chapters[coverChapter].images[0];
       const file = imageFiles.find((f) => imageInfo[f] === first);
       const base = path.parse(file).name;
-      await optimizeImage(path.join(srcImgDir, file), path.join(optDir, `${base}.cover.webp`), COVER_WIDTH);
+      await optimizeImage(path.join(activeImgDir, file), path.join(optDir, `${base}.cover.webp`), COVER_WIDTH);
       cover = `${urlBase("img")}/${volDirName}/${base}.cover.webp`;
     }
 

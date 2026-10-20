@@ -123,7 +123,9 @@
     });
     function updateShelfResume(series) {
       const host = $("#shelf-resume");
-      const recent = series.map((book) => ({ book, saved: progress(book) }))
+      const recent = series
+        .filter((book) => Array.isArray(book.volumesData))
+        .map((book) => ({ book, saved: progress(book) }))
         .filter(({ book, saved }) => Number.isInteger(saved.volIdx) && Number.isInteger(saved.chapIdx) && Number(saved.timestamp) > 0 && book.volumesData?.[saved.volIdx]?.chapters[saved.chapIdx])
         .sort((a, b) => Number(b.saved.timestamp) - Number(a.saved.timestamp))[0];
       host.hidden = !recent;
@@ -132,10 +134,16 @@
       host.innerHTML = `<button type="button" class="shelf-resume-card" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="">` : ""}<span class="shelf-resume-copy"><span class="shelf-resume-label">Đọc tiếp</span><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span></span><span class="shelf-resume-arrow" aria-hidden="true">→</span></button>`;
       host.querySelector("button").onclick = () => options.openMark(options.series.indexOf(book), { type: "bookmark", volIdx: saved.volIdx, chapIdx: saved.chapIdx });
     }
+    const VALID_SECTIONS = new Set(["main", "hlc-oneshot", "hlc-completed", "hlc-multivol"]);
     let activeSection = "main";
     const sectionTabs = $("#shelf-section-tabs");
+    const hlcGroup = $("#shelf-hlc-group");
+    function normalizeSection(sec) {
+      if (sec === "hlc-ln") return "hlc-oneshot";
+      return VALID_SECTIONS.has(sec) ? sec : "main";
+    }
     function setSection(nextSection, shouldRender = false) {
-      const normalized = nextSection === "hlc-ln" ? "hlc-ln" : "main";
+      const normalized = normalizeSection(nextSection);
       if (normalized === activeSection && !shouldRender) return;
       activeSection = normalized;
       if (sectionTabs) {
@@ -144,6 +152,9 @@
           tab.classList.toggle("is-active", selected);
           tab.setAttribute("aria-selected", String(selected));
         }
+      }
+      if (hlcGroup) {
+        hlcGroup.classList.toggle("has-active-tab", activeSection.startsWith("hlc-"));
       }
       if (shouldRender) options.renderShelf();
     }
@@ -154,25 +165,45 @@
       });
     }
     function updateSectionCounts(series) {
-      const mainCountEl = $("#shelf-count-main");
-      const hlcCountEl = $("#shelf-count-hlc");
-      if (!mainCountEl && !hlcCountEl) return;
-      let mainCount = 0;
-      let hlcCount = 0;
+      const counts = { main: 0, "hlc-oneshot": 0, "hlc-completed": 0, "hlc-multivol": 0 };
       for (const book of series) {
-        if (book.section === "hlc-ln") hlcCount++;
-        else mainCount++;
+        const sec = normalizeSection(book.section);
+        counts[sec] = (counts[sec] || 0) + 1;
       }
-      if (mainCountEl) mainCountEl.textContent = mainCount ? String(mainCount) : "";
-      if (hlcCountEl) hlcCountEl.textContent = hlcCount ? String(hlcCount) : "";
+      const map = {
+        main: "#shelf-count-main",
+        "hlc-oneshot": "#shelf-count-hlc-oneshot",
+        "hlc-completed": "#shelf-count-hlc-completed",
+        "hlc-multivol": "#shelf-count-hlc-multivol"
+      };
+      for (const [sec, sel] of Object.entries(map)) {
+        const el = $(sel);
+        if (el) el.textContent = counts[sec] ? String(counts[sec]) : "";
+      }
     }
     function filterSeries(series) {
       updateFilterSummary(); updateShelfResume(series); updateSectionCounts(series);
       const query = fold($("#shelf-search").value), filter = $("#shelf-status").value, group = $("#shelf-group").value, sort = $("#shelf-sort").value;
-      const result = series.filter((book) => ((book.section || "main") === activeSection)
-        && (!query || fold([book.titleVi, book.author, ...row(book).groups, ...(book.tags || [])].join(" ")).includes(query))
-        && (!group || row(book).groups.includes(group)) && (filter === "all" || (filter === "favorite" ? row(book).favorite : filter === "personal" ? book.personal : status(book) === filter)));
-      return result.sort((a, b) => sort === "title" ? a.titleVi.localeCompare(b.titleVi, "vi") : sort === "author" ? a.author.localeCompare(b.author, "vi") : sort === "newest" ? (b.importedAt || 0) - (a.importedAt || 0) : (progress(b).timestamp || 0) - (progress(a).timestamp || 0));
+      const result = series.filter((book) => {
+        if (normalizeSection(book.section) !== activeSection) return false;
+        if (query) {
+          if (!book._searchFold) book._searchFold = fold([book.titleVi, book.titleJp, book.author, ...(book.tags || [])].join(" "));
+          const groupsFold = row(book).groups.length ? " " + fold(row(book).groups.join(" ")) : "";
+          if (!(book._searchFold + groupsFold).includes(query)) return false;
+        }
+        if (group && !row(book).groups.includes(group)) return false;
+        if (filter !== "all") {
+          if (filter === "favorite" && !row(book).favorite) return false;
+          if (filter === "personal" && !book.personal) return false;
+          if (filter !== "favorite" && filter !== "personal" && status(book) !== filter) return false;
+        }
+        return true;
+      });
+      if (sort === "title") return result.sort((a, b) => a.titleVi.localeCompare(b.titleVi, "vi"));
+      if (sort === "author") return result.sort((a, b) => (a.author || "").localeCompare(b.author || "", "vi"));
+      if (sort === "newest") return result.sort((a, b) => (b.importedAt || 0) - (a.importedAt || 0));
+      const tsMap = new Map(result.map((b) => [b, progress(b).timestamp || 0]));
+      return result.sort((a, b) => tsMap.get(b) - tsMap.get(a));
     }
     ["shelf-search", "shelf-status", "shelf-group", "shelf-sort"].forEach((id) => $(`#${id}`).addEventListener(id === "shelf-search" ? "input" : "change", options.renderShelf));
     updateGroups();
