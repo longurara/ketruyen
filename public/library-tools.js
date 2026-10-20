@@ -134,58 +134,82 @@
       host.innerHTML = `<button type="button" class="shelf-resume-card" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="">` : ""}<span class="shelf-resume-copy"><span class="shelf-resume-label">Đọc tiếp</span><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span></span><span class="shelf-resume-arrow" aria-hidden="true">→</span></button>`;
       host.querySelector("button").onclick = () => options.openMark(options.series.indexOf(book), { type: "bookmark", volIdx: saved.volIdx, chapIdx: saved.chapIdx });
     }
-    const VALID_SECTIONS = new Set(["main", "hlc-oneshot", "hlc-completed", "hlc-multivol"]);
+    const VALID_SECTIONS = new Set(["main", "hlc-all", "hlc-oneshot", "hlc-completed", "hlc-multivol"]);
     let activeSection = "main";
+    let lastHlcSection = "hlc-all";
     const sectionTabs = $("#shelf-section-tabs");
-    const hlcGroup = $("#shelf-hlc-group");
+    const hlcSubtabs = $("#shelf-hlc-subtabs");
+    function normalizeBookSection(sec) {
+      if (sec === "hlc-ln") return "hlc-oneshot";
+      return sec === "hlc-oneshot" || sec === "hlc-completed" || sec === "hlc-multivol" ? sec : "main";
+    }
     function normalizeSection(sec) {
       if (sec === "hlc-ln") return "hlc-oneshot";
+      if (sec === "hlc") return lastHlcSection || "hlc-all";
       return VALID_SECTIONS.has(sec) ? sec : "main";
     }
     function setSection(nextSection, shouldRender = false) {
       const normalized = normalizeSection(nextSection);
+      if (normalized.startsWith("hlc-")) lastHlcSection = normalized;
       if (normalized === activeSection && !shouldRender) return;
       activeSection = normalized;
+      const isHlc = activeSection.startsWith("hlc-");
       if (sectionTabs) {
-        for (const tab of sectionTabs.querySelectorAll("[data-shelf-section]")) {
-          const selected = tab.dataset.shelfSection === activeSection;
-          tab.classList.toggle("is-active", selected);
-          tab.setAttribute("aria-selected", String(selected));
+        for (const pTab of sectionTabs.querySelectorAll("[data-shelf-primary]")) {
+          const selected = pTab.dataset.shelfPrimary === (isHlc ? "hlc" : "main");
+          pTab.classList.toggle("is-active", selected);
+          pTab.setAttribute("aria-selected", String(selected));
+        }
+        for (const sTab of sectionTabs.querySelectorAll("[data-shelf-section]")) {
+          const selected = sTab.dataset.shelfSection === activeSection;
+          sTab.classList.toggle("is-active", selected);
+          sTab.setAttribute("aria-selected", String(selected));
         }
       }
-      if (hlcGroup) {
-        hlcGroup.classList.toggle("has-active-tab", activeSection.startsWith("hlc-"));
+      if (hlcSubtabs) {
+        hlcSubtabs.hidden = !isHlc;
       }
       if (shouldRender) options.renderShelf();
     }
     if (sectionTabs) {
       sectionTabs.addEventListener("click", (event) => {
-        const btn = event.target.closest("[data-shelf-section]");
-        if (btn) setSection(btn.dataset.shelfSection, true);
+        const primaryBtn = event.target.closest("[data-shelf-primary]");
+        if (primaryBtn) {
+          setSection(primaryBtn.dataset.shelfPrimary === "hlc" ? lastHlcSection : "main", true);
+          return;
+        }
+        const subBtn = event.target.closest("[data-shelf-section]");
+        if (subBtn) setSection(subBtn.dataset.shelfSection, true);
       });
     }
     function updateSectionCounts(series) {
       const counts = { main: 0, "hlc-oneshot": 0, "hlc-completed": 0, "hlc-multivol": 0 };
       for (const book of series) {
-        const sec = normalizeSection(book.section);
+        const sec = normalizeBookSection(book.section);
         counts[sec] = (counts[sec] || 0) + 1;
       }
+      const hlcTotal = counts["hlc-oneshot"] + counts["hlc-completed"] + counts["hlc-multivol"];
       const map = {
-        main: "#shelf-count-main",
-        "hlc-oneshot": "#shelf-count-hlc-oneshot",
-        "hlc-completed": "#shelf-count-hlc-completed",
-        "hlc-multivol": "#shelf-count-hlc-multivol"
+        "#shelf-count-main": counts.main,
+        "#shelf-count-hlc-total": hlcTotal,
+        "#shelf-count-hlc-all": hlcTotal,
+        "#shelf-count-hlc-oneshot": counts["hlc-oneshot"],
+        "#shelf-count-hlc-completed": counts["hlc-completed"],
+        "#shelf-count-hlc-multivol": counts["hlc-multivol"]
       };
-      for (const [sec, sel] of Object.entries(map)) {
+      for (const [sel, val] of Object.entries(map)) {
         const el = $(sel);
-        if (el) el.textContent = counts[sec] ? String(counts[sec]) : "";
+        if (el) el.textContent = val ? val.toLocaleString("vi-VN") : "";
       }
     }
     function filterSeries(series) {
       updateFilterSummary(); updateShelfResume(series); updateSectionCounts(series);
       const query = fold($("#shelf-search").value), filter = $("#shelf-status").value, group = $("#shelf-group").value, sort = $("#shelf-sort").value;
       const result = series.filter((book) => {
-        if (normalizeSection(book.section) !== activeSection) return false;
+        const bookSec = normalizeBookSection(book.section);
+        if (activeSection === "main" && bookSec !== "main") return false;
+        if (activeSection === "hlc-all" && !bookSec.startsWith("hlc-")) return false;
+        if (activeSection !== "main" && activeSection !== "hlc-all" && bookSec !== activeSection) return false;
         if (query) {
           if (!book._searchFold) book._searchFold = fold([book.titleVi, book.titleJp, book.author, ...(book.tags || [])].join(" "));
           const groupsFold = row(book).groups.length ? " " + fold(row(book).groups.join(" ")) : "";

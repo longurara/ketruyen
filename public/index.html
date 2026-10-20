@@ -251,16 +251,36 @@
         <p class="shelf-intro">Chọn một bộ truyện để đọc hoặc nghe tiếp.</p>
         <p class="ebook-storage-note">EPUB · TXT · PDF · tối đa 50 MB/tệp · lưu riêng trên trình duyệt này</p>
         <div id="shelf-resume" class="shelf-resume" hidden></div>
-        <div id="shelf-section-tabs" class="shelf-section-tabs" role="tablist" aria-label="Danh mục kệ truyện">
-          <div class="toolbar-group shelf-main-group">
-            <button id="tab-shelf-main" class="filter-btn is-active" type="button" role="tab" aria-selected="true" data-shelf-section="main">Kệ truyện chính<span id="shelf-count-main" class="tab-count"></span></button>
+        <div id="shelf-section-tabs" class="shelf-section-tabs" aria-label="Danh mục kệ truyện">
+          <div class="toolbar-group shelf-primary-tabs" role="tablist" aria-label="Nguồn kệ truyện">
+            <button id="tab-shelf-main" class="filter-btn is-active" type="button" role="tab" aria-selected="true" data-shelf-primary="main">
+              <span>Kệ truyện chính</span>
+              <span id="shelf-count-main" class="shelf-badge"></span>
+            </button>
+            <button id="tab-shelf-hlc" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-primary="hlc">
+              <span>Hội Lẩu Chay</span>
+              <span id="shelf-count-hlc-total" class="shelf-badge"></span>
+            </button>
           </div>
-          <div id="shelf-hlc-group" class="shelf-hlc-group" role="group" aria-labelledby="shelf-hlc-group-label">
-            <span id="shelf-hlc-group-label" class="shelf-hlc-label">Hội Lẩu Chay</span>
-            <div class="toolbar-group shelf-hlc-tabs">
-              <button id="tab-shelf-hlc-oneshot" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="hlc-oneshot">OneShot<span id="shelf-count-hlc-oneshot" class="tab-count"></span></button>
-              <button id="tab-shelf-hlc-completed" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="hlc-completed">Đã Hoàn Thành<span id="shelf-count-hlc-completed" class="tab-count"></span></button>
-              <button id="tab-shelf-hlc-multivol" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="hlc-multivol">Truyện nhiều tập<span id="shelf-count-hlc-multivol" class="tab-count"></span></button>
+          <div id="shelf-hlc-subtabs" class="shelf-subtabs-row" role="tablist" aria-label="Phân loại Hội Lẩu Chay" hidden>
+            <span class="shelf-subtabs-label">Phân loại</span>
+            <div class="toolbar-group shelf-sub-tabs">
+              <button id="tab-shelf-hlc-all" class="filter-btn is-active" type="button" role="tab" aria-selected="true" data-shelf-section="hlc-all">
+                <span>Tất cả</span>
+                <span id="shelf-count-hlc-all" class="shelf-badge"></span>
+              </button>
+              <button id="tab-shelf-hlc-oneshot" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="hlc-oneshot">
+                <span>OneShot</span>
+                <span id="shelf-count-hlc-oneshot" class="shelf-badge"></span>
+              </button>
+              <button id="tab-shelf-hlc-completed" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="hlc-completed">
+                <span>Đã Hoàn Thành</span>
+                <span id="shelf-count-hlc-completed" class="shelf-badge"></span>
+              </button>
+              <button id="tab-shelf-hlc-multivol" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="hlc-multivol">
+                <span>Truyện nhiều tập</span>
+                <span id="shelf-count-hlc-multivol" class="shelf-badge"></span>
+              </button>
             </div>
           </div>
         </div>
