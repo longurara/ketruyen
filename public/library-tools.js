@@ -132,10 +132,45 @@
       host.innerHTML = `<button type="button" class="shelf-resume-card" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="">` : ""}<span class="shelf-resume-copy"><span class="shelf-resume-label">Đọc tiếp</span><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span></span><span class="shelf-resume-arrow" aria-hidden="true">→</span></button>`;
       host.querySelector("button").onclick = () => options.openMark(options.series.indexOf(book), { type: "bookmark", volIdx: saved.volIdx, chapIdx: saved.chapIdx });
     }
+    let activeSection = "main";
+    const sectionTabs = $("#shelf-section-tabs");
+    function setSection(nextSection, shouldRender = false) {
+      const normalized = nextSection === "hlc-ln" ? "hlc-ln" : "main";
+      if (normalized === activeSection && !shouldRender) return;
+      activeSection = normalized;
+      if (sectionTabs) {
+        for (const tab of sectionTabs.querySelectorAll("[data-shelf-section]")) {
+          const selected = tab.dataset.shelfSection === activeSection;
+          tab.classList.toggle("is-active", selected);
+          tab.setAttribute("aria-selected", String(selected));
+        }
+      }
+      if (shouldRender) options.renderShelf();
+    }
+    if (sectionTabs) {
+      sectionTabs.addEventListener("click", (event) => {
+        const btn = event.target.closest("[data-shelf-section]");
+        if (btn) setSection(btn.dataset.shelfSection, true);
+      });
+    }
+    function updateSectionCounts(series) {
+      const mainCountEl = $("#shelf-count-main");
+      const hlcCountEl = $("#shelf-count-hlc");
+      if (!mainCountEl && !hlcCountEl) return;
+      let mainCount = 0;
+      let hlcCount = 0;
+      for (const book of series) {
+        if (book.section === "hlc-ln") hlcCount++;
+        else mainCount++;
+      }
+      if (mainCountEl) mainCountEl.textContent = mainCount ? String(mainCount) : "";
+      if (hlcCountEl) hlcCountEl.textContent = hlcCount ? String(hlcCount) : "";
+    }
     function filterSeries(series) {
-      updateFilterSummary(); updateShelfResume(series);
+      updateFilterSummary(); updateShelfResume(series); updateSectionCounts(series);
       const query = fold($("#shelf-search").value), filter = $("#shelf-status").value, group = $("#shelf-group").value, sort = $("#shelf-sort").value;
-      const result = series.filter((book) => (!query || fold([book.titleVi, book.author, ...row(book).groups, ...(book.tags || [])].join(" ")).includes(query))
+      const result = series.filter((book) => ((book.section || "main") === activeSection)
+        && (!query || fold([book.titleVi, book.author, ...row(book).groups, ...(book.tags || [])].join(" ")).includes(query))
         && (!group || row(book).groups.includes(group)) && (filter === "all" || (filter === "favorite" ? row(book).favorite : filter === "personal" ? book.personal : status(book) === filter)));
       return result.sort((a, b) => sort === "title" ? a.titleVi.localeCompare(b.titleVi, "vi") : sort === "author" ? a.author.localeCompare(b.author, "vi") : sort === "newest" ? (b.importedAt || 0) - (a.importedAt || 0) : (progress(b).timestamp || 0) - (progress(a).timestamp || 0));
     }
@@ -347,7 +382,7 @@
       if (action === "toc") showToc();
     });
     applyLayout();
-    return { filterSeries, shelfItem, decorate, quickBookmark, openMarks: () => { markScope = ctx().view === "reader" ? ctx().series.slug : ""; showMarks(); }, openLayout: showLayout, openToc: showToc,
+    return { filterSeries, setSection, shelfItem, decorate, quickBookmark, openMarks: () => { markScope = ctx().view === "reader" ? ctx().series.slug : ""; showMarks(); }, openLayout: showLayout, openToc: showToc,
       attachHost: (host) => { embeddedHost = host; }, canClose: () => !busy,
       getMarks: () => state.marks.filter((m) => m.slug === ctx().series.slug), getLayout: () => ({ ...state.layout }),
       setLayout: (layout) => { state.layout = normalizeState({ ...state, layout }).layout; persist(); options.preservePosition(applyLayout); },

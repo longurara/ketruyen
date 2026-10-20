@@ -26,7 +26,8 @@
 .shelf-resume-copy strong { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-family: var(--font-serif); font-size: 18px; font-weight: 600; line-height: 1.3; }
 .shelf-resume-chapter { overflow: hidden; color: var(--text-muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
 .shelf-resume-arrow { flex: 0 0 auto; font-size: 23px; }
-.shelf-filters { display: grid; grid-template-columns: minmax(200px, 1.4fr) minmax(0, 2fr); align-items: end; gap: 14px; margin-top: 20px; }
+.shelf-section-tabs { display: inline-flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
+.shelf-filters { display: grid; grid-template-columns: minmax(200px, 1.4fr) minmax(0, 2fr); align-items: end; gap: 14px; margin-top: 16px; }
 .shelf-search-row { display: flex; gap: 8px; min-width: 0; }
 .shelf-search-row input { flex: 1; }
 .shelf-advanced-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }

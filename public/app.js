@@ -316,6 +316,7 @@
     activeSeriesIdx = seriesIdx;
     SERIES_META = SERIES[seriesIdx];
     DATA = SERIES_META.volumesData;
+    libraryTools?.setSection?.(SERIES_META.section || "main");
     currentVolIdx = -1;
     currentChapIdx = -1;
     pendingOpenToken += 1;
@@ -342,6 +343,7 @@
   function renderShelf() {
     shelfGrid.innerHTML = "";
     const ordered = libraryTools ? libraryTools.filterSeries(SERIES) : SERIES;
+    const frag = document.createDocumentFragment();
     ordered.forEach((series) => {
       const seriesIdx = SERIES.indexOf(series);
       const card = document.createElement("button");
@@ -368,7 +370,7 @@
       card.addEventListener("click", () => openSeries(seriesIdx));
       if (libraryTools) {
         const item = libraryTools.shelfItem(series, card);
-        shelfGrid.appendChild(item);
+        frag.appendChild(item);
       } else if (series.personal) {
         const item = document.createElement("div");
         item.className = "ebook-shelf-item";
@@ -376,9 +378,10 @@
         remove.type = "button"; remove.className = "btn-link ebook-delete";
         remove.textContent = "Xóa ebook"; remove.setAttribute("aria-label", `Xóa ebook ${series.titleVi}`);
         remove.addEventListener("click", () => ebookUI?.deleteBook(series));
-        item.append(card, remove); shelfGrid.appendChild(item);
-      } else shelfGrid.appendChild(card);
+        item.append(card, remove); frag.appendChild(item);
+      } else frag.appendChild(card);
     });
+    shelfGrid.appendChild(frag);
     if (!ordered.length) shelfGrid.innerHTML = '<p class="tools-empty">Không tìm thấy sách phù hợp.</p>';
   }
 

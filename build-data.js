@@ -272,8 +272,16 @@ async function main() {
   ensureDir(DATA_DIR);
   if (fs.existsSync(LEGACY_DATA_PATH)) fs.rmSync(LEGACY_DATA_PATH);
 
-  const catalog = [];
-  for (const config of seriesList) catalog.push(await buildSeries(config));
+  const catalog = new Array(seriesList.length);
+  let cursor = 0;
+  async function worker() {
+    while (true) {
+      const i = cursor++;
+      if (i >= seriesList.length) break;
+      catalog[i] = await buildSeries(seriesList[i]);
+    }
+  }
+  await Promise.all(Array.from({ length: 8 }, () => worker()));
   fs.writeFileSync(CATALOG_PATH, JSON.stringify(catalog), "utf-8");
   console.log(`📚 data/series.json: ${catalog.length} series`);
 }
