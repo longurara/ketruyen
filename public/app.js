@@ -362,10 +362,11 @@
         <span class="shelf-card-author">${escapeHtml(series.author || "")}</span>
         <span class="shelf-card-meta">${series.personal ? `${escapeHtml(series.sourceFormat)} · Ebook cá nhân` : `${series.volumes} tập`} · ${series.chapters} chương</span>
         ${updates ? `<span class="chapter-update-badge">${updates} chương mới</span>` : ""}
-        <span class="shelf-card-description">${escapeHtml(series.description || "")}</span>
+        ${series.description ? `<span class="shelf-card-description">${escapeHtml(series.description)}</span>` : ""}
         <span class="shelf-card-action">${resume ? `Đang đọc dở · ${escapeHtml(resume)}` : series.personal ? "Mở sách" : "Xem bộ truyện"} <span aria-hidden="true">→</span></span>
       </span>
     `;
+    if (resume) card.dataset.resume = "1";
     card.addEventListener("click", () => openSeries(seriesIdx));
     if (libraryTools) {
       return libraryTools.shelfItem(series, card);
@@ -391,7 +392,14 @@
     shelfGrid.innerHTML = "";
     const ordered = libraryTools ? libraryTools.filterSeries(SERIES) : SERIES;
     if (!ordered.length) {
-      shelfGrid.innerHTML = '<p class="tools-empty">Không tìm thấy sách phù hợp.</p>';
+      shelfGrid.innerHTML = '<div class="shelf-empty"><p class="tools-empty">Không tìm thấy sách phù hợp.</p><button type="button" class="btn-secondary">Xóa tìm kiếm và bộ lọc</button></div>';
+      shelfGrid.querySelector(".shelf-empty button").addEventListener("click", () => {
+        $("#shelf-search").value = "";
+        $("#shelf-status").value = "all";
+        $("#shelf-group").value = "";
+        renderShelf();
+        $("#shelf-search").focus();
+      });
       return;
     }
     let renderedCount = 0;
@@ -436,7 +444,7 @@
       runEinkPageTurn(() => {
         activateSeries(seriesIdx);
         showView("home");
-      }, { lagMs: 120, totalMs: 740 });
+      }, { lagMs: 70, totalMs: 420 });
       return;
     }
     const token = ++pendingOpenToken;
@@ -447,7 +455,7 @@
         runEinkPageTurn(() => {
           activateSeries(seriesIdx);
           showView("home");
-        }, { lagMs: 120, totalMs: 740 });
+        }, { lagMs: 70, totalMs: 420 });
       })
       .catch(() => {
         if (token === pendingOpenToken) showMessage("Không tải được mục lục truyện. Kiểm tra kết nối mạng rồi thử lại.");
@@ -1299,6 +1307,11 @@
       document.body.classList.remove("is-fetching");
       const route = await resolveHashRoute(location.hash);
       if (token !== pendingOpenToken) return;
+      if (route.notFound) {
+        reportMissingRoute(route);
+        applyRoute(route, { history: "replace" });
+        return;
+      }
       applyRoute(route);
     });
 
@@ -1330,11 +1343,39 @@
     });
   }
 
+  // What sort of book this is, for the line above the title.
+  function seriesKind(series) {
+    const tags = series.tags || [];
+    if (series.personal) return { label: "Ebook cá nhân", translated: false };
+    if (series.section?.startsWith("b1k")) return { label: (series.collection || "").split(" — ")[1] || "Tủ Sách 1000", translated: false };
+    if (series.section?.startsWith("hlc") || tags.some((tag) => /light novel/i.test(tag))) return { label: "Light novel", translated: true };
+    if (tags.includes("Văn học Nhật Bản")) return { label: "Văn học Nhật Bản", translated: true };
+    return { label: "Tiểu thuyết", translated: false };
+  }
+
+  // series.json carries only the start of long blurbs; the rest is fetched
+  // the first time a series page needs it.
+  let fullDescriptions = null;
+  function loadFullDescription(series) {
+    if (!series.descriptionTruncated) return;
+    fullDescriptions ||= fetch("/data/descriptions.json")
+      .then((res) => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
+      .catch(() => { fullDescriptions = null; return {}; });
+    fullDescriptions.then((all) => {
+      if (SERIES_META === series && all[series.slug]) seriesDescription.textContent = all[series.slug];
+    });
+  }
+
   function hydrateSeriesMeta() {
     const totals = getSeriesTotals();
+    const kind = seriesKind(SERIES_META);
+    $("#series-kind").textContent = kind.label;
+    $("#series-kind-extra").hidden = !kind.translated;
     seriesTitleVi.textContent = SERIES_META.titleVi; seriesTitleVi.classList.toggle("is-long", SERIES_META.titleVi.length > 32);
     seriesTitleJp.textContent = SERIES_META.titleJp;
-    seriesDescription.textContent = SERIES_META.description;
+    seriesDescription.textContent = SERIES_META.description || "";
+    seriesDescription.hidden = !SERIES_META.description;
+    loadFullDescription(SERIES_META);
     metaAuthor.textContent = SERIES_META.author;
     metaIllustrator.textContent = SERIES_META.illustrator;
     metaStatus.textContent = SERIES_META.status;
@@ -1345,6 +1386,7 @@
     statVolumes.textContent = totals.volumes;
     statChapters.textContent = totals.chapters;
     statIllustrations.textContent = totals.illustrations;
+    $("#stat-illustrations-card").hidden = !totals.illustrations;
     seriesCover.src = getSeriesCover();
     seriesBackdrop.src = getSeriesCover();
     seriesCover.alt = `Bìa ${SERIES_META.titleVi}`;
@@ -1946,9 +1988,9 @@
     let chapterPart = parts[2];
     if (seriesIdx < 0) {
       const legacySeries = SERIES.findIndex((series) => series.legacyStorage);
-      if (legacySeries < 0) return { view: "shelf" };
+      if (legacySeries < 0) return { view: "shelf", notFound: true };
       const legacyIdx = (SERIES[legacySeries].volumesData || []).findIndex((_, i) => volumeSlug(i, legacySeries) === parts[0]);
-      if (legacyIdx < 0) return { view: "shelf" };
+      if (legacyIdx < 0) return { view: "shelf", notFound: true };
       seriesIdx = legacySeries;
       volumePart = parts[0];
       chapterPart = parts[1];
@@ -1957,9 +1999,9 @@
     const volumes = SERIES[seriesIdx].volumesData;
     if (!Array.isArray(volumes)) return { view: "home", seriesIdx };
     const volIdx = volumes.findIndex((_, i) => volumeSlug(i, seriesIdx) === volumePart);
-    if (volIdx < 0) return { view: "home", seriesIdx };
+    if (volIdx < 0) return { view: "home", seriesIdx, notFound: true };
     const chapIdx = /^\d+$/.test(chapterPart || "") ? parseInt(chapterPart, 10) : -1;
-    if (!volumes[volIdx].chapters[chapIdx]) return { view: "volume", seriesIdx, volIdx };
+    if (!volumes[volIdx].chapters[chapIdx]) return { view: "volume", seriesIdx, volIdx, notFound: Boolean(chapterPart) };
     return { view: "reader", seriesIdx, volIdx, chapIdx };
   }
 
@@ -2047,7 +2089,7 @@
       return;
     }
 
-    runEinkPageTurn(change, { lagMs: 120, totalMs: 760 });
+    runEinkPageTurn(change, { lagMs: 70, totalMs: 420 });
   }
 
   async function restoreRoute() {
@@ -2066,11 +2108,19 @@
       }
     }
 
+    if (route.notFound) reportMissingRoute(route);
     if (route.view === "shelf") {
       showView("shelf", "replace");
     } else {
       applyRoute(route, { history: "replace", exact: true });
     }
+  }
+
+  // A link to a book, volume or chapter that no longer exists: say so, and
+  // put the address of the page actually shown in the URL bar.
+  function reportMissingRoute(route) {
+    showMessage(route.view === "shelf" ? "Không tìm thấy sách này trên kệ." : route.view === "home" ? "Không tìm thấy tập này, đã mở trang bộ truyện." : "Không tìm thấy chương này, đã mở mục lục tập.");
+    if (routeHash(route) === routeHash(currentRoute())) syncHistory("replace");
   }
 
   function goHome() {
@@ -2081,7 +2131,7 @@
 
     runEinkPageTurn(() => {
       showView("home");
-    }, { lagMs: 120, totalMs: 760 });
+    }, { lagMs: 70, totalMs: 420 });
   }
 
   function goShelf() {
@@ -2089,7 +2139,7 @@
       window.scrollTo({ top: 0, behavior: "auto" });
       return;
     }
-    runEinkPageTurn(() => showView("shelf"), { lagMs: 120, totalMs: 760 });
+    runEinkPageTurn(() => showView("shelf"), { lagMs: 70, totalMs: 420 });
   }
 
   // Up one level: chapter → contents → home. When that level is the page we
@@ -2117,7 +2167,7 @@
     runEinkPageTurn(() => {
       renderVolumeView(volIdx);
       showView("volume");
-    }, { lagMs: 120, totalMs: 740 });
+    }, { lagMs: 70, totalMs: 420 });
   }
 
   function renderVolumeView(volIdx) {
@@ -2255,7 +2305,7 @@
       if (options?.hit) revealSearchHit(volIdx, chapIdx, options.hit);
       else if (options?.anchor) holdAnchor(sectionFor(volIdx, chapIdx), options.anchor);
       else if (!options?.fromTop) restoreReadingPosition(volIdx, chapIdx);
-    }, { lagMs: 160, totalMs: 860 }));
+    }, { lagMs: 90, totalMs: 480 }));
   }
 
   function renderChapterView(volIdx, chapIdx) {
@@ -4448,8 +4498,8 @@
       return;
     }
 
-    const lagMs = options?.lagMs ?? 140;
-    const totalMs = options?.totalMs ?? 780;
+    const lagMs = options?.lagMs ?? 80;
+    const totalMs = options?.totalMs ?? 440;
     const token = ++einkTransitionToken;
 
     clearTimeout(einkApplyTimer);

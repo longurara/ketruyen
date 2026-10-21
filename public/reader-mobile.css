@@ -25,7 +25,7 @@ body.has-reader-surface #eink-ghost { display: none; }
   .reader-sheet { position: fixed; inset: auto 0 var(--reader-viewport-inset, 0px); margin: 0; width: 100%; max-width: 100%; max-height: calc(var(--reader-viewport-height, 100dvh) * .76); border-radius: 22px 22px 0 0; border-bottom: 0; transform: translateY(var(--sheet-drag, 0)); padding-bottom: env(safe-area-inset-bottom); }
   .reader-sheet.is-sheet-expanded { max-height: calc(var(--reader-viewport-height, 100dvh) - 12px); }
   .reader-sheet[open] { display: flex; flex-direction: column; }
-  .reader-sheet-handle { display: grid; place-items: center; flex-shrink: 0; height: 30px; width: 100%; padding: 0; border: 0; background: transparent; touch-action: none; }
+  .reader-sheet-handle { display: grid; place-items: center; flex-shrink: 0; height: 40px; width: 100%; padding: 0; border: 0; background: transparent; touch-action: none; }
   .reader-sheet-handle span { height: 4px; width: 40px; border-radius: 3px; background: var(--text-muted); opacity: .5; }
   .reader-sheet .tools-header { padding: 4px 18px 14px; }
   .reader-sheet .tools-heading { padding: 4px 18px 14px; }

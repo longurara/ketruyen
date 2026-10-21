@@ -7,7 +7,7 @@
 // and picture seen stays readable offline. app.js uses the same cache names
 // for "Tải về đọc offline".
 
-const SHELL_CACHE = "tenshi-shell-v20";
+const SHELL_CACHE = "tenshi-shell-v21";
 const INDEX_PATTERN = /^\/data\/(?:[^/]+\/)?index\.json$/;
 const TEXT_CACHE = "tenshi-text-v1";
 const IMAGE_CACHE = "tenshi-img-v2";
@@ -93,7 +93,8 @@ self.addEventListener("fetch", (event) => {
       event.waitUntil(fetched.then(() => pruneText()).catch(() => {}));
     } else if (request.mode === "navigate" && (url.pathname === "/" || url.pathname === "/index.html")) {
       event.respondWith(networkFirst(request, SHELL_CACHE, "/"));
-    } else if (SHELL.includes(url.pathname)) {
+    } else if (SHELL.includes(url.pathname) || url.pathname === "/data/descriptions.json") {
+      // Full blurbs are not precached (a few MB); the first series page fetch keeps a copy.
       event.respondWith(networkFirst(request, SHELL_CACHE));
     }
     return;

@@ -97,6 +97,8 @@
       const groups = [...new Set(Object.values(state.books).flatMap((item) => item.groups))].sort((a, b) => a.localeCompare(b, "vi"));
       select.innerHTML = '<option value="">Tất cả nhóm</option>' + groups.map((g) => `<option value="${escape(g)}">${escape(g)}</option>`).join("");
       if (groups.includes(previous)) select.value = previous;
+      // No groups yet: the picker would only offer "all", so leave it out.
+      select.closest("label").hidden = !groups.length;
     }
     const filterToggle = $("#shelf-filter-toggle"), advancedFilters = $("#shelf-advanced-filters"), shelfMore = $("#shelf-more");
     filterToggle.addEventListener("click", () => {
@@ -180,9 +182,25 @@
       }
       if (hlcSubtabs) hlcSubtabs.hidden = !isHlc;
       if (b1kSubtabs) b1kSubtabs.hidden = !isB1k;
+      // On phones each tab row scrolls sideways: keep the chosen tab in view.
+      sectionTabs?.querySelectorAll(".filter-btn.is-active").forEach((tab) => {
+        const row = tab.parentElement;
+        if (row.scrollWidth > row.clientWidth) row.scrollLeft = tab.offsetLeft - (row.clientWidth - tab.offsetWidth) / 2;
+        markTabOverflow(row);
+      });
       if (shouldRender) options.renderShelf();
     }
+    // Fade the edge a tab row can still scroll towards, so hidden tabs show.
+    function markTabOverflow(row) {
+      row.classList.toggle("has-more-start", row.scrollLeft > 2);
+      row.classList.toggle("has-more-end", row.scrollLeft + row.clientWidth < row.scrollWidth - 2);
+    }
     if (sectionTabs) {
+      sectionTabs.querySelectorAll(".toolbar-group").forEach((row) => {
+        row.addEventListener("scroll", () => markTabOverflow(row), { passive: true });
+        markTabOverflow(row);
+      });
+      window.addEventListener("resize", () => sectionTabs.querySelectorAll(".toolbar-group").forEach(markTabOverflow));
       sectionTabs.addEventListener("click", (event) => {
         const primaryBtn = event.target.closest("[data-shelf-primary]");
         if (primaryBtn) {
@@ -266,7 +284,8 @@
       };
       actions.querySelector("[data-manage]").onclick = () => manageBook(series);
       if (series.personal) actions.querySelector("[data-delete]").onclick = () => options.deleteBook(series);
-      const label = { want: "Muốn đọc", reading: "Đang đọc", done: "Đã đọc" }[status(series)];
+      // A card that already says "Đang đọc dở · Tập N" needs no "Đang đọc" tag.
+      const label = { want: "Muốn đọc", reading: card.dataset.resume ? "" : "Đang đọc", done: "Đã đọc" }[status(series)];
       if (label || row(series).groups.length) {
         const tags = document.createElement("span"); tags.className = "shelf-book-tags";
         tags.textContent = [label, ...row(series).groups].filter(Boolean).join(" · "); card.querySelector(".shelf-card-action").before(tags);

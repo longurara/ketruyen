@@ -17,6 +17,7 @@ const SERIES_PATH = path.join(__dirname, "series.json");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const DATA_DIR = path.join(PUBLIC_DIR, "data");
 const CATALOG_PATH = path.join(DATA_DIR, "series.json");
+const DESCRIPTIONS_PATH = path.join(DATA_DIR, "descriptions.json");
 const LEGACY_DATA_PATH = path.join(PUBLIC_DIR, "data.json");
 
 // Reader images are downscaled WebP copies of the scans (a few MB each as
@@ -127,6 +128,43 @@ function cleanChapter(title, content) {
   if (heading && !/^Chương/i.test(cleanTitle)) cleanTitle = heading;
 
   return { title: cleanTitle, content: merged.join("\n\n") };
+}
+
+// Blurbs taken from ebook metadata are often the release group's credits
+// ("Đánh máy: …", "Ebook được thực hiện bởi …", links, copyright lines).
+// Drop those sentences; a blurb with nothing real left becomes empty.
+const BLURB_CREDITS = /đánh máy|typing|\be-?book|chế bản|số hóa|copyright|©|all rights reserved|www\.|https?:|\.(?:com|vn|org|net)\/|tinyurl|facebook\.com|fb group|support team|nguồn (?:ebook|sách)|nguồn\s*:|hiệu đính|soát (?:lỗi|solo|chính tả)|đưa lên vào ngày|thư viện online|\bđt\s*:|\bfax\b|giấy phép|thương hiệu đã đăng k|tựa đề nguyên bản|bản gốc tiếng anh|thành viên tham gia|thời đại công nghệ thông tin|tinh thần tự nguyện|mua sách in|ủng hộ bản dịch|liên lạc với chúng mình|lời người dịch|người dịch\s*:|các người dịch/i;
+const MIN_BLURB = 80;
+
+function cleanDescription(text) {
+  const blurb = (text || "").normalize("NFC").replace(/\s+/g, " ").trim();
+  if (!BLURB_CREDITS.test(blurb)) return blurb;
+  const kept = blurb
+    .split(/(?<=[.!?…]["”’»』」)]*)\s+|\s+•\s+/)
+    .filter((sentence) => !BLURB_CREDITS.test(sentence))
+    .join(" ")
+    .trim();
+  return kept.length >= MIN_BLURB ? kept : "";
+}
+
+// The shelf card shows three lines of each blurb, so series.json carries a
+// short cut of it; the series page loads the full text from descriptions.json.
+const SHELF_BLURB = 220;
+
+function shortenBlurb(text) {
+  if (text.length <= SHELF_BLURB) return text;
+  return `${text.slice(0, SHELF_BLURB).replace(/[\s,;:.…-]+\S*$/, "")}…`;
+}
+
+function splitDescriptions(catalog) {
+  const full = {};
+  const shelf = catalog.map((entry) => {
+    const description = cleanDescription(entry.description);
+    if (description.length <= SHELF_BLURB) return { ...entry, description };
+    full[entry.slug] = description;
+    return { ...entry, description: shortenBlurb(description), descriptionTruncated: true };
+  });
+  return { shelf, full };
 }
 
 // ------------------------------------------------------------
@@ -307,11 +345,17 @@ async function main() {
     }
   }
   await Promise.all(Array.from({ length: 8 }, () => worker()));
-  fs.writeFileSync(CATALOG_PATH, JSON.stringify(catalog), "utf-8");
-  console.log(`📚 data/series.json: ${catalog.length} series`);
+  const { shelf, full } = splitDescriptions(catalog);
+  fs.writeFileSync(CATALOG_PATH, JSON.stringify(shelf), "utf-8");
+  fs.writeFileSync(DESCRIPTIONS_PATH, JSON.stringify(full), "utf-8");
+  console.log(`📚 data/series.json: ${shelf.length} series, ${Object.keys(full).length} full blurbs in data/descriptions.json`);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
+
+module.exports = { cleanDescription, splitDescriptions };

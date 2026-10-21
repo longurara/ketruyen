@@ -51,6 +51,7 @@
 .shelf-search-row { display: flex; gap: 8px; min-width: 0; }
 .shelf-search-row input { flex: 1; }
 .shelf-advanced-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.shelf-advanced-filters:has(> label[hidden]) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .shelf-advanced-filters label { display: grid; gap: 6px; min-width: 0; color: var(--text-muted); font-size: 11px; }
 #shelf-filter-toggle { display: none; flex: 0 0 auto; align-items: center; gap: 6px; min-height: 46px; padding: 10px 12px; font-size: 12px; white-space: nowrap; }
 #shelf-filter-toggle.has-active-filters { background: var(--surface-2); border-color: var(--ink); }
@@ -58,10 +59,21 @@
   width: 100%; min-width: 0; min-height: 46px; padding: 11px 12px; border: 1px solid var(--line-strong);
   border-radius: 10px; background: var(--surface); color: var(--text); font: 13px/1.5 var(--font-ui);
 }
+/* The browser's own clear button is blue; draw it in the theme's ink. */
+#shelf-search::-webkit-search-cancel-button {
+  -webkit-appearance: none; appearance: none; width: 16px; height: 16px; cursor: pointer; background: var(--text-muted);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 6l12 12M18 6L6 18'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+#shelf-search::-webkit-search-cancel-button:hover { background: var(--text); }
 .shelf-shell .shelf-grid { margin-top: 22px; row-gap: 32px; }
-.ebook-shelf-item { display: flex; flex-direction: column; min-width: 0; }
-.ebook-shelf-item > .shelf-card { flex: 1; }
-.shelf-card-controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding: 10px 0 0; font-size: 12px; }
+/* The favourite / manage buttons sit in a footer drawn inside the card, so
+   they read as part of the book above them rather than the next one. */
+.ebook-shelf-item { position: relative; display: flex; flex-direction: column; min-width: 0; }
+.ebook-shelf-item > .shelf-card { flex: 1; padding-bottom: 82px; }
+.ebook-shelf-item > .shelf-card:hover, .ebook-shelf-item > .shelf-card:focus-visible { transform: none; }
+.shelf-card-controls { position: absolute; left: 24px; right: 24px; bottom: 12px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; }
+.shelf-empty { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
 .shelf-card-controls [aria-pressed="true"] { color: var(--text); font-weight: 700; }
 .shelf-book-tags { display: block; margin-top: 12px; color: var(--text-muted); font-size: 12px; overflow-wrap: anywhere; }
 .book-edit-cover { display: block; max-width: 130px; max-height: 180px; object-fit: contain; margin-bottom: 20px; }
@@ -116,19 +128,27 @@
   .shelf-heading .btn-primary { min-height: 44px; padding: 10px 13px; font-size: 12px; }
   .shelf-heading .shelf-actions { gap: 8px; }
   .shelf-more summary { width: 44px; height: 44px; }
-  .shelf-shell .ebook-storage-note { margin-top: 10px; line-height: 1.7; }
+  /* The import dialog repeats the format and size limits. */
+  .shelf-shell .ebook-storage-note { display: none; }
   .shelf-filters { margin-top: 16px; gap: 12px; }
   .shelf-filters input, .shelf-filters select { font-size: 16px; }
   #shelf-filter-toggle { display: flex; }
   .shelf-advanced-filters { display: none; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
   .shelf-advanced-filters.is-expanded { display: grid; }
-  .shelf-advanced-filters label:last-child { grid-column: 1 / -1; }
+  .shelf-advanced-filters:not(:has(> label[hidden])) label:last-child { grid-column: 1 / -1; }
   .shelf-resume { margin-top: 16px; }
   .shelf-section-tabs { width: 100%; }
+  /* One row per tab group that scrolls sideways, instead of wrapping a lone
+     tab onto a second line. */
   .shelf-section-tabs .shelf-primary-tabs,
-  .shelf-section-tabs .shelf-sub-tabs { display: flex; flex-wrap: wrap; width: 100%; border-radius: 16px; padding: 4px; gap: 4px; }
+  .shelf-section-tabs .shelf-sub-tabs { position: relative; display: flex; flex-wrap: nowrap; width: 100%; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; border-radius: 999px; padding: 4px; gap: 4px; }
+  .shelf-section-tabs .shelf-primary-tabs::-webkit-scrollbar,
+  .shelf-section-tabs .shelf-sub-tabs::-webkit-scrollbar { display: none; }
+  .shelf-section-tabs .has-more-end { -webkit-mask-image: linear-gradient(90deg, #000 78%, transparent); mask-image: linear-gradient(90deg, #000 78%, transparent); }
+  .shelf-section-tabs .has-more-start { -webkit-mask-image: linear-gradient(90deg, transparent, #000 22%); mask-image: linear-gradient(90deg, transparent, #000 22%); }
+  .shelf-section-tabs .has-more-start.has-more-end { -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
   .shelf-section-tabs .shelf-primary-tabs .filter-btn,
-  .shelf-section-tabs .shelf-sub-tabs .filter-btn { flex: 1 1 calc(50% - 4px); min-width: 0; justify-content: center; min-height: 38px; padding: 6px 8px; gap: 5px; font-size: 12px; }
+  .shelf-section-tabs .shelf-sub-tabs .filter-btn { flex: 0 0 auto; justify-content: center; min-height: 40px; padding: 6px 14px; gap: 6px; font-size: 12.5px; white-space: nowrap; }
   .shelf-section-tabs .shelf-badge { min-width: 20px; height: 18px; padding: 0 6px; font-size: 10.5px; flex-shrink: 0; }
   .shelf-subtabs-row { width: 100%; padding-left: 0; }
   .shelf-subtabs-label { display: none; }
@@ -137,7 +157,8 @@
   .shelf-resume-chapter { font-size: 11px; }
   .shelf-resume-cover { width: 42px; height: 60px; }
   .shelf-resume-arrow { font-size: 20px; }
-  .shelf-card-controls { justify-content: flex-start; }
+  .ebook-shelf-item > .shelf-card { padding-bottom: 72px; }
+  .shelf-card-controls { left: 16px; right: 16px; bottom: 8px; padding-top: 8px; }
   .shelf-shell .shelf-grid { margin-top: 18px; }
   .ebook-dialog { padding: 22px 18px; }
   .reader-content { padding-inline: min(var(--reading-margin, 24px), 7vw); }
@@ -146,6 +167,4 @@
   .shelf-heading { flex-wrap: wrap; gap: 10px; }
   .shelf-heading .shelf-title { font-size: 1.5rem; }
   .shelf-heading .btn-primary { padding-inline: 12px; }
-  .shelf-section-tabs .shelf-primary-tabs .filter-btn,
-  .shelf-section-tabs .shelf-sub-tabs .filter-btn { flex-basis: 100%; }
 }

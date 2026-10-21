@@ -122,8 +122,8 @@
       <p id="motion-status" role="status">Đang tắt.</p>
       <div class="tools-actions"><button id="motion-toggle" type="button" class="btn-secondary">Bật cảm biến</button><button id="motion-calibrate" type="button" class="btn-secondary" disabled>Lấy lại mốc / Tiếp tục</button></div>
       <label class="motion-field"><span>Chế độ nghiêng</span><select id="motion-mode"><option value="scroll">Nghiêng trước/sau để tự cuộn</option><option value="page">Nghiêng trái/phải để lật trang</option><option value="off">Tắt điều khiển bằng nghiêng</option></select></label>
-      <label class="motion-field"><span>Độ nhạy</span><output id="motion-sensitivity-value" for="motion-sensitivity"></output><input id="motion-sensitivity" type="range" min="1" max="5" step="1"></label>
-      <label class="motion-field"><span>Tốc độ cuộn tối đa</span><output id="motion-speed-value" for="motion-speed"></output><input id="motion-speed" type="range" min="40" max="600" step="20"></label>
+      <label class="motion-field"><span>Độ nhạy</span><output id="motion-sensitivity-value" for="motion-sensitivity"></output><input id="motion-sensitivity" type="range" aria-label="Độ nhạy" min="1" max="5" step="1"></label>
+      <label class="motion-field"><span>Tốc độ cuộn tối đa</span><output id="motion-speed-value" for="motion-speed"></output><input id="motion-speed" type="range" aria-label="Tốc độ cuộn tối đa" min="40" max="600" step="20"></label>
       <div class="motion-switches">
         <label class="motion-switch"><span>Lắc để lưu vị trí đọc<small>Có thể hoàn tác sau khi lưu.</small></span><input id="motion-bookmark" type="checkbox" role="switch"></label>
         <label class="motion-switch"><span>Úp máy để tạm dừng<small>Dừng nghe và tự cuộn.</small></span><input id="motion-face-down" type="checkbox" role="switch"></label>

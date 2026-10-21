@@ -219,7 +219,7 @@ body[data-theme="dark"] #eink-ghost {
 }
 
 #eink-ghost.is-active {
-  animation: einkGhost 860ms var(--steps-8) forwards;
+  animation: einkGhost 480ms var(--steps-6) forwards;
 }
 
 #eink-ghost .ghost-header {
@@ -253,7 +253,7 @@ body[data-theme="dark"] #eink-ghost {
 }
 
 body.is-eink-refreshing #eink-refresh {
-  animation: einkRefresh 820ms var(--steps-8);
+  animation: einkRefresh 460ms var(--steps-6);
 }
 
 body.is-eink-refreshing #header,
@@ -381,6 +381,7 @@ body.is-eink-busy select {
 .brand {
   flex: 1;
   min-width: 0;
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -1730,6 +1731,10 @@ mark.search-hit {
 
 .offline-btn {
   padding-inline: 0;
+}
+
+@media (hover: none) {
+  .offline-btn { min-height: 44px; }
 }
 
 .offline-btn:disabled {
