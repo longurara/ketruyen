@@ -201,7 +201,7 @@
         <p id="tools-feedback" class="tools-feedback" role="status" hidden></p>
         <div id="tools-panel" class="tools-panel" role="tabpanel"></div>
       </dialog>
-      <div id="reader-selection-tools" class="selection-tools" hidden><span id="selection-summary">Đã chọn đoạn</span><button type="button" data-selection-action="quote">Tạo trích dẫn</button><button type="button" data-selection-action="character">Thêm nhân vật</button><button type="button" data-library-action="highlight">Tô màu / Ghi chú</button></div>
+      <div id="reader-selection-tools" class="selection-tools" role="toolbar" aria-label="Đoạn đã chọn" hidden><button type="button" data-library-action="highlight" title="Tô màu hoặc ghi chú đoạn này"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 11-6 6v3h3l6-6"/><path d="m14 6 4 4"/><path d="M9.5 10.5 16 4l4 4-6.5 6.5z"/></svg><span>Tô màu</span></button><button type="button" data-selection-action="quote" title="Tạo ảnh trích dẫn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 7H6a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h2v1a3 3 0 0 1-3 3"/><path d="M20 7h-4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h2v1a3 3 0 0 1-3 3"/></svg><span>Trích dẫn</span></button><button type="button" data-selection-action="character" title="Thêm làm nhân vật"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Nhân vật</span></button><span id="selection-summary" class="selection-note" hidden>Lấy 600 ký tự đầu</span></div>
     `);
     const dialog = $("#reader-tools-dialog"), panel = $("#tools-panel"), selectionTools = $("#reader-selection-tools");
     let embeddedHost = null;
@@ -370,9 +370,36 @@
       const end = selection.focusNode?.parentElement?.closest(".reader-frame");
       if (!start || start !== end || !selection.anchorNode.parentElement.closest(".reader-content") || !selection.focusNode.parentElement.closest(".reader-content")) { selectionTools.hidden = true; return; }
       selectedQuote = quoteContext(text.slice(0, 600), start); savedSelection = text;
-      $("#selection-summary").textContent = text.length > 600 ? "Lấy 600 ký tự đầu" : "Đoạn đã chọn";
+      $("#selection-summary").hidden = text.length <= 600;
       selectionTools.hidden = false;
+      placeSelectionTools();
     }
+
+    // With a mouse the bar floats just above the selection (below it when
+    // there is no room). On touch screens the system's own copy menu sits
+    // there, so the bar stays docked at the bottom (see CSS).
+    const finePointer = matchMedia("(hover: hover) and (pointer: fine)");
+    function placeSelectionTools() {
+      const floating = finePointer.matches;
+      selectionTools.classList.toggle("is-floating", floating);
+      if (!floating) { selectionTools.style.left = selectionTools.style.top = ""; return; }
+      const selection = window.getSelection();
+      if (!selection?.rangeCount) return;
+      const rects = [...selection.getRangeAt(0).getClientRects()].filter((rect) => rect.width > 0);
+      if (!rects.length) return;
+      const first = rects[0], last = rects[rects.length - 1];
+      const bar = selectionTools.getBoundingClientRect(), gap = 10, edge = 12;
+      const above = first.top - bar.height - gap >= (document.querySelector("#header")?.getBoundingClientRect().bottom || 0) + edge;
+      const anchor = above ? first : last;
+      const centre = anchor.left + anchor.width / 2;
+      const left = Math.min(Math.max(centre - bar.width / 2, edge), window.innerWidth - bar.width - edge);
+      selectionTools.style.left = `${Math.round(left)}px`;
+      selectionTools.style.top = `${Math.round(above ? first.top - bar.height - gap : last.bottom + gap)}px`;
+      selectionTools.style.setProperty("--arrow-x", `${Math.round(centre - left)}px`);
+      selectionTools.classList.toggle("is-below", !above);
+    }
+    window.addEventListener("scroll", () => { if (!selectionTools.hidden) placeSelectionTools(); }, { passive: true });
+    window.addEventListener("resize", () => { if (!selectionTools.hidden) placeSelectionTools(); });
     document.addEventListener("selectionchange", readSelection);
     selectionTools.addEventListener("mousedown", (event) => event.preventDefault());
     selectionTools.addEventListener("click", (event) => {

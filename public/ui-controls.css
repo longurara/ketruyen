@@ -152,6 +152,9 @@ input[type="checkbox"]:not([role="switch"]):disabled { opacity: .45; cursor: not
 :is(.tools-panel, .workbench-panel, .shelf-card-controls) .btn-link:hover:not(:disabled) { background: var(--surface-2); border-color: var(--line-strong); color: var(--text); }
 :is(.tools-panel, .workbench-panel, .shelf-card-controls) .btn-link:disabled { opacity: .4; cursor: not-allowed; }
 :is(.tools-panel, .workbench-panel) :is(.btn-primary, .btn-secondary) { border-radius: 10px; line-height: 1.5; white-space: normal; }
+/* Edit buttons on a card are secondary to its text: no box until hovered. */
+.tool-card-heading :is(.btn-link, .tool-action):not(.ui-danger) { border-color: transparent; background: transparent; color: var(--text-muted); }
+.tool-card-heading :is(.btn-link, .tool-action):not(.ui-danger):hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
 .hand-camera-panel :is(button, summary) { border-radius: 10px; }
 
 button:is(.ui-danger, [data-term-delete], [data-vocab-delete], [data-profile-delete], [data-delete-quote], [data-delete-rule], [data-delete-character], #mark-delete, #btn-downloads-clear, #btn-reset-volume),

@@ -84,7 +84,7 @@
     const settings = document.createElement("section"); settings.className = "settings-section";
     settings.innerHTML = '<h4 class="settings-section-title">Tiện ích sách</h4><p class="settings-hint">Bản đồ sách, xem trước, chú giải, sổ từ và hồ sơ đọc.</p><button type="button" class="btn-secondary settings-action" data-workbench="options">Tùy chỉnh tiện ích</button>';
     $("#settings-progress-section").before(settings);
-    $("#reader-selection-tools").insertAdjacentHTML("beforeend", '<button type="button" data-workbench-selection="words">Chú giải / Lưu từ</button>');
+    $("#selection-summary").insertAdjacentHTML("beforebegin", '<button type="button" data-workbench-selection="words" title="Chú giải hoặc lưu vào sổ từ"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M9 8h7M9 12h5"/></svg><span>Chú giải</span></button>');
     const sideButton = document.createElement("button"); sideButton.type = "button"; sideButton.className = "side-settings-btn"; sideButton.dataset.workbench = "map"; sideButton.innerHTML = '<span class="side-settings-glyph" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v16H4zM14 4h6v16h-6zM7 8h1M7 12h1M17 8h1M17 12h1"></path></svg></span>Tiện ích đọc';
     $("#btn-reader-listen").after(sideButton);
     function close() { if (!libraryActive || options.library.canClose()) options.surfaces.close(dialog); }

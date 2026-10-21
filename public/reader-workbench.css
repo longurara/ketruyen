@@ -1,11 +1,18 @@
 .workbench-dialog { width: min(980px, calc(100vw - 24px)); }
-.workbench-dialog .tools-header { display: flex; flex-shrink: 0; align-items: start; justify-content: space-between; gap: 16px; padding: 22px 24px 10px; }
-.workbench-dialog .tools-header h2 { margin-top: 8px; font: 26px var(--font-serif); }
+.workbench-dialog .tools-header { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px 14px; }
+.workbench-dialog .tools-header h2 { margin-top: 2px; font: 600 24px/1.2 var(--font-serif); }
+.workbench-dialog .tools-close { width: 38px; height: 38px; border: 0; background: var(--surface-2); color: var(--text-soft); font-size: 22px; }
+.workbench-dialog .tools-close:hover { color: var(--text); background: var(--raised); }
 .workbench-dialog .tools-eyebrow { font: 11px/1.7 var(--font-ui); text-transform: uppercase; letter-spacing: .12em; color: var(--text-muted); }
-.workbench-tabs { display: flex; flex-shrink: 0; gap: 8px; overflow-x: auto; padding: 12px 22px; border-bottom: 1px solid var(--line); }
-.workbench-tabs button { flex: 0 0 auto; padding: 10px 14px; border: 1px solid var(--line); border-radius: 22px; color: var(--text); background: var(--surface); }
-.workbench-tabs button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
-.workbench-panel { padding: 24px; overflow: auto; min-height: 0; max-height: 62dvh; overscroll-behavior: contain; }
+/* Second level: a scrolling row of words, the current one underlined. */
+.workbench-tabs { display: flex; flex-shrink: 0; gap: 2px; overflow-x: auto; scrollbar-width: none; padding: 4px 16px 0; border-bottom: 1px solid var(--line); }
+.workbench-tabs::-webkit-scrollbar { display: none; }
+.workbench-tabs button { position: relative; flex: 0 0 auto; min-height: 42px; padding: 10px 10px 12px; border: 0; background: none; color: var(--text-muted); font: 500 13px var(--font-ui); white-space: nowrap; cursor: pointer; }
+.workbench-tabs button:hover { color: var(--text); }
+.workbench-tabs button[aria-pressed="true"] { color: var(--text); }
+.workbench-tabs button[aria-pressed="true"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--text); }
+.workbench-tabs button:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; border-radius: 8px; }
+.workbench-panel { padding: 20px 24px 24px; overflow: auto; min-height: 0; max-height: 62dvh; overscroll-behavior: contain; }
 .workbench-panel label:not(.workbench-check) { display: grid; gap: 8px; }
 .workbench-panel select, .workbench-panel input:not([type="checkbox"]):not([type="range"]), .workbench-panel textarea { max-width: 100%; width: 100%; padding: 10px; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 8px; }
 .workbench-panel .tools-actions { margin: 14px 0; }
@@ -13,7 +20,13 @@
 .workbench-panel summary { padding: 16px 0; cursor: pointer; }
 .book-map { display: grid; gap: 10px; }
 .book-map > button { display: grid; gap: 8px; padding: 12px; text-align: left; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--text); }
-.book-map > button[aria-current] { outline: 2px solid var(--text); outline-offset: 1px; }
+.book-map > button:hover { background: var(--surface-2); }
+.book-map > button[aria-current] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--text); }
+/* The chapter list reads as rows rather than a stack of boxes. */
+#workbench-chapters { gap: 0; margin-top: 4px; border-top: 1px solid var(--line); }
+#workbench-chapters > button { padding: 12px 12px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; font-size: 14px; line-height: 1.5; }
+#workbench-chapters > button:hover { background: var(--surface-2); }
+#workbench-chapters > button[aria-current] { background: var(--surface-2); font-weight: 600; }
 .book-map-track { display: block; height: 8px; background: var(--line); border-radius: 5px; overflow: hidden; }
 .book-map-track i { display: block; height: 100%; background: var(--text); }
 .book-map small { color: var(--text-muted); }
