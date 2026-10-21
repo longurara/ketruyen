@@ -360,7 +360,7 @@
 
     function quoteContext(text, article) {
       const entry = entries().find((item) => item.volIdx === Number(article.dataset.vol) && item.chapIdx === Number(article.dataset.chap));
-      return { id: uid(), text, slug: currentSeries().slug, title: entry.volume.title || currentSeries().titleVi, author: currentSeries().author, source: `${entry.volume.name} · ${entry.chapter.title}`, theme: context().theme };
+      return { id: uid(), text, slug: currentSeries().slug, title: entry.volume.title || currentSeries().titleVi, author: currentSeries().author, source: `${entry.volume.name} · ${entry.chapter.title}`, cover: entry.volume.cover || currentSeries().cover || "", theme: context().theme };
     }
 
     function readSelection() {
@@ -411,28 +411,106 @@
       }
     });
 
-    function makeQuoteImage(draft) {
-      const palette = draft.theme === "dark" ? ["#101311", "#eeeee4", "#99a997"] : draft.theme === "light" ? ["#f6f7f2", "#202d25", "#607861"] : ["#eee6d7", "#332d23", "#8b7655"];
+    // Quote card palettes follow the reader themes: paper, ink, quiet text,
+    // the large quotation mark and hairlines.
+    const QUOTE_PALETTES = {
+      sepia: { bg: ["#f3ecdf", "#e9dfcc"], ink: "#2b241b", muted: "#85704f", mark: "rgba(150, 118, 72, 0.32)", line: "rgba(80, 60, 30, 0.18)" },
+      light: { bg: ["#fbfaf7", "#f0eee8"], ink: "#1b1a17", muted: "#77716a", mark: "rgba(30, 26, 21, 0.14)", line: "rgba(30, 26, 21, 0.14)" },
+      dark: { bg: ["#161618", "#0b0b0c"], ink: "#eeeae1", muted: "#9c978c", mark: "rgba(236, 233, 225, 0.16)", line: "rgba(236, 233, 225, 0.16)" }
+    };
+    const QUOTE_SERIF = '"Literata", Georgia, "Times New Roman", serif';
+    const QUOTE_SANS = '"Be Vietnam Pro", system-ui, sans-serif';
+
+    // Short lines get display-size type; long passages stay readable.
+    function quoteFontSize(text) {
+      const n = text.length;
+      return n <= 60 ? 68 : n <= 140 ? 56 : n <= 260 ? 47 : n <= 420 ? 40 : 35;
+    }
+
+    let quoteRender = 0;
+    function makeQuoteImage(draft, cover) {
+      const palette = QUOTE_PALETTES[draft.theme] || QUOTE_PALETTES.sepia;
       const canvas = document.createElement("canvas"), ctx = canvas.getContext("2d");
-      canvas.width = 1080;
-      ctx.font = '38px "Literata", "Times New Roman", serif';
-      const text = wrapLines(ctx, draft.text.trim().normalize("NFC"), 880);
-      ctx.font = 'bold 25px system-ui, sans-serif';
-      const title = wrapLines(ctx, draft.title, 880);
-      ctx.font = '22px system-ui, sans-serif';
-      const source = wrapLines(ctx, draft.source, 880);
-      canvas.height = Math.max(720, 420 + text.length * 58 + title.length * 36 + source.length * 30);
-      ctx.fillStyle = palette[0]; ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = palette[2]; ctx.lineWidth = 2; ctx.strokeRect(42, 42, 996, canvas.height - 84);
-      ctx.fillStyle = palette[2]; ctx.font = '110px Georgia, serif'; ctx.fillText('“', 96, 170);
-      ctx.fillStyle = palette[1]; ctx.font = '38px "Literata", "Times New Roman", serif';
-      let y = 214; text.forEach((line) => { ctx.fillText(line, 100, y); y += 58; });
-      y = Math.max(y + 50, canvas.height - 125 - title.length * 36 - source.length * 30);
-      ctx.fillStyle = palette[2]; ctx.fillRect(100, y - 24, 72, 2);
-      ctx.fillStyle = palette[1]; ctx.font = 'bold 25px system-ui, sans-serif'; title.forEach((line) => { ctx.fillText(line, 100, y + 16); y += 36; });
-      ctx.fillStyle = palette[2]; ctx.font = '22px system-ui, sans-serif'; source.forEach((line) => { ctx.fillText(line, 100, y + 18); y += 30; });
-      ctx.font = '18px system-ui, sans-serif'; ctx.fillText(`${draft.author} · Kệ truyện`, 100, canvas.height - 70);
+      const W = 1080, PAD = 110, inner = W - PAD * 2;
+      const body = draft.text.trim().normalize("NFC");
+      const size = quoteFontSize(body), leading = Math.round(size * 1.5);
+      canvas.width = W;
+
+      ctx.font = `400 ${size}px ${QUOTE_SERIF}`;
+      const text = wrapLines(ctx, body, inner);
+      const coverW = cover ? 96 : 0, coverH = Math.round(coverW * 1.5), metaX = PAD + (cover ? coverW + 32 : 0), metaW = W - PAD - metaX;
+      ctx.font = `600 32px ${QUOTE_SERIF}`;
+      const title = wrapLines(ctx, draft.title, metaW).slice(0, 2);
+      ctx.font = `400 23px ${QUOTE_SANS}`;
+      const source = wrapLines(ctx, draft.source, metaW).slice(0, 2);
+      const meta = title.length * 42 + 10 + source.length * 32 + (draft.author ? 34 : 0);
+      const footer = Math.max(meta, coverH);
+
+      // At least square; the quote sits in the middle of the space above the footer.
+      const markSpace = 150, textHeight = text.length * leading, footerGap = 96;
+      const height = Math.max(W, PAD + markSpace + textHeight + footerGap + 1 + 48 + footer + 70 + PAD * 0.6);
+      canvas.height = height;
+
+      const gradient = ctx.createLinearGradient(0, 0, W * 0.4, height);
+      gradient.addColorStop(0, palette.bg[0]); gradient.addColorStop(1, palette.bg[1]);
+      ctx.fillStyle = gradient; ctx.fillRect(0, 0, W, height);
+
+      const footerTop = height - PAD * 0.6 - 70 - footer - 48;
+      const free = footerTop - footerGap - (PAD + markSpace) - textHeight;
+      const textTop = PAD + markSpace + Math.max(0, free / 2);
+
+      ctx.fillStyle = palette.mark; ctx.font = `400 300px ${QUOTE_SERIF}`; ctx.textBaseline = "alphabetic";
+      ctx.fillText("“", PAD - 14, textTop - 10);
+
+      ctx.fillStyle = palette.ink; ctx.font = `400 ${size}px ${QUOTE_SERIF}`; ctx.textBaseline = "top";
+      text.forEach((line, i) => ctx.fillText(line, PAD, textTop + i * leading + (leading - size) / 2));
+
+      ctx.fillStyle = palette.line; ctx.fillRect(PAD, footerTop, inner, 1);
+      let y = footerTop + 48;
+      if (cover) {
+        ctx.save();
+        ctx.shadowColor = "rgba(0, 0, 0, 0.28)"; ctx.shadowBlur = 18; ctx.shadowOffsetY = 6;
+        ctx.beginPath(); ctx.roundRect(PAD, y, coverW, coverH, 6); ctx.fillStyle = palette.bg[1]; ctx.fill();
+        ctx.restore();
+        ctx.save(); ctx.beginPath(); ctx.roundRect(PAD, y, coverW, coverH, 6); ctx.clip();
+        const scale = Math.max(coverW / cover.naturalWidth, coverH / cover.naturalHeight);
+        const dw = cover.naturalWidth * scale, dh = cover.naturalHeight * scale;
+        ctx.drawImage(cover, PAD + (coverW - dw) / 2, y + (coverH - dh) / 2, dw, dh);
+        ctx.restore();
+      }
+      const metaTop = y + Math.max(0, (coverH - meta) / 2);
+      ctx.fillStyle = palette.ink; ctx.font = `600 32px ${QUOTE_SERIF}`;
+      title.forEach((line, i) => ctx.fillText(line, metaX, metaTop + i * 42));
+      y = metaTop + title.length * 42 + 10;
+      ctx.fillStyle = palette.muted; ctx.font = `400 23px ${QUOTE_SANS}`;
+      source.forEach((line, i) => ctx.fillText(line, metaX, y + i * 32));
+      y += source.length * 32;
+      if (draft.author) { ctx.font = `500 23px ${QUOTE_SANS}`; ctx.fillText(draft.author, metaX, y + 2); }
+
+      // Small mark of the library in the bottom corner.
+      const brandY = height - PAD * 0.6 - 34;
+      ctx.font = `600 20px ${QUOTE_SANS}`; ctx.textAlign = "right"; ctx.fillStyle = palette.muted;
+      ctx.fillText("Kệ truyện", W - PAD, brandY + 7);
+      const brandW = ctx.measureText("Kệ truyện").width;
+      ctx.textAlign = "center"; ctx.beginPath(); ctx.arc(W - PAD - brandW - 26, brandY + 17, 17, 0, Math.PI * 2); ctx.fillStyle = palette.ink; ctx.fill();
+      ctx.fillStyle = palette.bg[0]; ctx.font = `600 18px "Noto Serif JP", ${QUOTE_SERIF}`; ctx.fillText("天", W - PAD - brandW - 26, brandY + 7);
+      ctx.textAlign = "left";
       return canvas;
+    }
+
+    // The series cover for the card's footer, loaded once per address.
+    const quoteCovers = new Map();
+    function quoteCover(draft) {
+      const src = draft.cover || seriesList.find((series) => series.slug === draft.slug)?.cover;
+      if (!src) return Promise.resolve(null);
+      if (!quoteCovers.has(src)) {
+        quoteCovers.set(src, new Promise((resolve) => {
+          const image = new Image();
+          image.onload = () => resolve(image); image.onerror = () => resolve(null);
+          image.src = src;
+        }));
+      }
+      return quoteCovers.get(src);
     }
 
     function renderQuotes() {
@@ -447,7 +525,14 @@
         const preview = () => {
           draft.text = $("#quote-text").value.slice(0, 600); draft.theme = $("#quote-theme").value;
           const empty = !draft.text.trim(); $("#quote-preview").hidden = empty; $("#quote-download").disabled = empty; $("#quote-save").disabled = empty;
-          if (!empty) { canvas = makeQuoteImage(draft); $("#quote-preview").src = canvas.toDataURL("image/png"); }
+          if (empty) return;
+          const token = ++quoteRender;
+          // Draw once the card fonts and the cover are in, so the PNG matches the preview.
+          const fonts = document.fonts ? Promise.all([`400 40px ${QUOTE_SERIF}`, `600 32px ${QUOTE_SERIF}`, `400 23px ${QUOTE_SANS}`].map((font) => document.fonts.load(font, draft.text.slice(0, 40) || "Aa"))).catch(() => {}) : Promise.resolve();
+          Promise.all([quoteCover(draft), fonts]).then(([cover]) => {
+            if (token !== quoteRender || !$("#quote-preview")) return;
+            canvas = makeQuoteImage(draft, cover); $("#quote-preview").src = canvas.toDataURL("image/png");
+          });
         };
         $("#quote-text").addEventListener("input", preview); $("#quote-theme").addEventListener("change", preview);
         $("#quote-paragraph")?.addEventListener("change", (event) => { if (event.target.value === "") return; const text = options.paragraphs(entry.volIdx, entry.chapIdx).filter((p) => !p.startsWith("---"))[Number(event.target.value)]; quoteDraft = { ...quoteContext(text.slice(0, 600), document.querySelector(`.reader-frame[data-vol="${entry.volIdx}"][data-chap="${entry.chapIdx}"]`)), theme: draft.theme }; renderQuotes(); });
