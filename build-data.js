@@ -197,37 +197,41 @@ async function buildSeries(config) {
     }
     totalImages += imageFiles.length;
 
-    const chapters = vol.chapters.map((ch, idx) => {
-      // Find images for this chapter
-      const prefix = ch.isIllustration
-        ? "illu"
-        : `ch${String(idx + 1).padStart(2, "0")}`;
-      const chImages = imageFiles.filter((f) =>
-        ch.isIllustration
-          ? f.startsWith("illu")
-          : f.startsWith(`${prefix}_`) || f.startsWith(`${prefix}.`)
-      );
-      const text = ch.isIllustration
-        ? { title: ch.title, content: "" }
-        : cleanChapter(ch.title, ch.content);
+    const chapters = vol.chapters
+      .map((ch, idx) => {
+        // Find images for this chapter
+        const prefix = ch.isIllustration
+          ? "illu"
+          : `ch${String(idx + 1).padStart(2, "0")}`;
+        const chImages = imageFiles.filter((f) =>
+          ch.isIllustration
+            ? f.startsWith("illu")
+            : f.startsWith(`${prefix}_`) || f.startsWith(`${prefix}.`)
+        );
+        const text = ch.isIllustration
+          ? { title: ch.title, content: "" }
+          : cleanChapter(ch.title, ch.content);
 
-      return {
-        title: text.title,
-        content: text.content,
-        isIllustration: ch.isIllustration || false,
-        images: chImages.map((f) => imageInfo[f])
-      };
-    });
+        return {
+          title: text.title,
+          content: text.content,
+          isIllustration: ch.isIllustration || false,
+          images: chImages.map((f) => imageInfo[f])
+        };
+      })
+      .filter((ch, _, arr) => !ch.isIllustration || ch.images.length > 0 || arr.length === 1);
 
     // The first picture in the volume doubles as its cover.
     let cover = "";
-    const coverChapter = vol.chapters.findIndex((_, i) => chapters[i].images.length > 0);
+    const coverChapter = chapters.findIndex((ch) => ch.images.length > 0);
     if (coverChapter >= 0) {
       const first = chapters[coverChapter].images[0];
       const file = imageFiles.find((f) => imageInfo[f] === first);
       const base = path.parse(file).name;
       await optimizeImage(path.join(activeImgDir, file), path.join(optDir, `${base}.cover.webp`), COVER_WIDTH);
       cover = `${urlBase("img")}/${volDirName}/${base}.cover.webp`;
+    } else if (fs.existsSync(path.join(optDir, "illu_01.cover.webp"))) {
+      cover = `${urlBase("img")}/${volDirName}/illu_01.cover.webp`;
     }
 
     texts.push(chapters.map((ch) => ch.content));

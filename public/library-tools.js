@@ -134,29 +134,41 @@
       host.innerHTML = `<button type="button" class="shelf-resume-card" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="">` : ""}<span class="shelf-resume-copy"><span class="shelf-resume-label">Đọc tiếp</span><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span></span><span class="shelf-resume-arrow" aria-hidden="true">→</span></button>`;
       host.querySelector("button").onclick = () => options.openMark(options.series.indexOf(book), { type: "bookmark", volIdx: saved.volIdx, chapIdx: saved.chapIdx });
     }
-    const VALID_SECTIONS = new Set(["main", "hlc-all", "hlc-oneshot", "hlc-completed", "hlc-multivol"]);
+    const VALID_SECTIONS = new Set([
+      "main",
+      "hlc-all", "hlc-oneshot", "hlc-completed", "hlc-multivol",
+      "b1k-all", "b1k-lit", "b1k-mystery", "b1k-knowledge", "b1k-life"
+    ]);
     let activeSection = "main";
     let lastHlcSection = "hlc-all";
+    let lastB1kSection = "b1k-all";
     const sectionTabs = $("#shelf-section-tabs");
     const hlcSubtabs = $("#shelf-hlc-subtabs");
+    const b1kSubtabs = $("#shelf-b1k-subtabs");
     function normalizeBookSection(sec) {
       if (sec === "hlc-ln") return "hlc-oneshot";
-      return sec === "hlc-oneshot" || sec === "hlc-completed" || sec === "hlc-multivol" ? sec : "main";
+      if (sec === "hlc-oneshot" || sec === "hlc-completed" || sec === "hlc-multivol") return sec;
+      if (sec === "b1k-lit" || sec === "b1k-mystery" || sec === "b1k-knowledge" || sec === "b1k-life") return sec;
+      return "main";
     }
     function normalizeSection(sec) {
       if (sec === "hlc-ln") return "hlc-oneshot";
       if (sec === "hlc") return lastHlcSection || "hlc-all";
+      if (sec === "b1k") return lastB1kSection || "b1k-all";
       return VALID_SECTIONS.has(sec) ? sec : "main";
     }
     function setSection(nextSection, shouldRender = false) {
       const normalized = normalizeSection(nextSection);
       if (normalized.startsWith("hlc-")) lastHlcSection = normalized;
+      if (normalized.startsWith("b1k-")) lastB1kSection = normalized;
       if (normalized === activeSection && !shouldRender) return;
       activeSection = normalized;
       const isHlc = activeSection.startsWith("hlc-");
+      const isB1k = activeSection.startsWith("b1k-");
+      const activePrimary = isHlc ? "hlc" : isB1k ? "b1k" : "main";
       if (sectionTabs) {
         for (const pTab of sectionTabs.querySelectorAll("[data-shelf-primary]")) {
-          const selected = pTab.dataset.shelfPrimary === (isHlc ? "hlc" : "main");
+          const selected = pTab.dataset.shelfPrimary === activePrimary;
           pTab.classList.toggle("is-active", selected);
           pTab.setAttribute("aria-selected", String(selected));
         }
@@ -166,16 +178,16 @@
           sTab.setAttribute("aria-selected", String(selected));
         }
       }
-      if (hlcSubtabs) {
-        hlcSubtabs.hidden = !isHlc;
-      }
+      if (hlcSubtabs) hlcSubtabs.hidden = !isHlc;
+      if (b1kSubtabs) b1kSubtabs.hidden = !isB1k;
       if (shouldRender) options.renderShelf();
     }
     if (sectionTabs) {
       sectionTabs.addEventListener("click", (event) => {
         const primaryBtn = event.target.closest("[data-shelf-primary]");
         if (primaryBtn) {
-          setSection(primaryBtn.dataset.shelfPrimary === "hlc" ? lastHlcSection : "main", true);
+          const p = primaryBtn.dataset.shelfPrimary;
+          setSection(p === "hlc" ? lastHlcSection : p === "b1k" ? lastB1kSection : "main", true);
           return;
         }
         const subBtn = event.target.closest("[data-shelf-section]");
@@ -183,19 +195,30 @@
       });
     }
     function updateSectionCounts(series) {
-      const counts = { main: 0, "hlc-oneshot": 0, "hlc-completed": 0, "hlc-multivol": 0 };
+      const counts = {
+        main: 0,
+        "hlc-oneshot": 0, "hlc-completed": 0, "hlc-multivol": 0,
+        "b1k-lit": 0, "b1k-mystery": 0, "b1k-knowledge": 0, "b1k-life": 0
+      };
       for (const book of series) {
         const sec = normalizeBookSection(book.section);
         counts[sec] = (counts[sec] || 0) + 1;
       }
       const hlcTotal = counts["hlc-oneshot"] + counts["hlc-completed"] + counts["hlc-multivol"];
+      const b1kTotal = counts["b1k-lit"] + counts["b1k-mystery"] + counts["b1k-knowledge"] + counts["b1k-life"];
       const map = {
         "#shelf-count-main": counts.main,
         "#shelf-count-hlc-total": hlcTotal,
         "#shelf-count-hlc-all": hlcTotal,
         "#shelf-count-hlc-oneshot": counts["hlc-oneshot"],
         "#shelf-count-hlc-completed": counts["hlc-completed"],
-        "#shelf-count-hlc-multivol": counts["hlc-multivol"]
+        "#shelf-count-hlc-multivol": counts["hlc-multivol"],
+        "#shelf-count-b1k-total": b1kTotal,
+        "#shelf-count-b1k-all": b1kTotal,
+        "#shelf-count-b1k-lit": counts["b1k-lit"],
+        "#shelf-count-b1k-mystery": counts["b1k-mystery"],
+        "#shelf-count-b1k-knowledge": counts["b1k-knowledge"],
+        "#shelf-count-b1k-life": counts["b1k-life"]
       };
       for (const [sel, val] of Object.entries(map)) {
         const el = $(sel);
@@ -209,7 +232,8 @@
         const bookSec = normalizeBookSection(book.section);
         if (activeSection === "main" && bookSec !== "main") return false;
         if (activeSection === "hlc-all" && !bookSec.startsWith("hlc-")) return false;
-        if (activeSection !== "main" && activeSection !== "hlc-all" && bookSec !== activeSection) return false;
+        if (activeSection === "b1k-all" && !bookSec.startsWith("b1k-")) return false;
+        if (activeSection !== "main" && activeSection !== "hlc-all" && activeSection !== "b1k-all" && bookSec !== activeSection) return false;
         if (query) {
           if (!book._searchFold) book._searchFold = fold([book.titleVi, book.titleJp, book.author, ...(book.tags || [])].join(" "));
           const groupsFold = row(book).groups.length ? " " + fold(row(book).groups.join(" ")) : "";
