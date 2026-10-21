@@ -13,7 +13,11 @@
     "vendor-hand-camera": "node scripts/vendor-hand-camera.js",
     "vendor-pdf-reader": "node scripts/vendor-pdf-reader.js",
     "start": "node server.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "lint": "eslint .",
+    "check-data": "node scripts/check-data.js",
+    "test:e2e": "node test/e2e/smoke.js",
+    "check": "npm run lint && npm test && npm run check-data"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "1.0.1",
@@ -25,5 +29,14 @@
     "jszip": "^3.10.1",
     "pdfjs-dist": "6.3.289",
     "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "playwright": "^1.64.1"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

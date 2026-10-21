@@ -1,0 +1,65 @@
+name: Dependencies
+
+on:
+  pull_request:
+    paths: [package.json, package-lock.json]
+  push:
+    branches: [main]
+    paths: [package.json, package-lock.json]
+  schedule:
+    - cron: "41 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    name: Dependency review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          filter: blob:none
+          sparse-checkout: |
+            package.json
+            package-lock.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/dependency-review-action@v5
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure
+
+  audit:
+    name: npm audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          filter: blob:none
+          sparse-checkout: |
+            package.json
+            package-lock.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      # Known advisories are reported in the run summary; a critical one in a
+      # runtime dependency fails the job.
+      - name: Audit runtime dependencies
+        run: |
+          npm audit --omit=dev --json > audit.json || true
+          node -e "
+            const r = require('./audit.json'); const v = r.metadata?.vulnerabilities || {};
+            const lines = ['### npm audit (runtime dependencies)', '', '| Severity | Count |', '|---|---|',
+              ...['critical','high','moderate','low'].map((s) => '| ' + s + ' | ' + (v[s] || 0) + ' |'), '',
+              ...Object.values(r.vulnerabilities || {}).map((x) => '- **' + x.name + '** (' + x.severity + ')' + (x.fixAvailable ? ' — fix available' : ''))];
+            require('fs').appendFileSync(process.env.GITHUB_STEP_SUMMARY, lines.join('\n') + '\n');
+            console.log(lines.join('\n'));
+          "
+          npm audit --omit=dev --audit-level=critical
