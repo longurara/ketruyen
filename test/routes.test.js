@@ -1,8 +1,9 @@
+const path = require("node:path");
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
 const { volumeSlug, locationParts, parseRoute, routePath } = require("../public/app-routes.js");
 const { formatReadingTime, volumeSubtitle } = require("../public/book-format.js");
-const { describePath, renderPage } = require("../page-meta.js");
+const { describePath, renderPage, createRenderer } = require("../page-meta.js");
 
 const chapters = (n) => Array.from({ length: n }, (_, i) => ({ title: `Chương ${i}`, isIllustration: i === 0 }));
 const SERIES = [
@@ -69,4 +70,9 @@ test("server pages carry the book's title, description and cover", () => {
   assert.match(html, /og:image" content="https:\/\/example.test\/img\/elaina-1.webp"/);
   assert.match(html, /twitter:card" content="summary_large_image"/);
   assert.match(renderPage(shell, { found: false }, "https://example.test"), /noindex/);
+
+  const render = createRenderer(path.join(__dirname, "..", "public", "index.html"));
+  const live = render("/truyen/thien-su-nha-ben/tap-1", "https://example.test");
+  assert.equal(live.status, 200);
+  assert.match(live.html, /<title>Tập 1 · Thiên Sứ Nhà Bên<\/title>/);
 });

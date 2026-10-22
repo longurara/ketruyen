@@ -87,9 +87,10 @@ function renderPage(html, page, origin) {
   return out;
 }
 
-// Reads the shell and catalogue from a public/ folder. Each is cached until
-// its file changes, so a running dev server picks up edits.
+// Reads the shell and catalogue from a public/ folder (or its index.html path).
+// Each is cached until its file changes, so a running dev server picks up edits.
 function createRenderer(publicDir) {
+  if (publicDir.endsWith(".html")) publicDir = path.dirname(publicDir);
   const files = new Map();
   function cached(file, parse) {
     const full = path.join(publicDir, file);
