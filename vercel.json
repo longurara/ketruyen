@@ -6,7 +6,10 @@
     { "source": "/truyen/:path*", "destination": "/api/page?p=:path*" }
   ],
   "functions": {
-    "api/page.js": { "includeFiles": "public/{index.html,data/series.json,data/index.json,data/*/index.json}" }
+    "api/page.js": {
+      "includeFiles": "public/{index.html,data/series.json,data/index.json,data/*/index.json}",
+      "excludeFiles": "public/{img/**,images/**,vendor/**,icons/**,data/**/vol-*.json,data/descriptions.json}"
+    }
   },
   "headers": [
     {
