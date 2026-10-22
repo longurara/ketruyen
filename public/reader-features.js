@@ -193,7 +193,7 @@
 
     document.body.insertAdjacentHTML("beforeend", `
       <dialog id="reader-tools-dialog" class="tools-dialog" aria-labelledby="tools-title">
-        <div class="tools-heading"><div><p class="eyebrow" id="tools-series"></p><h2 id="tools-title">Tiện ích đọc</h2></div><button class="tools-close" type="button" aria-label="Đóng tiện ích">×</button></div>
+        <div class="tools-heading"><div><p class="eyebrow" id="tools-series"></p><h2 id="tools-title">Tiện ích đọc</h2></div><button class="tools-close" type="button" aria-label="Đóng tiện ích"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div>
         <div class="tools-tabs" role="tablist" aria-label="Tiện ích đọc">
           ${[["characters", "Nhân vật"], ["stats", "Thống kê"], ["pronunciation", "Phát âm"], ["quotes", "Trích dẫn"], ["goal", "Mục tiêu"]].map(([id, label]) => `<button type="button" id="tools-tab-${id}" role="tab" data-tools-tab="${id}" aria-controls="tools-panel">${label}</button>`).join("")}
           <button type="button" data-library-action="marks">Đánh dấu & Ghi chú</button><button type="button" data-library-action="layout">Vùng đọc</button><button type="button" data-library-action="toc">Mục lục EPUB</button><button type="button" data-hand-camera hidden>Điều khiển bằng tay <span class="beta-badge">Beta</span></button>
@@ -258,7 +258,7 @@
       panel.innerHTML = `<div class="character-controls">
           <div class="character-overview"><p class="character-count">Đã mở <strong>${unlocked.length}/${characters().length}</strong> nhân vật</p><details class="character-guide"><summary>Hướng dẫn</summary><p class="tools-hint">Bấm tên được gạch chân trong truyện để xem ghi chú. Mặc định chỉ hiện nhân vật khi đã đọc tới chương tương ứng.</p></details></div>
           <label class="character-search"><span class="character-search-label">Tìm nhân vật</span><input id="character-search" type="search" value="${escape(characterSearch)}" placeholder="Tìm tên, tên khác hoặc ghi chú…" autocomplete="off"></label>
-          <label class="character-show-all"><span><span class="character-switch-title">Hiện toàn bộ nhân vật</span><small id="character-spoiler-note">Có thể lộ tình tiết chưa đọc</small></span><input id="character-show-all" type="checkbox" aria-describedby="character-spoiler-note"${showAllCharacters ? " checked" : ""}></label>
+          <label class="character-show-all"><span><span class="character-switch-title">Hiện toàn bộ nhân vật</span><small id="character-spoiler-note">Có thể lộ tình tiết chưa đọc</small></span><input id="character-show-all" type="checkbox" role="switch" aria-describedby="character-spoiler-note"${showAllCharacters ? " checked" : ""}></label>
         </div>
         <p id="character-search-empty" class="tools-empty" role="status" hidden>Không tìm thấy nhân vật phù hợp.</p>
         <div class="character-list">${visible.length ? visible.map((character) => `<article class="tool-card" data-character-card="${character.id}"><div class="tool-card-heading"><h3>${escape(character.name)}</h3><button type="button" class="btn-secondary tool-action" data-edit-character="${character.id}" aria-label="Sửa ghi chú ${escape(character.name)}">Sửa</button></div><p>${escape(character.note)}</p>${character.aliases.length ? `<p class="tools-hint">Tên khác: ${escape(character.aliases.join(", "))}</p>` : ""}</article>`).join("") : '<p class="tools-empty">Mở chương đầu để xem các nhân vật. Bạn cũng có thể thêm ghi chú riêng.</p>'}</div>
@@ -341,11 +341,20 @@
       const weekTotal = week.reduce((sum, { day }) => sum + (day.read || 0) + (day.listen || 0), 0);
       const max = Math.max(60, ...week.map(({ day }) => (day.read || 0) + (day.listen || 0)));
       const completed = seriesList.reduce((sum, series) => sum + options.completed(series), 0);
+      if (!total && !completed) {
+        panel.innerHTML = `<div class="tools-empty-state"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 20h16M7 16v-4M12 16V7M17 16v-7"></path></svg><strong>Chưa có gì để thống kê</strong><p>Đọc hoặc nghe vài phút, thời gian và số chương đã xong sẽ hiện ở đây. Mọi số liệu chỉ lưu trên trình duyệt này.</p></div>`;
+        return;
+      }
       panel.innerHTML = `<p class="tools-hint">Hoạt động trên trình duyệt này. Dừng đếm khi chuyển tab, mở tiện ích hoặc không tương tác quá 2 phút.</p>
         <div class="tools-stat-grid"><div><strong>${duration(weekTotal)}</strong><span>7 ngày gần đây</span></div><div><strong>${completed}</strong><span>Chương đã hoàn thành</span></div><div><strong>${duration(total)}</strong><span>Tổng thời gian đã ghi</span></div></div>
-        <h3 class="tools-subtitle">Tuần đọc của bạn</h3><div class="reading-chart" role="img" aria-label="Thời gian đọc và nghe trong 7 ngày: ${escape(week.map(({ date, day }) => `${date.getDate()}/${date.getMonth() + 1}: ${duration((day.read || 0) + (day.listen || 0))}`).join("; "))}">${week.map(({ date, day }) => `<div class="reading-day"><span>${Math.floor(((day.read || 0) + (day.listen || 0)) / 60)}′</span><div class="reading-bar"><i style="height:${(day.read || 0) / max * 100}%"></i><b style="height:${(day.listen || 0) / max * 100}%"></b></div><small>${date.getDate()}/${date.getMonth() + 1}</small></div>`).join("")}</div>
-        <p class="chart-legend"><span>● Đọc</span><span>● Nghe</span></p>
-        <h3 class="tools-subtitle">Theo bộ truyện · 7 ngày</h3>${seriesList.map((series) => { const seconds = week.reduce((sum, { day }) => sum + (day.series?.[series.slug] || 0), 0); return `<div class="tool-card tool-rule"><span>${escape(series.titleVi)}</span><strong>${duration(seconds)}</strong></div>`; }).join("")}`;
+        <h3 class="tools-subtitle">Tuần đọc của bạn</h3>${weekTotal ? `<div class="reading-chart" role="img" aria-label="Thời gian đọc và nghe trong 7 ngày: ${escape(week.map(({ date, day }) => `${date.getDate()}/${date.getMonth() + 1}: ${duration((day.read || 0) + (day.listen || 0))}`).join("; "))}">${week.map(({ date, day }) => `<div class="reading-day"><span>${Math.floor(((day.read || 0) + (day.listen || 0)) / 60)}′</span><div class="reading-bar"><i style="height:${(day.read || 0) / max * 100}%"></i><b style="height:${(day.listen || 0) / max * 100}%"></b></div><small>${date.getDate()}/${date.getMonth() + 1}</small></div>`).join("")}</div>
+        <p class="chart-legend"><span>● Đọc</span><span>● Nghe</span></p>` : '<p class="tools-empty">Chưa ghi nhận phút đọc hay nghe nào trong 7 ngày qua.</p>'}
+        ${(() => {
+          // Only books actually read this week, most time first.
+          const rows = seriesList.map((series) => ({ series, seconds: week.reduce((sum, { day }) => sum + (day.series?.[series.slug] || 0), 0) }))
+            .filter((row) => row.seconds > 0).sort((a, b) => b.seconds - a.seconds);
+          return rows.length ? `<h3 class="tools-subtitle">Theo bộ truyện · 7 ngày</h3>${rows.map(({ series, seconds }) => `<div class="tool-card tool-rule"><span>${escape(series.titleVi)}</span><strong>${duration(seconds)}</strong></div>`).join("")}` : "";
+        })()}`;
     }
 
     function renderGoal() {

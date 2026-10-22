@@ -1,9 +1,11 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const { createRenderer } = require("./page-meta");
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
+const renderPage = createRenderer(path.join(__dirname, "public"));
 
 // Serve static frontend
 app.use(express.static(path.join(__dirname, "public")));
@@ -50,6 +52,13 @@ app.get("/api/images/:volume", (req, res) => {
   } else {
     res.json([]);
   }
+});
+
+// Book, volume and chapter pages: the app shell with that page's title,
+// description and preview image filled in (see page-meta.js).
+app.get(/^\/truyen\//, (req, res) => {
+  const { status, html } = renderPage(req.path, `${req.protocol}://${req.get("host")}`);
+  res.status(status).type("html").send(html);
 });
 
 app.listen(PORT, () => {

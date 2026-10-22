@@ -1,7 +1,7 @@
 .reader-sheet-handle { display: none; }
 /* First level: one segmented control; the chosen group is a raised chip. */
 .workbench-groups { display: flex; gap: 2px; max-width: 560px; margin: 0 24px 6px; padding: 3px; flex-shrink: 0; border-radius: 12px; background: var(--surface-2); }
-.workbench-groups button { flex: 1; min-height: 36px; padding: 6px 10px; border: 0; border-radius: 9px; background: transparent; color: var(--text-muted); font: 500 13px var(--font-ui); cursor: pointer; }
+.workbench-groups button { flex: 1; min-height: 36px; padding: 6px 10px; border: 0; border-radius: 9px; background: transparent; color: var(--text-muted); font: 500 var(--text-sm) var(--font-ui); cursor: pointer; }
 .workbench-groups button:hover:not(:disabled) { color: var(--text); }
 .workbench-groups button[aria-pressed="true"] { background: var(--raised); color: var(--text); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16), inset 0 0 0 1px var(--line); }
 .workbench-groups button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
@@ -13,7 +13,7 @@
 .workbench-return { display: block; margin: 0 24px 12px; align-self: start; }
 .reader-aa-dialog { width: min(480px, calc(100vw - 24px)); }
 .reader-aa-controls { padding: 8px 24px 24px; overflow: auto; min-height: 0; }
-.reader-aa-controls label { display: grid; gap: 10px; margin: 18px 0; font: 14px var(--font-ui); }
+.reader-aa-controls label { display: grid; gap: 10px; margin: 18px 0; font: var(--text-base) var(--font-ui); }
 .reader-aa-controls input[type="range"] { width: 100%; }
 .reader-aa-controls select { padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--text); min-height: 44px; }
 .reader-aa-theme { display: flex; gap: 8px; }
@@ -37,7 +37,7 @@ body.has-reader-surface #eink-ghost { display: none; }
   .reader-sheet .tools-header h2 { font-size: 23px; margin: 0; }
   .reader-sheet .tools-close { width: 44px; height: 44px; }
   .workbench-groups { margin: 0 16px 6px; }
-  .workbench-groups button { padding: 6px 4px; font-size: 12.5px; }
+  .workbench-groups button { padding: 6px 4px; font-size: var(--text-sm); }
   .workbench-tabs { padding-inline: 8px; }
   .reader-sheet .workbench-panel, .reader-sheet .workbench-external, .reader-sheet .tools-panel { flex: 1; min-height: 0; max-height: none; }
   .reader-sheet .tools-panel { padding: 18px; }
@@ -47,12 +47,14 @@ body.has-reader-surface #eink-ghost { display: none; }
   .reader-sheet .btn-secondary, .reader-sheet .btn-primary { min-height: 44px; }
   body[data-view="reader"] .reader-bottom-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px 4px; }
   body[data-view="reader"] #main { padding-bottom: calc(var(--reader-dock-height, 96px) + 16px); }
-  .reader-bottom-nav .reader-status-footer { position: static; grid-column: 1 / -1; padding: 5px 8px; border-top: 0; border-bottom: 1px solid var(--line); font-size: 11px; }
+  .reader-bottom-nav .reader-status-footer { position: static; grid-column: 1 / -1; padding: 5px 8px; border-top: 0; border-bottom: 1px solid var(--line); font-size: var(--text-2xs); }
   body[data-view="reader"]:not(.is-chrome-hidden):not(.is-listening) .reader-top,
   body[data-view="reader"]:not(.is-chrome-hidden):not(.is-listening) .reader-toast,
   body[data-view="reader"]:not(.is-listening) .selection-tools:not(.is-floating),
   body[data-view="reader"]:not(.is-listening) .motion-active { bottom: calc(var(--reader-dock-height, 96px) + 12px); }
   body.is-listening[data-view="reader"] .reader-toast { bottom: var(--reader-floating-bottom); }
+  /* A message pushes the "back to top" button up instead of sliding under it. */
+  body.has-toast[data-view="reader"]:not(.is-chrome-hidden):not(.is-listening) .reader-top { bottom: calc(var(--reader-dock-height, 96px) + 72px); }
   body.is-listening[data-view="reader"] .reader-bottom-nav { display: none; }
   .reader-bottom-nav button { min-width: 44px; touch-action: manipulation; }
   body.is-chrome-hidden .reader-bottom-nav { pointer-events: none; visibility: hidden; }

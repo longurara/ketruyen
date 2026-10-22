@@ -1,12 +1,18 @@
 .beta-badge { display: inline-flex; vertical-align: middle; padding: 3px 7px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--text-muted); font: 600 10px/1.3 var(--font-ui); letter-spacing: 0.03em; }
-.hand-camera-panel { position: relative; min-width: 0; display: grid; gap: 10px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--text); font: 12px/1.7 var(--font-ui); }
+.hand-camera-panel { position: relative; min-width: 0; display: grid; gap: 10px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--text); font: var(--text-xs)/1.7 var(--font-ui); }
 .hand-camera-panel[hidden], .hand-camera-panel [hidden], .hand-camera-entry[hidden], [data-hand-camera][hidden] { display: none !important; }
+/* Camera off: just the heading, a quiet "Bật camera" button and the guide. */
+.hand-camera-panel.is-idle { gap: 8px; }
+.hand-camera-panel.is-idle :is(#hand-camera-status, .hand-camera-actions) { display: none; }
+.hand-camera-panel.is-idle #hand-camera-start { min-height: 36px; background: var(--surface); color: var(--text); }
+.hand-camera-panel.is-idle .hand-camera-heading h3 { display: flex; align-items: center; gap: 6px; color: var(--text-soft); font-weight: 500; white-space: nowrap; }
+.hand-camera-panel.is-idle #hand-camera-config > summary { border-color: transparent; background: transparent; color: var(--text-muted); padding-inline: 0; }
 .hand-camera-panel:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 .hand-camera-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.hand-camera-heading h3 { margin: 0; font: 600 13px/1.6 var(--font-ui); }
-.hand-camera-panel button, .hand-camera-panel summary { min-height: 34px; padding: 7px 10px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); color: var(--text); font: 500 12px/1.5 var(--font-ui); cursor: pointer; }
+.hand-camera-heading h3 { margin: 0; font: 600 var(--text-sm)/1.6 var(--font-ui); }
+.hand-camera-panel button, .hand-camera-panel summary { min-height: 34px; padding: 7px 10px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); color: var(--text); font: 500 var(--text-xs)/1.5 var(--font-ui); cursor: pointer; }
 .hand-camera-panel button:hover, .hand-camera-panel summary:hover { background: var(--surface-2); }
-#hand-camera-stop { padding: 6px 8px; font-size: 11px; white-space: nowrap; }
+#hand-camera-stop { padding: 6px 8px; font-size: var(--text-2xs); white-space: nowrap; }
 #hand-camera-start { min-height: 38px; background: var(--ink); color: var(--on-ink); }
 .hand-camera-preview { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 8px; background: #111; }
 .hand-camera-preview video, .hand-camera-preview canvas { display: block; position: absolute; width: 100%; height: 100%; object-fit: contain; }
@@ -23,7 +29,7 @@
 .hand-camera-settings .hand-camera-check { display: flex; align-items: center; gap: 8px; }
 .hand-camera-check input { accent-color: var(--ink); }
 #hand-camera-calibration { display: grid; gap: 8px; border: 1px solid var(--line-strong); border-radius: 8px; padding: 10px; }
-.hand-camera-pointer { position: fixed; z-index: 155; width: 22px; height: 22px; border: 2px solid #73e1b3; background: #73e1b330; box-shadow: 0 0 0 2px #0008; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+.hand-camera-pointer { position: fixed; z-index: var(--z-overlay-controls); width: 22px; height: 22px; border: 2px solid #73e1b3; background: #73e1b330; box-shadow: 0 0 0 2px #0008; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; }
 .hand-camera-hover { outline: 3px solid #73e1b3; outline-offset: 3px; }
 @media (min-width: 1081px) {
   .reader-sidebar { max-height: calc(100dvh - var(--header-h) - 48px); overflow-y: auto; overscroll-behavior: contain; padding-right: 6px; scrollbar-width: none; }

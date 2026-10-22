@@ -91,7 +91,7 @@
     });
   }
   async function exportData(report = () => {}) {
-    const zip = new JSZip(), books = await EbookImport.all(), settings = {};
+    const JSZip = await EbookImport.loadZip(), zip = new JSZip(), books = await EbookImport.all(), settings = {};
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i); if (key.startsWith("tenshi-")) settings[key] = localStorage.getItem(key);
     }
@@ -119,7 +119,7 @@
   async function readBackup(file, report = () => {}) {
     if (!file.size || file.size > MAX_BACKUP) throw new Error("Bản sao lưu tối đa 512 MB.");
     const bytes = new Uint8Array(await file.arrayBuffer()); EbookImport.inspectArchive(bytes, MAX_EXPANDED, 20000);
-    const zip = await JSZip.loadAsync(bytes), budget = { bytes: 0 };
+    const JSZip = await EbookImport.loadZip(), zip = await JSZip.loadAsync(bytes), budget = { bytes: 0 };
     const json = async (path, cap) => { try { return JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(await readEntry(zip, path, cap, budget))); } catch (_) { fail(); } };
     const manifest = await json("library.json", 10 * 1024 * 1024);
     if (manifest.format !== "tenshi-library" || manifest.version !== 1 || !Array.isArray(manifest.books) || manifest.books.length > 1000 || new Set(manifest.books).size !== manifest.books.length) fail();

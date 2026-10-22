@@ -1,0 +1,248 @@
+/*
+ * Motion for panels, menus, presses and lists.
+ *
+ * Durations use the --steps-N easings from style.css: smooth curves by
+ * default, discrete steps when the e-ink effect is on. Everything here is
+ * switched off by the prefers-reduced-motion rule at the end of style.css.
+ * Movement uses the `translate` and `scale` properties so it never fights
+ * an element's own `transform` (centring, sheet dragging).
+ */
+
+:root {
+  --motion-fast: 0.14s;
+  --motion: 0.22s;
+  --motion-slow: 0.3s;
+}
+
+/* ---- Dialogs: rise and fade in, sink and fade out ----------------------- */
+
+:is(.tools-dialog, .ebook-dialog, .app-confirm) {
+  opacity: 0;
+  translate: 0 12px;
+  scale: 0.98;
+  transition:
+    opacity var(--motion) var(--steps-3),
+    translate var(--motion) var(--steps-3),
+    scale var(--motion) var(--steps-3),
+    overlay var(--motion) allow-discrete,
+    display var(--motion) allow-discrete;
+}
+
+:is(.tools-dialog, .ebook-dialog, .app-confirm)[open] {
+  opacity: 1;
+  translate: 0 0;
+  scale: 1;
+}
+
+@starting-style {
+  :is(.tools-dialog, .ebook-dialog, .app-confirm)[open] {
+    opacity: 0;
+    translate: 0 12px;
+    scale: 0.98;
+  }
+}
+
+/* The dimmed page behind a dialog fades too. */
+:is(.tools-dialog, .ebook-dialog, .app-confirm, .settings-panel)::backdrop {
+  opacity: 0;
+  transition:
+    opacity var(--motion) var(--steps-3),
+    overlay var(--motion) allow-discrete,
+    display var(--motion) allow-discrete;
+}
+
+:is(.tools-dialog, .ebook-dialog, .app-confirm, .settings-panel)[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  :is(.tools-dialog, .ebook-dialog, .app-confirm, .settings-panel)[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+/* Reading settings already slide via .is-open; this lets them animate in
+   the moment they open and stay drawn while they slide away. */
+.settings-panel {
+  transition:
+    opacity var(--motion-slow) var(--steps-5),
+    transform var(--motion-slow) var(--steps-5),
+    background-color 0.3s var(--steps-4),
+    overlay var(--motion-slow) allow-discrete,
+    display var(--motion-slow) allow-discrete;
+}
+
+@starting-style {
+  .settings-panel.is-open[open] {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* Phones: panels are sheets that slide up from the bottom edge. */
+@media (max-width: 1080px) {
+  .reader-sheet,
+  .reader-sheet[open] {
+    scale: 1;
+  }
+
+  .reader-sheet {
+    opacity: 1;
+    translate: 0 100%;
+    transition:
+      translate var(--motion-slow) var(--steps-5),
+      overlay var(--motion-slow) allow-discrete,
+      display var(--motion-slow) allow-discrete;
+  }
+
+  .reader-sheet[open] {
+    translate: 0 0;
+  }
+
+  @starting-style {
+    .reader-sheet[open] {
+      translate: 0 100%;
+    }
+  }
+
+  @starting-style {
+    .settings-panel.is-open[open] {
+      opacity: 1;
+      transform: translateY(100%);
+    }
+  }
+}
+
+/* ---- Focus on panel controls -------------------------------------------- */
+
+:is(.tools-close, .settings-close):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+.reader-sheet-handle:focus-visible {
+  outline: none;
+}
+
+.reader-sheet-handle:focus-visible span {
+  width: 56px;
+  background: var(--ink);
+  opacity: 1;
+}
+
+:is(.tools-close, .settings-close) {
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+:is(.tools-close, .settings-close) svg {
+  display: block;
+}
+
+/* ---- Menus: drop in from their button ----------------------------------- */
+
+@keyframes menuIn {
+  from { opacity: 0; translate: 0 -6px; scale: 0.97; }
+}
+
+@keyframes menuUp {
+  from { opacity: 0; translate: 0 6px; scale: 0.97; }
+}
+
+:is(.shelf-more, .shelf-card-more)[open] > .shelf-more-menu,
+.chapter-tools-more[open] > .chapter-tools-menu {
+  transform-origin: top right;
+  animation: menuIn var(--motion-fast) var(--steps-3);
+}
+
+#reader-quick-actions:not([hidden]) {
+  transform-origin: bottom right;
+  animation: menuUp var(--motion-fast) var(--steps-3);
+}
+
+/* ---- Presses: controls give a little under the finger ------------------- */
+
+:is(button, summary, [role="button"]):not(:disabled):active {
+  scale: 0.96;
+}
+
+/* Large targets (whole cards, list rows) give less, or they lurch. */
+:is(.shelf-card, .volume-card, .chapter-item, .shelf-resume-card, .end-card, .recent-chapter-list button):not(:disabled):active {
+  scale: 0.985;
+}
+
+/* Things that should not shrink: sliders' thumbs, drag handles, the
+   reading text itself and links styled as text. */
+:is(.reader-sheet-handle, .btn-link, .ebook-noteref, .word-wise-term, .illustration-open):active {
+  scale: none;
+}
+
+:is(.btn-primary, .btn-secondary, .filter-btn, .segmented button, .header-btn, .icon-btn, .tools-close, .settings-close,
+  .shelf-menu-action, .chapter-tools > button, .chapter-tools-more > summary, .shelf-card-more summary, .shelf-more summary,
+  .reader-bottom-nav button, .listen-icon, .listen-toggle, .listen-chip, .shelf-density button, .hero-description-toggle,
+  .shelf-card, .volume-card, .chapter-item, .shelf-resume-card, .end-card) {
+  transition-property: background-color, border-color, color, opacity, box-shadow, transform, scale;
+  transition-duration: var(--motion-fast);
+  transition-timing-function: var(--steps-3);
+}
+
+/* ---- Toasts: leave the way they came ------------------------------------ */
+
+@keyframes toastOut {
+  to { opacity: 0; translate: 0 10px; }
+}
+
+.reader-toast.is-leaving {
+  animation: toastOut var(--motion) var(--steps-3) forwards;
+  pointer-events: none;
+}
+
+/* ---- Tabs and segmented choices: the selection slides ------------------- */
+
+.has-slider {
+  position: relative;
+  isolation: isolate;
+}
+
+.has-slider > .slide-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  border-radius: 10px;
+  background: var(--raised);
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+  transition:
+    transform var(--motion-slow) var(--steps-4),
+    width var(--motion-slow) var(--steps-4),
+    height var(--motion-slow) var(--steps-4),
+    opacity var(--motion-fast);
+}
+
+.toolbar-group.has-slider > .slide-indicator {
+  border-radius: 999px;
+}
+
+.has-slider > .slide-indicator.is-instant {
+  transition: none;
+}
+
+/* The indicator now draws the selected background. */
+.has-slider > button:is(.is-active, [aria-selected="true"], [aria-pressed="true"]) {
+  background: transparent;
+  box-shadow: none;
+}
+
+/* ---- Lists: shelf cards arrive one after another ------------------------ */
+
+@keyframes cardIn {
+  from { opacity: 0; translate: 0 10px; }
+}
+
+body[data-eink="off"] .shelf-grid > .is-entering {
+  animation: cardIn var(--motion-slow) var(--steps-3) backwards;
+  animation-delay: calc(var(--enter, 0) * 28ms);
+}

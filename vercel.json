@@ -2,6 +2,12 @@
   "buildCommand": "node build-data.js",
   "outputDirectory": "public",
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/truyen/:path*", "destination": "/api/page?p=:path*" }
+  ],
+  "functions": {
+    "api/page.js": { "includeFiles": "public/{index.html,data/series.json,data/index.json,data/*/index.json}" }
+  },
   "headers": [
     {
       "source": "/images/(.*)",
