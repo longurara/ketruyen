@@ -2,6 +2,8 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <!-- Pages are served at /truyen/...; resolve the app's own files from the root. -->
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Thư viện light novel tiếng Việt: chọn truyện, đọc và nghe tiếp trên mọi thiết bị.">
   <meta name="theme-color" content="#ebe5d8">
@@ -15,6 +17,12 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Kệ truyện</title>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Kệ truyện">
+  <meta property="og:title" content="Kệ truyện · Thư viện light novel tiếng Việt">
+  <meta property="og:description" content="Chọn truyện, đọc và nghe tiếp trên mọi thiết bị. Đọc offline, đánh dấu, ghi chú và nhập ebook của riêng bạn.">
+  <meta property="og:locale" content="vi_VN">
+  <meta name="twitter:card" content="summary">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
@@ -29,8 +37,10 @@
   <link rel="stylesheet" href="reader-mobile.css">
   <link rel="stylesheet" href="settings-ui.css">
   <link rel="stylesheet" href="ui-controls.css">
+  <link rel="stylesheet" href="motion.css">
+  <link rel="stylesheet" href="reading-comfort.css">
 </head>
-<body data-view="home" data-theme="sepia" data-images="color" data-eink="on">
+<body data-view="home" data-theme="sepia" data-images="color" data-eink="off">
   <script>
     try {
       var savedTheme = localStorage.getItem("tenshi-theme");
@@ -39,8 +49,10 @@
       var savedImageMode = localStorage.getItem("tenshi-image-mode");
       if (savedImageMode === "color" || savedImageMode === "mono") document.body.dataset.images = savedImageMode;
       var savedEink = localStorage.getItem("tenshi-eink");
-      if (!savedEink && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) savedEink = "off";
       if (savedEink === "on" || savedEink === "off") document.body.dataset.eink = savedEink;
+      if (localStorage.getItem("tenshi-page-mode") === "on") document.body.dataset.pageMode = "on";
+      var savedAlign = localStorage.getItem("tenshi-text-align");
+      if (savedAlign === "justify" || savedAlign === "start") document.documentElement.dataset.textAlign = savedAlign;
     } catch (error) {}
   </script>
 
@@ -51,6 +63,17 @@
       <span class="loading-bar" aria-hidden="true"><span></span></span>
     </div>
   </div>
+  <script>
+    // Opening the shelf itself: show its outline with placeholder cards at
+    // once instead of the splash. Deep links keep the splash until the
+    // book they point at is ready.
+    (function () {
+      var hash = location.hash.replace(/^#\/?/, "");
+      if (!hash && (location.pathname === "/" || location.pathname === "/index.html")) {
+        document.body.classList.add("is-shelf-boot");
+      }
+    })();
+  </script>
 
   <div class="page-noise" aria-hidden="true"></div>
   <div id="eink-ghost" aria-hidden="true"></div>
@@ -68,13 +91,13 @@
         <span class="brand-mark" aria-hidden="true">天</span>
         <span class="brand-copy">
           <span id="header-title">Kệ truyện</span>
-          <span id="header-sub" class="header-sub"></span>
         </span>
       </button>
 
       <div class="header-actions">
-        <button id="btn-reader-tools" class="header-btn" aria-label="Tiện ích đọc" title="Tiện ích đọc">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v16H4zM14 4h6v16h-6zM7 8h1M7 12h1M17 8h1M17 12h1"></path></svg>
+        <button id="btn-reader-tools" class="header-btn" aria-label="Thống kê đọc" title="Thống kê đọc">
+          <svg class="header-icon-stats" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"></path></svg>
+          <svg class="header-icon-tools" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v16H4zM14 4h6v16h-6zM7 8h1M7 12h1M17 8h1M17 12h1"></path></svg>
         </button>
         <button id="btn-settings" class="header-btn" aria-label="Cài đặt đọc" title="Cài đặt đọc">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -111,6 +134,12 @@
       </div>
 
       <div class="settings-group">
+        <label class="settings-range"><span>Ánh sáng ấm</span><output></output><input type="range" min="0" max="100" step="5" data-comfort="warmth"></label>
+        <p class="settings-hint">Phủ một lớp cam nhạt lên màn hình, dịu mắt khi đọc buổi tối.</p>
+        <label class="settings-range"><span>Độ sáng</span><output></output><input type="range" min="40" max="100" step="5" data-comfort="brightness"></label>
+      </div>
+
+      <div class="settings-group">
         <span class="settings-label">Màu ảnh</span>
         <div class="segmented" id="image-mode-switch">
           <button type="button" data-image-value="color"><span class="swatch swatch-color" aria-hidden="true"></span>Màu</button>
@@ -120,7 +149,7 @@
 
       <div class="settings-group">
         <span class="settings-label">Hiệu ứng e-ink</span>
-        <p class="settings-hint">Màn hình nháy khi lật trang và chuyển động giật từng nhịp như máy đọc sách. Tắt để chuyển động mượt.</p>
+        <p class="settings-hint">Bật để giống máy đọc sách: màn hình nháy khi lật trang, chuyển động đi từng nhịp thay vì trượt mượt.</p>
         <div class="segmented" id="eink-switch">
           <button type="button" data-eink-value="on">Bật</button>
           <button type="button" data-eink-value="off">Tắt</button>
@@ -139,6 +168,8 @@
 
     <section class="settings-section" data-settings-section="text">
       <h4 class="settings-section-title">Chữ</h4>
+
+      <p class="settings-preview" aria-label="Xem trước chữ">Gió đầu đông lùa qua khe cửa, mang theo mùi trà nóng từ căn hộ bên cạnh. Cô ấy khẽ mỉm cười, đặt hộp cơm xuống bàn rồi quay đi như chưa có chuyện gì.</p>
 
       <div class="settings-group">
         <span class="settings-label">Cỡ chữ</span>
@@ -166,10 +197,51 @@
           <button type="button" data-font-value="system"><span class="font-sample font-sample-system" aria-hidden="true">Aa</span>Hệ thống</button>
         </div>
       </div>
+
+      <div class="settings-group">
+        <span class="settings-label">Căn lề</span>
+        <p class="settings-hint">Tự động: căn đều trên màn hình rộng, căn trái trên điện thoại để không có khoảng trắng lớn giữa các chữ.</p>
+        <div class="segmented" id="text-align-switch">
+          <button type="button" data-align-value="auto">Tự động</button>
+          <button type="button" data-align-value="justify">Căn đều</button>
+          <button type="button" data-align-value="start">Căn trái</button>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <span class="settings-label">Khoảng cách</span>
+        <p class="settings-hint">Giãn rộng các chữ cái và các từ giúp mắt bớt nhảy dòng, nhất là với người khó đọc chữ nhỏ.</p>
+        <label class="settings-range"><span>Giãn chữ</span><output></output><input type="range" min="0" max="10" step="1" data-comfort="letter"></label>
+        <label class="settings-range"><span>Giãn từ</span><output></output><input type="range" min="0" max="40" step="5" data-comfort="word"></label>
+      </div>
+
+      <div class="settings-group">
+        <button id="btn-text-reset" class="btn-secondary settings-action" type="button">Khôi phục chữ mặc định</button>
+      </div>
     </section>
 
     <section class="settings-section" data-settings-section="reading">
       <h4 class="settings-section-title">Khi đọc</h4>
+
+      <div class="settings-group">
+        <span class="settings-label">Cách đọc</span>
+        <p class="settings-hint">Lật trang: đọc từng trang như sách, chạm hai bên, vuốt hoặc dùng phím mũi tên để sang trang.</p>
+        <div class="segmented" id="page-mode-switch">
+          <button type="button" data-page-value="off">Cuộn dọc</button>
+          <button type="button" data-page-value="on">Lật trang</button>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <span class="settings-label">Tự cuộn</span>
+        <p class="settings-hint">Trang tự chạy theo tốc độ đọc của bạn; ở chế độ lật trang, trang tự lật. Chạm vào trang để tạm dừng. Phím tắt: A.</p>
+        <label class="settings-range"><span>Tốc độ</span><output></output><input type="range" min="6" max="80" step="2" data-comfort="speed"></label>
+        <button type="button" class="btn-secondary settings-action" data-auto-start>Bắt đầu tự cuộn</button>
+      </div>
+
+      <div class="settings-group">
+        <label class="workbench-switch settings-switch"><span class="workbench-switch-copy"><strong>Thước đọc</strong><span>Làm mờ phần trên và dưới, chỉ để rõ hai dòng đang đọc. Có chuột thì thước đi theo con trỏ.</span></span><input type="checkbox" role="switch" data-comfort="ruler"></label>
+      </div>
 
       <div class="settings-group">
         <span class="settings-label">Chế độ đọc</span>
@@ -182,7 +254,7 @@
 
       <div class="settings-group touch-only">
         <span class="settings-label">Chạm để lật trang</span>
-        <p class="settings-hint">Chạm phần dưới màn hình để xuống một trang, phần trên để lên lại. Chạm giữa để ẩn/hiện thanh công cụ.</p>
+        <p class="settings-hint">Chạm phần dưới màn hình để xuống một trang, phần trên để lên lại. Chạm giữa để ẩn/hiện thanh công cụ. Vuốt ngang để sang chương khác.</p>
         <div class="segmented" id="tap-page-switch">
           <button type="button" data-tap-value="on">Bật</button>
           <button type="button" data-tap-value="off">Tắt</button>
@@ -238,9 +310,9 @@
         <div class="shelf-heading">
           <h1 class="shelf-title">Kệ truyện</h1>
           <div class="shelf-actions">
-            <button id="btn-import-ebook" class="btn-primary" type="button"><span aria-hidden="true">＋</span> Nhập ebook</button>
+            <button id="btn-import-ebook" class="btn-secondary" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Nhập ebook</button>
             <details id="shelf-more" class="shelf-more">
-              <summary aria-label="Thao tác thư viện" title="Thao tác thư viện"><span aria-hidden="true">⋯</span></summary>
+              <summary aria-label="Thao tác thư viện" title="Thao tác thư viện"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg></summary>
               <div class="shelf-more-menu">
                 <button id="btn-check-updates" class="shelf-menu-action shelf-update-check" type="button">Kiểm tra chương mới</button>
                 <button id="btn-library-backup" class="shelf-menu-action" type="button">Sao lưu / Khôi phục</button>
@@ -315,7 +387,11 @@
         </div>
         <div class="shelf-filters">
           <div class="shelf-search-row">
-            <input id="shelf-search" type="search" placeholder="Tìm sách, tác giả, nhóm…" aria-label="Tìm sách trên kệ">
+            <input id="shelf-search" type="search" placeholder="Tìm sách, tác giả…" aria-label="Tìm sách theo tên, tác giả hoặc nhóm">
+            <div class="shelf-density" role="group" aria-label="Kiểu hiển thị">
+              <button type="button" data-shelf-density="list" aria-pressed="true" aria-label="Danh sách có mô tả" title="Danh sách có mô tả"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4.5" width="5" height="6.5" rx="1"></rect><rect x="4" y="13" width="5" height="6.5" rx="1"></rect><path d="M12 6h8M12 9h5M12 14.5h8M12 17.5h5"></path></svg></button>
+              <button type="button" data-shelf-density="grid" aria-pressed="false" aria-label="Lưới bìa sách" title="Lưới bìa sách"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6.5" height="7" rx="1"></rect><rect x="13.5" y="4" width="6.5" height="7" rx="1"></rect><rect x="4" y="13" width="6.5" height="7" rx="1"></rect><rect x="13.5" y="13" width="6.5" height="7" rx="1"></rect></svg></button>
+            </div>
             <button id="shelf-filter-toggle" class="btn-secondary" type="button" aria-expanded="false" aria-controls="shelf-advanced-filters">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4"></path></svg>
               <span>Lọc</span>
@@ -327,7 +403,14 @@
             <label><span>Sắp xếp</span><select id="shelf-sort"><option value="recent">Đọc gần đây</option><option value="title">Tên sách A–Z</option><option value="newest">Mới nhập</option><option value="author">Tác giả A–Z</option></select></label>
           </div>
         </div>
-        <div id="shelf-grid" class="shelf-grid"></div>
+        <div id="shelf-grid" class="shelf-grid" aria-busy="true">
+          <div class="shelf-skeleton" aria-hidden="true"><span class="shelf-skeleton-cover"></span><span class="shelf-skeleton-lines"><span></span><span></span><span></span><span></span></span></div>
+          <div class="shelf-skeleton" aria-hidden="true"><span class="shelf-skeleton-cover"></span><span class="shelf-skeleton-lines"><span></span><span></span><span></span><span></span></span></div>
+          <div class="shelf-skeleton" aria-hidden="true"><span class="shelf-skeleton-cover"></span><span class="shelf-skeleton-lines"><span></span><span></span><span></span><span></span></span></div>
+          <div class="shelf-skeleton" aria-hidden="true"><span class="shelf-skeleton-cover"></span><span class="shelf-skeleton-lines"><span></span><span></span><span></span><span></span></span></div>
+          <div class="shelf-skeleton" aria-hidden="true"><span class="shelf-skeleton-cover"></span><span class="shelf-skeleton-lines"><span></span><span></span><span></span><span></span></span></div>
+          <div class="shelf-skeleton" aria-hidden="true"><span class="shelf-skeleton-cover"></span><span class="shelf-skeleton-lines"><span></span><span></span><span></span><span></span></span></div>
+        </div>
       </div>
     </section>
 
@@ -357,6 +440,7 @@
             </p>
 
             <p id="series-description" class="hero-description"></p>
+            <button id="series-description-toggle" class="hero-description-toggle" type="button" aria-expanded="false" aria-controls="series-description" hidden>Xem thêm</button>
 
             <div id="series-tags" class="chip-row"></div>
 
@@ -516,6 +600,10 @@
               <span>Vị trí trong tập</span>
               <strong id="chapter-indicator">1 / 1</strong>
             </div>
+            <div class="reader-side-row">
+              <span>Cả sách</span>
+              <strong id="reader-book-progress">—</strong>
+            </div>
           </div>
 
           <div class="reader-side-jump">
@@ -569,6 +657,11 @@
       </div>
     </section>
   </main>
+
+  <div id="page-curtain" class="page-curtain" aria-hidden="true" hidden></div>
+  <p id="page-indicator" class="page-indicator" aria-live="polite" hidden></p>
+  <button id="page-turn-prev" class="page-turn page-turn-prev" type="button" aria-label="Trang trước" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></button>
+  <button id="page-turn-next" class="page-turn page-turn-next" type="button" aria-label="Trang sau" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg></button>
 
   <button id="btn-reader-top" class="reader-top" type="button" aria-label="Lên đầu chương" title="Lên đầu chương">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -645,11 +738,16 @@
   </nav>
 
   <dialog id="reader-aa-dialog" class="tools-dialog reader-aa-dialog" aria-labelledby="reader-aa-title">
-    <header class="tools-heading"><h2 id="reader-aa-title">Chữ & giao diện</h2><button id="reader-aa-close" class="tools-close" type="button" aria-label="Đóng chỉnh chữ">×</button></header>
+    <header class="tools-heading"><h2 id="reader-aa-title">Chữ & giao diện</h2><button id="reader-aa-close" class="tools-close" type="button" aria-label="Đóng chỉnh chữ"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></header>
     <div class="reader-aa-controls">
       <label><span>Cỡ chữ</span><output id="reader-aa-size-value" for="reader-aa-size"></output><input id="reader-aa-size" type="range" min="16" max="28" step="2"></label>
       <label><span>Giãn dòng</span><select id="reader-aa-line"><option value="1.7">Gọn</option><option value="2.02">Vừa</option><option value="2.35">Rộng</option></select></label>
       <label><span>Phông chữ</span><select id="reader-aa-font"><option value="serif">Có chân</option><option value="sans">Không chân</option><option value="system">Hệ thống</option></select></label>
+      <label><span>Cách đọc</span><select id="reader-aa-page"><option value="off">Cuộn dọc</option><option value="on">Lật trang</option></select></label>
+      <label><span>Ánh sáng ấm</span><output></output><input type="range" min="0" max="100" step="5" data-comfort="warmth"></label>
+      <label class="workbench-switch"><span class="workbench-switch-copy"><strong>Thước đọc</strong></span><input type="checkbox" role="switch" data-comfort="ruler"></label>
+      <button type="button" class="btn-secondary" data-auto-start>Bắt đầu tự cuộn</button>
+      <label><span>Căn lề</span><select id="reader-aa-align"><option value="auto">Tự động</option><option value="justify">Căn đều</option><option value="start">Căn trái</option></select></label>
       <div class="reader-aa-theme" aria-label="Màu nền"><button class="btn-secondary" type="button" data-aa-theme="light">Sáng</button><button class="btn-secondary" type="button" data-aa-theme="sepia">Giấy</button><button class="btn-secondary" type="button" data-aa-theme="dark">Tối</button></div>
       <label><span>Lề hai bên</span><output id="reader-aa-margin-value" for="reader-aa-margin"></output><input id="reader-aa-margin" type="range" min="12" max="64" step="2"></label>
       <button id="reader-aa-all" class="btn-secondary" type="button">Tất cả cài đặt đọc</button>
@@ -660,12 +758,12 @@
     <form id="ebook-import-form">
       <div class="ebook-dialog-head">
         <h2 id="ebook-import-heading">Nhập ebook</h2>
-        <button id="ebook-close" type="button" class="btn-link" aria-label="Đóng nhập ebook">Đóng</button>
+        <button id="ebook-close" type="button" class="tools-close" aria-label="Đóng nhập ebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
       </div>
       <p class="ebook-help">Chọn EPUB, TXT hoặc PDF (tối đa 50 MB/tệp) từ thiết bị. Tệp được lưu trong trình duyệt để đọc offline, không tải lên máy chủ.</p>
       <label class="ebook-file-label" for="ebook-file">Chọn tệp ebook</label>
-      <div id="ebook-drop" class="ebook-drop" tabindex="0" role="button" aria-label="Chọn hoặc kéo thả ebook">Kéo thả EPUB/TXT/PDF vào đây, hoặc bấm để chọn</div>
-      <input id="ebook-file" type="file" multiple accept=".epub,.txt,.pdf,application/epub+zip,text/plain,application/pdf">
+      <div id="ebook-drop" class="ebook-drop" tabindex="0" role="button" aria-label="Chọn hoặc kéo thả ebook"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"></path></svg><strong>Kéo thả tệp vào đây</strong><span>hoặc bấm để chọn EPUB, TXT, PDF</span></div>
+      <input id="ebook-file" class="visually-hidden" type="file" multiple accept=".epub,.txt,.pdf,application/epub+zip,text/plain,application/pdf">
       <div id="ebook-queue" class="ebook-queue"></div>
       <div id="ebook-preview" class="ebook-preview" hidden>
         <label for="ebook-title">Tên sách</label>
@@ -688,7 +786,7 @@
       <button id="ebook-save" type="submit" class="btn-primary" disabled>Thêm vào kệ</button>
     </form>
   </dialog>
-  <script src="vendor/jszip.min.js"></script>
+  <script src="app-dialog.js"></script>
   <script src="pdf-reader.js"></script>
   <script src="ebook-import.js"></script>
   <script src="reader-characters.js"></script>
@@ -701,6 +799,10 @@
   <script src="motion-controls.js"></script>
   <script src="reader-workbench.js"></script>
   <script src="reader-surfaces.js"></script>
+  <script src="reading-comfort.js"></script>
+  <script src="book-format.js"></script>
+  <script src="app-routes.js"></script>
+  <script src="page-turn.js"></script>
   <script src="app.js"></script>
   <script src="ui-controls.js"></script>
 </body>

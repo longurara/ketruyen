@@ -1,0 +1,280 @@
+/* Reading comfort (reading-comfort.js) and page mode (app.js). */
+
+/* ---- Letter and word spacing -------------------------------------------- */
+
+.reader-content,
+.settings-preview {
+  letter-spacing: var(--reader-letter-spacing, 0);
+  word-spacing: var(--reader-word-spacing, 0);
+}
+
+/* ---- Warm light and dimming: tinted layers above the page --------------- */
+
+.comfort-layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-eink);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--motion, 0.22s) ease;
+}
+
+.comfort-warm {
+  background: rgb(255, 147, 41);
+  mix-blend-mode: multiply;
+}
+
+.comfort-dim {
+  background: #000;
+}
+
+/* ---- Reading ruler: two clear lines, the rest of the screen dimmed ------ */
+
+.reading-ruler {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: calc(var(--z-header) - 2);
+  pointer-events: none;
+  border-block: 1px solid rgba(var(--ink-rgb), 0.18);
+  box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--bg) 62%, transparent);
+  transition: transform 0.08s linear;
+}
+
+.reading-ruler[hidden],
+body:not([data-view="reader"]) .reading-ruler {
+  display: none;
+}
+
+/* ---- Auto-scroll controls ------------------------------------------------ */
+
+.auto-scroll-bar {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: var(--z-overlay-controls);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--raised);
+  color: var(--text);
+  box-shadow: var(--shadow-pop);
+  transform: translateX(-50%);
+  animation: fadeIn var(--motion, 0.22s) var(--steps-3);
+}
+
+.auto-scroll-bar[hidden] {
+  display: none;
+}
+
+.auto-scroll-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.auto-scroll-icon:hover {
+  background: var(--surface-2);
+}
+
+.auto-scroll-icon[data-auto="toggle"] {
+  background: var(--ink);
+  color: var(--on-ink);
+}
+
+.auto-scroll-icon:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.auto-scroll-bar .icon-play,
+.auto-scroll-bar.is-paused .icon-pause {
+  display: none;
+}
+
+.auto-scroll-bar.is-paused .icon-play {
+  display: block;
+}
+
+.auto-scroll-speed {
+  min-width: 104px;
+  color: var(--text-soft);
+  font: 600 var(--text-xs)/1 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* Above the bottom bar on phones, and clear of the "back to top" button. */
+@media (max-width: 1080px) {
+  body[data-view="reader"]:not(.is-chrome-hidden) .auto-scroll-bar {
+    bottom: calc(var(--reader-dock-height, 96px) + 12px);
+  }
+}
+
+body.is-auto-scrolling .reader-top {
+  visibility: hidden;
+}
+
+/* Messages sit above the auto-scroll controls rather than over them. */
+body.is-auto-scrolling[data-view="reader"] .reader-toast {
+  bottom: calc(84px + env(safe-area-inset-bottom));
+}
+
+@media (max-width: 1080px) {
+  body.is-auto-scrolling[data-view="reader"]:not(.is-chrome-hidden) .reader-toast {
+    bottom: calc(var(--reader-dock-height, 96px) + 76px);
+  }
+}
+
+/* ---- Settings rows with a slider ----------------------------------------- */
+
+.settings-range {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 12px;
+  margin-top: 6px;
+  color: var(--text);
+  font: 600 var(--text-sm)/1.5 var(--font-ui);
+}
+
+.settings-range > input {
+  grid-column: 1 / -1;
+}
+
+.settings-range output {
+  padding: 2px 8px;
+  border-radius: 7px;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font: 500 var(--text-xs)/1.5 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+
+.settings-group .settings-hint + .settings-range,
+.settings-group .settings-range + .settings-hint {
+  margin-top: 8px;
+}
+
+.settings-switch {
+  margin-top: 0;
+}
+
+.settings-group [data-auto-start] {
+  width: 100%;
+  margin-top: 10px;
+}
+
+#reader-aa-dialog .reader-aa-controls label.workbench-switch {
+  display: flex;
+  margin: 16px 0;
+}
+
+#reader-aa-dialog .reader-aa-controls [data-auto-start] {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+/* ---- Page mode ------------------------------------------------------------ */
+
+/* The page does not scroll by hand; page turns move it. */
+html.is-paged {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.page-curtain {
+  position: fixed;
+  z-index: calc(var(--z-reader-bar) - 1);
+  pointer-events: none;
+}
+
+.page-curtain[hidden],
+.page-indicator[hidden],
+.page-turn[hidden] {
+  display: none;
+}
+
+.page-indicator {
+  position: fixed;
+  left: 50%;
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  z-index: calc(var(--z-reader-bar) - 1);
+  margin: 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  color: var(--text-muted);
+  font: 600 var(--text-2xs)/1.5 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 1080px) {
+  body[data-view="reader"]:not(.is-chrome-hidden) .page-indicator {
+    bottom: calc(var(--reader-dock-height, 96px) + 8px);
+  }
+}
+
+body.is-auto-scrolling .page-indicator {
+  display: none;
+}
+
+/* Arrows beside the text column, for mouse users. */
+.page-turn {
+  position: fixed;
+  top: 50%;
+  z-index: var(--z-floating);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-soft);
+  opacity: 0.55;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: opacity 0.15s, background-color 0.15s;
+}
+
+.page-turn:hover,
+.page-turn:focus-visible {
+  opacity: 1;
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.page-turn:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* A page turn: the new page slides in from the side it came from. */
+@keyframes pageInNext {
+  from { opacity: 0.25; translate: 32px 0; }
+}
+
+@keyframes pageInBack {
+  from { opacity: 0.25; translate: -32px 0; }
+}
+
+.reader-chapters.is-turning-next {
+  animation: pageInNext 0.24s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.reader-chapters.is-turning-back {
+  animation: pageInBack 0.24s cubic-bezier(0.2, 0, 0, 1);
+}

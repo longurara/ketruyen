@@ -285,7 +285,9 @@
       <p>Giơ ngón cái hoặc nắm/mở tay ổn định khoảng một giây để xác nhận. Các chế độ riêng tránh thao tác trùng nhau.</p>
       <button id="hand-camera-calibrate" type="button" disabled>Hiệu chỉnh ngón chụm / mở</button><button id="hand-camera-calibrate-reset" type="button">Dùng ngưỡng mặc định</button><p id="hand-camera-calibration-saved"></p>
       <p>Hình ảnh xử lý ngay trên máy, không lưu hoặc gửi đi. Bản Beta chỉ hỗ trợ máy tính.</p></div></details>`;
-    sidebar.querySelector(".reader-side-progress").after(panel);
+    // A Beta extra: it sits below the everyday reading controls and stays a
+    // single compact row until the camera is switched on.
+    sidebar.append(panel);
     const video = $("#hand-camera-video"), overlay = $("#hand-camera-overlay");
     const status = $("#hand-camera-status"), settings = $("#hand-camera-config"), preview = panel.querySelector(".hand-camera-preview");
     const startButton = $("#hand-camera-start"), stopButton = $("#hand-camera-stop"), previewToggle = $("#hand-camera-preview-toggle");
@@ -326,6 +328,7 @@
       stopButton.hidden = !starting && !active;
       preview.hidden = !stream;
       previewToggle.hidden = !stream;
+      panel.classList.toggle("is-idle", !starting && !active && !calibration);
     }
     function save() {
       const next = preferences({ ...prefs, sensitivity: Number(sensitivity.value), amount: Number(amount.value), mode: $("#hand-camera-mode").value,

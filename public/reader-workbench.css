@@ -1,20 +1,36 @@
 .workbench-dialog { width: min(980px, calc(100vw - 24px)); }
 .workbench-dialog .tools-header { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px 14px; }
-.workbench-dialog .tools-header h2 { margin-top: 2px; font: 600 24px/1.2 var(--font-serif); }
+.workbench-dialog .tools-header h2 { margin-top: 2px; font: 600 var(--text-2xl)/1.2 var(--font-serif); }
 .workbench-dialog .tools-close { width: 38px; height: 38px; border: 0; background: var(--surface-2); color: var(--text-soft); font-size: 22px; }
 .workbench-dialog .tools-close:hover { color: var(--text); background: var(--raised); }
-.workbench-dialog .tools-eyebrow { font: 11px/1.7 var(--font-ui); text-transform: uppercase; letter-spacing: .12em; color: var(--text-muted); }
+.workbench-dialog .tools-eyebrow { font: var(--text-2xs)/1.7 var(--font-ui); text-transform: uppercase; letter-spacing: .12em; color: var(--text-muted); }
 /* Second level: a scrolling row of words, the current one underlined. */
 .workbench-tabs { display: flex; flex-shrink: 0; gap: 2px; overflow-x: auto; scrollbar-width: none; padding: 4px 16px 0; border-bottom: 1px solid var(--line); }
 .workbench-tabs::-webkit-scrollbar { display: none; }
-.workbench-tabs button { position: relative; flex: 0 0 auto; min-height: 42px; padding: 10px 10px 12px; border: 0; background: none; color: var(--text-muted); font: 500 13px var(--font-ui); white-space: nowrap; cursor: pointer; }
+.workbench-tabs button { position: relative; flex: 0 0 auto; min-height: 42px; padding: 10px 10px 12px; border: 0; background: none; color: var(--text-muted); font: 500 var(--text-sm) var(--font-ui); white-space: nowrap; cursor: pointer; }
 .workbench-tabs button:hover { color: var(--text); }
 .workbench-tabs button[aria-pressed="true"] { color: var(--text); }
 .workbench-tabs button[aria-pressed="true"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--text); }
 .workbench-tabs button:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; border-radius: 8px; }
 .workbench-panel { padding: 20px 24px 24px; overflow: auto; min-height: 0; max-height: 62dvh; overscroll-behavior: contain; }
-.workbench-panel label:not(.workbench-check) { display: grid; gap: 8px; }
-.workbench-panel select, .workbench-panel input:not([type="checkbox"]):not([type="range"]), .workbench-panel textarea { max-width: 100%; width: 100%; padding: 10px; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 8px; }
+.workbench-panel label:not(.workbench-check):not(.workbench-switch) { display: grid; gap: 8px; color: var(--text-soft); font: 600 var(--text-sm)/1.5 var(--font-ui); }
+/* Fields are a faint tint of the text colour, so they read as fields on any
+   card in any theme rather than as black holes in dark mode. */
+.workbench-panel select, .workbench-panel input:not([type="checkbox"]):not([type="range"]), .workbench-panel textarea { max-width: 100%; width: 100%; min-height: 44px; padding: 11px 14px; background: rgba(var(--ink-rgb), 0.04); color: var(--text); border: 1px solid var(--line-strong); border-radius: 12px; font: 400 var(--text-base)/1.6 var(--font-ui); transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s; }
+.workbench-panel :is(input:not([type="checkbox"]):not([type="range"]), textarea):hover { border-color: rgba(var(--ink-rgb), 0.36); }
+.workbench-panel :is(input:not([type="checkbox"]):not([type="range"]), textarea, select):focus-visible { outline: none; border-color: var(--ink); background: transparent; box-shadow: 0 0 0 3px rgba(var(--ink-rgb), 0.14); }
+.workbench-panel :is(input, textarea)::placeholder { color: var(--text-muted); opacity: 1; }
+.workbench-panel textarea { min-height: 96px; resize: vertical; }
+/* An editor card: fields stacked with room between them, actions at the foot. */
+.workbench-panel .tools-editor { display: grid; gap: 18px; margin-top: 16px; padding: 20px; border-radius: var(--radius-lg); }
+.workbench-panel .tools-editor > .tools-actions { margin: 4px 0 0; }
+.workbench-panel .tools-editor > .tools-hint { margin: -6px 0 0; padding: 10px 12px; border-left: 2px solid var(--line-strong); color: var(--text-muted); font-style: italic; }
+/* A setting that is on or off: text on the left, a switch on the right. */
+.workbench-switch { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius-md); cursor: pointer; }
+.workbench-switch:hover { background: rgba(var(--ink-rgb), 0.03); }
+.workbench-switch-copy { display: grid; gap: 2px; min-width: 0; }
+.workbench-switch-copy strong { color: var(--text); font: 600 var(--text-base)/1.5 var(--font-ui); }
+.workbench-switch-copy span { color: var(--text-muted); font-size: var(--text-xs); line-height: 1.5; }
 .workbench-panel .tools-actions { margin: 14px 0; }
 .workbench-panel h3 { margin: 18px 0 12px; }
 .workbench-panel summary { padding: 16px 0; cursor: pointer; }
@@ -24,7 +40,7 @@
 .book-map > button[aria-current] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--text); }
 /* The chapter list reads as rows rather than a stack of boxes. */
 #workbench-chapters { gap: 0; margin-top: 4px; border-top: 1px solid var(--line); }
-#workbench-chapters > button { padding: 12px 12px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; font-size: 14px; line-height: 1.5; }
+#workbench-chapters > button { padding: 12px 12px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; font-size: var(--text-base); line-height: 1.5; }
 #workbench-chapters > button:hover { background: var(--surface-2); }
 #workbench-chapters > button[aria-current] { background: var(--surface-2); font-weight: 600; }
 .book-map-track { display: block; height: 8px; background: var(--line); border-radius: 5px; overflow: hidden; }
@@ -46,11 +62,17 @@
 .word-wise-term:focus-visible { outline: 2px solid var(--text); }
 body[data-view="reader"] { --reader-floating-bottom: max(calc(24px + env(safe-area-inset-bottom)), calc(var(--reader-status-height, 0px) + 12px)); }
 body.is-listening[data-view="reader"] { --reader-floating-bottom: calc(150px + env(safe-area-inset-bottom)); }
-.reader-quick-menu { position: fixed; right: calc(76px + env(safe-area-inset-right)); bottom: var(--reader-floating-bottom); z-index: 75; font-family: var(--font-sans); }
+.reader-quick-menu { position: fixed; right: calc(76px + env(safe-area-inset-right)); bottom: var(--reader-floating-bottom); z-index: var(--z-floating); font-family: var(--font-sans); }
 .reader-quick-menu[hidden], #reader-quick-actions[hidden], .reader-status-footer[hidden] { display: none; }
 #reader-quick-actions { display: grid; gap: 8px; position: absolute; bottom: calc(100% + 8px); right: 0; min-width: 190px; max-height: min(65dvh, calc(100dvh - var(--reader-floating-bottom) - var(--reader-quick-height, 46px) - 20px)); overflow: auto; padding: 12px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--raised); box-shadow: var(--shadow-pop); }
-.reader-status-footer { position: fixed; bottom: 0; inset-inline: 0; text-align: center; padding: 8px 12px max(8px, env(safe-area-inset-bottom)); background: var(--bg); color: var(--text-muted); font: 12px/1.4 var(--font-sans); border-top: 1px solid var(--line); z-index: 65; pointer-events: none; }
+.reader-status-footer { position: fixed; bottom: 0; inset-inline: 0; text-align: center; padding: 8px 12px max(8px, env(safe-area-inset-bottom)); background: var(--bg); color: var(--text-muted); font: var(--text-xs)/1.4 var(--font-sans); border-top: 1px solid var(--line); z-index: var(--z-reader-bar); pointer-events: none; }
 body.is-listening .reader-status-footer { display: none; }
-@media (min-width: 1081px) { body[data-view="reader"] .reader-top, body[data-view="reader"] .reader-toast { bottom: var(--reader-floating-bottom); } }
+@media (min-width: 1081px) {
+  body[data-view="reader"] .reader-top, body[data-view="reader"] .reader-toast { bottom: var(--reader-floating-bottom); }
+  /* The sidebar already shows chapter, time and book progress. */
+  .reader-status-footer { display: none !important; }
+  .reader-quick-menu { display: none !important; }
+  body[data-view="reader"] { --reader-floating-bottom: calc(24px + env(safe-area-inset-bottom)); }
+}
 @media (max-width: 1080px) { .reader-status-footer { bottom: calc(64px + env(safe-area-inset-bottom)); padding-bottom: 8px; } .reader-quick-menu { bottom: calc(106px + env(safe-area-inset-bottom)); right: 12px; } .workbench-panel { padding: 18px; } }
 @media (max-width: 600px) { .workbench-tabs { padding-inline: 14px; } .page-flip-preview { padding: 14px; } }

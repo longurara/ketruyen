@@ -187,10 +187,26 @@
   const elements = (node, name) => [...node.getElementsByTagNameNS("*", name)];
   const firstText = (node, name) => clean(elements(node, name)[0]?.textContent);
 
+  // The ZIP reader (~95 KB) is only needed for EPUB files and backups, so it
+  // loads the first time one of those is opened rather than with the page.
+  let zipRequest = null;
+  function loadZip() {
+    if (globalThis.JSZip) return Promise.resolve(globalThis.JSZip);
+    if (typeof document === "undefined") return Promise.reject(new Error("Chưa tải được bộ đọc ZIP."));
+    zipRequest ||= new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "/vendor/jszip.min.js";
+      script.onload = () => globalThis.JSZip ? resolve(globalThis.JSZip) : reject(new Error("Chưa tải được bộ đọc ZIP."));
+      script.onerror = () => { zipRequest = null; script.remove(); reject(new Error("Chưa tải được bộ đọc EPUB. Kiểm tra kết nối mạng rồi thử lại.")); };
+      document.head.append(script);
+    });
+    return zipRequest;
+  }
+
   async function parseEpub(bytes, report) {
     inspectArchive(bytes);
-    if (!globalThis.JSZip) throw new Error("Chưa tải được bộ đọc EPUB. Hãy mở lại trang rồi thử lại.");
-    const zip = await globalThis.JSZip.loadAsync(bytes);
+    const JSZip = await loadZip();
+    const zip = await JSZip.loadAsync(bytes);
     const reads = new Map();
     let totalRead = 0;
     const read = (path, limit = 8 * 1024 * 1024) => {
@@ -642,11 +658,12 @@
       }
     });
     return { async deleteBook(book) {
-      if (!confirm(`Xóa “${book.titleVi}” khỏi thiết bị này? Ghi chú và tiến độ đọc vẫn được giữ để bạn nhập lại sau.`)) return;
-      try { await remove(book.slug); location.hash = ""; location.reload(); }
+      const confirmed = await AppDialog.confirm({ title: `Xóa “${book.titleVi}” khỏi thiết bị này?`, message: "Tệp ebook sẽ bị xóa khỏi trình duyệt. Ghi chú và tiến độ đọc vẫn được giữ để bạn nhập lại sau.", confirmLabel: "Xóa ebook", danger: true });
+      if (!confirmed) return;
+      try { await remove(book.slug); location.href = "/"; }
       catch (_) { message("Không xóa được ebook. Hãy thử lại."); }
     } };
   }
 
-  return { archivePath, decodeText, textChapters, inspectArchive, rasterDimensions, rasterType, parseFile, list, all, get, save, saveMany, remove, hydrate, load, release, attachUI, summary, fallbackCover, updateChapters, mergeTextChapters, splitTextChapter, renderRich, renderBlocks };
+  return { loadZip, archivePath, decodeText, textChapters, inspectArchive, rasterDimensions, rasterType, parseFile, list, all, get, save, saveMany, remove, hydrate, load, release, attachUI, summary, fallbackCover, updateChapters, mergeTextChapters, splitTextChapter, renderRich, renderBlocks };
 });

@@ -4,6 +4,10 @@ const globals = require("globals");
 // The page loads public/*.js as plain <script> tags, so each one sees the
 // globals the others define. The same files export to Node for the tests.
 const PAGE_MODULES = {
+  AppDialog: "readonly",
+  AppRoutes: "readonly",
+  BookFormat: "readonly",
+  PageTurn: "readonly",
   EbookImport: "readonly",
   HandCalibration: "readonly",
   HandGestures: "readonly",
@@ -16,6 +20,7 @@ const PAGE_MODULES = {
   ReaderFeatures: "readonly",
   ReaderSurfaces: "readonly",
   ReaderWorkbench: "readonly",
+  ReadingComfort: "readonly",
   UiControls: "readonly",
   JSZip: "readonly",
   pdfjsLib: "readonly"

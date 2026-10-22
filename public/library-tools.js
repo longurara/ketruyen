@@ -8,6 +8,14 @@
   const escape = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fold = (value) => String(value || "").normalize("NFD").replace(/\p{M}/gu, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
   const clamp = (value, min, max, fallback) => Number.isFinite(Number(value)) ? Math.max(min, Math.min(max, Number(value))) : fallback;
+  const svg = (body, fill = "none") => `<svg width="18" height="18" viewBox="0 0 24 24" fill="${fill}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
+  const STAR = '<path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"></path>';
+  const ICONS = {
+    more: svg('<circle cx="5" cy="12" r="1.3" fill="currentColor"></circle><circle cx="12" cy="12" r="1.3" fill="currentColor"></circle><circle cx="19" cy="12" r="1.3" fill="currentColor"></circle>'),
+    star: svg(STAR), starFilled: svg(STAR, "currentColor"),
+    edit: svg('<path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="m13.5 6.5 4 4"></path>'),
+    trash: svg('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"></path>')
+  };
   function locatePart(text, part) {
     if (!part.quote) return null;
     if (text.slice(part.start, part.end) === part.quote) return { start: part.start, end: part.end };
@@ -60,7 +68,7 @@
         return false;
       }
     }
-    document.body.insertAdjacentHTML("beforeend", `<dialog id="library-dialog" class="tools-dialog" aria-labelledby="library-title"><div class="tools-heading"><h2 id="library-title"></h2><button type="button" class="tools-close" aria-label="Đóng">×</button></div><div id="library-tools-panel" class="tools-panel"></div><p id="library-feedback" class="tools-feedback" role="status" hidden></p></dialog>`);
+    document.body.insertAdjacentHTML("beforeend", `<dialog id="library-dialog" class="tools-dialog" aria-labelledby="library-title"><div class="tools-heading"><h2 id="library-title"></h2><button type="button" class="tools-close" aria-label="Đóng"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div><div id="library-tools-panel" class="tools-panel"></div><p id="library-feedback" class="tools-feedback" role="status" hidden></p></dialog>`);
     const dialog = $("#library-dialog"), panel = $("#library-tools-panel");
     let embeddedHost = null;
     const isOpen = () => embeddedHost ? embeddedHost.isOpen() : dialog.open;
@@ -115,13 +123,24 @@
     shelfMore.addEventListener("click", (event) => {
       if (event.target.closest("button")) { shelfMore.open = false; shelfMore.querySelector("summary").focus({ preventScroll: true }); }
     }, true);
+    // The library menu and each book's menu: one open at a time, closed by an outside click or Escape.
+    const openMenus = () => document.querySelectorAll("#shelf-more[open], .shelf-card-more[open]");
     document.addEventListener("click", (event) => {
-      if (shelfMore.open && !shelfMore.contains(event.target)) shelfMore.open = false;
+      openMenus().forEach((menu) => { if (!menu.contains(event.target)) menu.open = false; });
     });
+    document.addEventListener("toggle", (event) => {
+      if (!event.target.matches?.("#shelf-more, .shelf-card-more") || !event.target.open) return;
+      openMenus().forEach((menu) => { if (menu !== event.target) menu.open = false; });
+      event.target.querySelector(".shelf-more-menu button")?.focus({ preventScroll: true });
+    }, true);
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && shelfMore.open && shelfMore.contains(document.activeElement)) {
-        shelfMore.open = false; shelfMore.querySelector("summary").focus(); event.preventDefault();
-      }
+      const menu = [...openMenus()].find((open) => open.contains(document.activeElement));
+      if (!menu) return;
+      if (event.key === "Escape") { menu.open = false; menu.querySelector("summary").focus(); event.preventDefault(); return; }
+      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+      const items = [...menu.querySelectorAll(".shelf-more-menu button:not(:disabled)")];
+      const next = items[(items.indexOf(document.activeElement) + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length];
+      next?.focus(); event.preventDefault();
     });
     function updateShelfResume(series) {
       const host = $("#shelf-resume");
@@ -129,12 +148,41 @@
         .filter((book) => Array.isArray(book.volumesData))
         .map((book) => ({ book, saved: progress(book) }))
         .filter(({ book, saved }) => Number.isInteger(saved.volIdx) && Number.isInteger(saved.chapIdx) && Number(saved.timestamp) > 0 && book.volumesData?.[saved.volIdx]?.chapters[saved.chapIdx])
-        .sort((a, b) => Number(b.saved.timestamp) - Number(a.saved.timestamp))[0];
-      host.hidden = !recent;
-      if (!recent) { host.replaceChildren(); return; }
-      const { book, saved } = recent, volume = book.volumesData[saved.volIdx], chapter = volume.chapters[saved.chapIdx];
-      host.innerHTML = `<button type="button" class="shelf-resume-card" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="">` : ""}<span class="shelf-resume-copy"><span class="shelf-resume-label">Đọc tiếp</span><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span></span><span class="shelf-resume-arrow" aria-hidden="true">→</span></button>`;
-      host.querySelector("button").onclick = () => options.openMark(options.series.indexOf(book), { type: "bookmark", volIdx: saved.volIdx, chapIdx: saved.chapIdx });
+        .sort((a, b) => Number(b.saved.timestamp) - Number(a.saved.timestamp))
+        .slice(0, 8);
+      if (!recent.length) { showSuggestions(series, host); return; }
+      host.hidden = false;
+      // Story chapters finished out of the whole book, as on the series page.
+      const bookShare = (book) => {
+        let done = 0, total = 0, read = {};
+        try { read = JSON.parse(localStorage.getItem(book.legacyStorage ? "tenshi-chapters" : `tenshi-${book.slug}-chapters`)) || {}; } catch (_) {}
+        book.volumesData.forEach((volume, vi) => volume.chapters.forEach((chapter, ci) => {
+          if (chapter.isIllustration) return;
+          total += 1;
+          if (read[`${vi}:${ci}`]?.done) done += 1;
+        }));
+        return { done, total, percent: total ? Math.round((done / total) * 100) : 0 };
+      };
+      host.innerHTML = `<div class="shelf-resume-head"><h2 class="shelf-resume-title">Đọc tiếp</h2>${recent.length > 1 ? `<span class="shelf-resume-count">${recent.length} cuốn đang đọc</span>` : ""}</div><div class="shelf-resume-row${recent.length === 1 ? " is-single" : ""}">${recent.map(({ book, saved }, index) => {
+        const volume = book.volumesData[saved.volIdx], chapter = volume.chapters[saved.chapIdx], share = bookShare(book);
+        return `<button type="button" class="shelf-resume-card" data-resume="${index}" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}, đã đọc ${share.done} trên ${share.total} chương">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="" width="104" height="148" loading="lazy" decoding="async">` : '<span class="shelf-resume-cover" aria-hidden="true"></span>'}<span class="shelf-resume-copy"><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span><span class="shelf-resume-meter" aria-hidden="true"><span style="width:${Math.max(share.percent, share.done ? 2 : 0)}%"></span></span><span class="shelf-resume-share">${share.done}/${share.total}</span></span></button>`;
+      }).join("")}</div>`;
+      host.querySelectorAll("[data-resume]").forEach((button) => {
+        const { book, saved } = recent[Number(button.dataset.resume)];
+        button.onclick = () => options.openMark(options.series.indexOf(book), { type: "bookmark", volIdx: saved.volIdx, chapIdx: saved.chapIdx });
+      });
+    }
+    // Nothing in progress yet (a first visit): offer a few books from the main
+    // shelf to start with, in the catalogue's own order.
+    function showSuggestions(series, host) {
+      const picks = series.filter((book) => !book.personal && normalizeBookSection(book.section) === "main").slice(0, 8);
+      host.hidden = !picks.length;
+      if (!picks.length) { host.replaceChildren(); return; }
+      host.innerHTML = `<div class="shelf-resume-head"><h2 class="shelf-resume-title">Bắt đầu với</h2><span class="shelf-resume-count">Gợi ý từ kệ truyện chính</span></div><div class="shelf-resume-row is-suggestions">${picks.map((book, index) => `<button type="button" class="shelf-resume-card" data-suggest="${index}" aria-label="Xem ${escape(book.titleVi)}">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="" width="104" height="148" loading="lazy" decoding="async">` : '<span class="shelf-resume-cover" aria-hidden="true"></span>'}<span class="shelf-resume-copy"><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape([book.author, book.volumes ? `${book.volumes} tập` : ""].filter(Boolean).join(" · "))}</span></span></button>`).join("")}</div>`;
+      host.querySelectorAll("[data-suggest]").forEach((button) => {
+        const book = picks[Number(button.dataset.suggest)];
+        button.onclick = () => options.openSeries(options.series.indexOf(book), button.querySelector(".shelf-resume-cover"));
+      });
     }
     const VALID_SECTIONS = new Set([
       "main",
@@ -271,19 +319,42 @@
       const tsMap = new Map(result.map((b) => [b, progress(b).timestamp || 0]));
       return result.sort((a, b) => tsMap.get(b) - tsMap.get(a));
     }
+    // List (cover, blurb, actions) or a dense grid of covers for browsing large shelves.
+    const DENSITY_KEY = "tenshi-shelf-density", densityButtons = document.querySelectorAll("[data-shelf-density]");
+    function setDensity(value) {
+      const density = value === "grid" ? "grid" : "list";
+      $("#shelf-grid").classList.toggle("is-covers", density === "grid");
+      densityButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.shelfDensity === density)));
+      return density;
+    }
+    let savedDensity = "list"; try { savedDensity = localStorage.getItem(DENSITY_KEY) || "list"; } catch (_) {}
+    setDensity(savedDensity);
+    densityButtons.forEach((button) => button.addEventListener("click", () => {
+      const density = setDensity(button.dataset.shelfDensity);
+      try { localStorage.setItem(DENSITY_KEY, density); } catch (_) {}
+    }));
     ["shelf-search", "shelf-status", "shelf-group", "shelf-sort"].forEach((id) => $(`#${id}`).addEventListener(id === "shelf-search" ? "input" : "change", options.renderShelf));
     updateGroups();
     function shelfItem(series, card) {
       const item = document.createElement("div"); item.className = "ebook-shelf-item"; item.dataset.book = series.slug;
-      const actions = document.createElement("div"); actions.className = "shelf-card-controls";
-      actions.innerHTML = `<button type="button" class="btn-link" data-favorite aria-pressed="${row(series).favorite}" aria-label="Yêu thích ${escape(series.titleVi)}">${row(series).favorite ? "★ Yêu thích" : "☆ Yêu thích"}</button><button type="button" class="btn-link" data-manage aria-label="Quản lý ${escape(series.titleVi)}">Quản lý</button>${series.personal ? `<button type="button" class="btn-link ui-danger" data-delete aria-label="Xóa ebook ${escape(series.titleVi)}">Xóa</button>` : ""}`;
+      const favorite = row(series).favorite;
+      // Per-book actions live in one overflow menu so the grid reads as books, not toolbars.
+      const actions = document.createElement("details"); actions.className = "shelf-card-more";
+      actions.innerHTML = `<summary aria-label="Thao tác cho ${escape(series.titleVi)}" title="Thao tác">${ICONS.more}</summary><div class="shelf-more-menu" role="menu"><button type="button" class="shelf-menu-action" role="menuitem" data-favorite aria-pressed="${favorite}">${favorite ? ICONS.starFilled : ICONS.star}<span>${favorite ? "Bỏ yêu thích" : "Thêm vào yêu thích"}</span></button><button type="button" class="shelf-menu-action" role="menuitem" data-manage>${ICONS.edit}<span>Trạng thái &amp; nhóm…</span></button>${series.personal ? `<button type="button" class="shelf-menu-action is-danger" role="menuitem" data-delete>${ICONS.trash}<span>Xóa khỏi thiết bị…</span></button>` : ""}</div>`;
+      const closeMenu = () => { actions.open = false; };
       actions.querySelector("[data-favorite]").onclick = () => {
         const old = state.books[series.slug]; state.books[series.slug] = { ...row(series), favorite: !row(series).favorite };
-        if (!persist()) { if (old) state.books[series.slug] = old; else delete state.books[series.slug]; }
-        options.renderShelf();
+        if (!persist()) { if (old) state.books[series.slug] = old; else delete state.books[series.slug]; return; }
+        closeMenu(); options.renderShelf();
+        options.message(row(series).favorite ? "Đã thêm vào yêu thích." : "Đã bỏ khỏi yêu thích.");
       };
-      actions.querySelector("[data-manage]").onclick = () => manageBook(series);
-      if (series.personal) actions.querySelector("[data-delete]").onclick = () => options.deleteBook(series);
+      actions.querySelector("[data-manage]").onclick = () => { closeMenu(); manageBook(series); };
+      if (series.personal) actions.querySelector("[data-delete]").onclick = () => { closeMenu(); options.deleteBook(series); };
+      if (favorite) {
+        const badge = document.createElement("span"); badge.className = "shelf-favorite-badge"; badge.innerHTML = ICONS.starFilled;
+        badge.setAttribute("role", "img"); badge.setAttribute("aria-label", "Yêu thích");
+        card.querySelector(".shelf-card-title").prepend(badge);
+      }
       // A card that already says "Đang đọc dở · Tập N" needs no "Đang đọc" tag.
       const label = { want: "Muốn đọc", reading: card.dataset.resume ? "" : "Đang đọc", done: "Đã đọc" }[status(series)];
       if (label || row(series).groups.length) {

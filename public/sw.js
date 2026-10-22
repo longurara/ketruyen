@@ -7,7 +7,7 @@
 // and picture seen stays readable offline. app.js uses the same cache names
 // for "Tải về đọc offline".
 
-const SHELL_CACHE = "tenshi-shell-v21";
+const SHELL_CACHE = "tenshi-shell-v26";
 const INDEX_PATTERN = /^\/data\/(?:[^/]+\/)?index\.json$/;
 const TEXT_CACHE = "tenshi-text-v1";
 const IMAGE_CACHE = "tenshi-img-v2";
@@ -35,12 +35,19 @@ const SHELL = [
   "/reader-mobile.css",
   "/settings-ui.css",
   "/ui-controls.css",
+  "/motion.css",
+  "/reading-comfort.css",
+  "/reading-comfort.js",
   "/ui-controls.js",
   "/pdf-reader.js",
   "/pdf-reader.css",
   "/hand-camera.css",
   "/hand-camera-worker.js",
   "/vendor/jszip.min.js",
+  "/app-dialog.js",
+  "/app-routes.js",
+  "/book-format.js",
+  "/page-turn.js",
   "/reader-characters.js",
   "/reader-features.js",
   "/reader-features.css",
@@ -93,6 +100,9 @@ self.addEventListener("fetch", (event) => {
       event.waitUntil(fetched.then(() => pruneText()).catch(() => {}));
     } else if (request.mode === "navigate" && (url.pathname === "/" || url.pathname === "/index.html")) {
       event.respondWith(networkFirst(request, SHELL_CACHE, "/"));
+    } else if (request.mode === "navigate" && url.pathname.startsWith("/truyen/")) {
+      // A book page is the same app shell; offline, the cached shell opens it.
+      event.respondWith(fetch(request).catch(async () => (await caches.match("/", { cacheName: SHELL_CACHE })) || Response.error()));
     } else if (SHELL.includes(url.pathname) || url.pathname === "/data/descriptions.json") {
       // Full blurbs are not precached (a few MB); the first series page fetch keeps a copy.
       event.respondWith(networkFirst(request, SHELL_CACHE));

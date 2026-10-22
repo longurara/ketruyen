@@ -3,7 +3,7 @@ body { --ui-danger-rgb: 148, 60, 54; }
 body[data-theme="dark"] { --ui-danger-rgb: 218, 153, 144; }
 textarea { font: inherit; color: inherit; }
 
-:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"] {
+:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"] {
   appearance: none;
   display: block;
   width: 100%;
@@ -18,12 +18,12 @@ textarea { font: inherit; color: inherit; }
   cursor: pointer;
   touch-action: pan-y;
 }
-:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]::-webkit-slider-runnable-track {
+:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-webkit-slider-runnable-track {
   height: 6px;
   border-radius: 999px;
   background: linear-gradient(to right, var(--ink) var(--control-fill, 50%), var(--line-strong) var(--control-fill, 50%));
 }
-:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]::-webkit-slider-thumb {
+:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-webkit-slider-thumb {
   appearance: none;
   width: 20px;
   height: 20px;
@@ -33,17 +33,17 @@ textarea { font: inherit; color: inherit; }
   background: var(--ink);
   box-shadow: 0 0 0 1px var(--line-strong);
 }
-:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]::-moz-range-track {
+:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-moz-range-track {
   height: 6px;
   border-radius: 999px;
   background: var(--line-strong);
 }
-:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]::-moz-range-progress {
+:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-moz-range-progress {
   height: 6px;
   border-radius: 999px;
   background: var(--ink);
 }
-:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]::-moz-range-thumb {
+:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-moz-range-thumb {
   width: 14px;
   height: 14px;
   border: 3px solid var(--surface);
@@ -67,7 +67,7 @@ select.reader-select:not([multiple]):not([size]) {
   background-size: 5px 5px;
   background-repeat: no-repeat;
   color: var(--text);
-  font: 14px/1.5 var(--font-ui);
+  font: var(--text-base)/1.5 var(--font-ui);
   text-overflow: ellipsis;
   cursor: pointer;
 }
@@ -83,9 +83,9 @@ input[type="checkbox"]:not([role="switch"]) {
   min-width: 20px;
   margin: 0;
   padding: 0;
-  border: 1px solid var(--line-strong);
+  border: 1.5px solid rgba(var(--ink-rgb), 0.4);
   border-radius: 6px;
-  background: var(--paper);
+  background: transparent;
   accent-color: var(--ink);
   cursor: pointer;
 }
@@ -102,15 +102,44 @@ input[type="checkbox"]:not([role="switch"])::after {
   transform: translate(-50%, -60%) rotate(45deg);
 }
 input[type="checkbox"]:not([role="switch"]):checked { background: var(--ink); border-color: var(--ink); }
+/* On/off switch: a checkbox with role="switch". */
+input[type="checkbox"][role="switch"] {
+  appearance: none;
+  position: relative;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 26px;
+  margin: 0;
+  border: 1px solid rgba(var(--ink-rgb), 0.3);
+  border-radius: 999px;
+  background: rgba(var(--ink-rgb), 0.12);
+  cursor: pointer;
+  transition: background-color 0.2s var(--steps-3), border-color 0.2s var(--steps-3);
+}
+input[type="checkbox"][role="switch"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s var(--steps-3), background-color 0.2s var(--steps-3);
+}
+input[type="checkbox"][role="switch"]:checked { background: var(--ink); border-color: var(--ink); }
+input[type="checkbox"][role="switch"]:checked::after { transform: translateX(18px); background: var(--on-ink); }
+input[type="checkbox"][role="switch"]:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 input[type="checkbox"]:not([role="switch"]):checked::after { display: block; }
 input[type="checkbox"]:not([role="switch"]):indeterminate { background: var(--ink); border-color: var(--ink); }
 input[type="checkbox"]:not([role="switch"]):indeterminate::after { display: block; width: 10px; height: 0; border-width: 0 0 2px; transform: translate(-50%, -50%); }
 
-:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]:focus-visible,
+:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]:focus-visible,
 :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .shelf-filters, #ebook-txt-tools, .workbench-section-select, .motion-field) select:focus-visible,
 select.reader-select:focus-visible,
 input[type="checkbox"]:not([role="switch"]):focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
-:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]:disabled,
+:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]:disabled,
 select:disabled,
 input[type="checkbox"]:not([role="switch"]):disabled { opacity: .45; cursor: not-allowed; }
 
@@ -127,13 +156,13 @@ input[type="checkbox"]:not([role="switch"]):disabled { opacity: .45; cursor: not
   border-radius: 7px;
   background: var(--surface-2);
   color: var(--text-muted);
-  font: 500 12px/1.5 var(--font-ui);
+  font: 500 var(--text-xs)/1.5 var(--font-ui);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 :is(.workbench-check, .library-check, .character-show-all, .hand-camera-check) { cursor: pointer; }
 
-:is(.tools-panel, .workbench-panel, .shelf-card-controls) .btn-link {
+:is(.tools-panel, .workbench-panel) .btn-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -145,20 +174,19 @@ input[type="checkbox"]:not([role="switch"]):disabled { opacity: .45; cursor: not
   border-radius: 10px;
   background: var(--surface);
   color: var(--text-soft);
-  font: 500 12.5px/1.4 var(--font-ui);
+  font: 500 var(--text-sm)/1.4 var(--font-ui);
   text-decoration: none;
   white-space: normal;
 }
-:is(.tools-panel, .workbench-panel, .shelf-card-controls) .btn-link:hover:not(:disabled) { background: var(--surface-2); border-color: var(--line-strong); color: var(--text); }
-:is(.tools-panel, .workbench-panel, .shelf-card-controls) .btn-link:disabled { opacity: .4; cursor: not-allowed; }
+:is(.tools-panel, .workbench-panel) .btn-link:hover:not(:disabled) { background: var(--surface-2); border-color: var(--line-strong); color: var(--text); }
+:is(.tools-panel, .workbench-panel) .btn-link:disabled { opacity: .4; cursor: not-allowed; }
 :is(.tools-panel, .workbench-panel) :is(.btn-primary, .btn-secondary) { border-radius: 10px; line-height: 1.5; white-space: normal; }
 /* Edit buttons on a card are secondary to its text: no box until hovered. */
 .tool-card-heading :is(.btn-link, .tool-action):not(.ui-danger) { border-color: transparent; background: transparent; color: var(--text-muted); }
 .tool-card-heading :is(.btn-link, .tool-action):not(.ui-danger):hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
 .hand-camera-panel :is(button, summary) { border-radius: 10px; }
 
-button:is(.ui-danger, [data-term-delete], [data-vocab-delete], [data-profile-delete], [data-delete-quote], [data-delete-rule], [data-delete-character], #mark-delete, #btn-downloads-clear, #btn-reset-volume),
-.shelf-card-controls button[data-delete] {
+button:is(.ui-danger, [data-term-delete], [data-vocab-delete], [data-profile-delete], [data-delete-quote], [data-delete-rule], [data-delete-character], #mark-delete, #btn-downloads-clear, #btn-reset-volume) {
   border: 1px solid rgba(var(--ui-danger-rgb), .3);
   border-radius: 10px;
   background: rgba(var(--ui-danger-rgb), .06);
@@ -167,40 +195,71 @@ button:is(.ui-danger, [data-term-delete], [data-vocab-delete], [data-profile-del
   text-decoration: none;
   white-space: normal;
 }
-button:is(.ui-danger, [data-term-delete], [data-vocab-delete], [data-profile-delete], [data-delete-quote], [data-delete-rule], [data-delete-character], #mark-delete, #btn-downloads-clear, #btn-reset-volume):hover:not(:disabled),
-.shelf-card-controls button[data-delete]:hover:not(:disabled) {
+button:is(.ui-danger, [data-term-delete], [data-vocab-delete], [data-profile-delete], [data-delete-quote], [data-delete-rule], [data-delete-character], #mark-delete, #btn-downloads-clear, #btn-reset-volume):hover:not(:disabled) {
   border-color: rgba(var(--ui-danger-rgb), .5);
   background: rgba(var(--ui-danger-rgb), .12);
   color: rgb(var(--ui-danger-rgb));
 }
 button.ui-danger:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 
+/* Confirmation dialog (app-dialog.js). */
+.app-confirm {
+  width: min(420px, calc(100% - 32px));
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--raised);
+  color: var(--text);
+  box-shadow: var(--shadow-pop);
+}
+.app-confirm::backdrop { background: rgba(0, 0, 0, var(--backdrop-opacity, 0.5)); }
+.app-confirm-body { display: grid; gap: 10px; padding: 24px; }
+.app-confirm-title { font: 600 var(--text-xl)/1.35 var(--font-serif); text-wrap: balance; }
+.app-confirm-message { color: var(--text-soft); font: var(--text-base)/1.65 var(--font-ui); text-wrap: pretty; }
+.app-confirm-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+.app-confirm-actions button { min-height: 42px; padding: 0 18px; }
+.app-confirm .btn-primary.is-danger { background: rgb(var(--ui-danger-rgb)); color: var(--on-ink); }
+.app-confirm :is(.btn-primary, .btn-secondary):focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.app-shortcuts-list { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px 16px; margin-top: 6px; }
+.app-shortcuts-list dt { display: flex; gap: 4px; }
+.app-shortcuts-list dd { color: var(--text-soft); font-size: var(--text-sm); line-height: 1.5; }
+.app-shortcuts-list kbd { min-width: 28px; padding: 3px 8px; border: 1px solid var(--line-strong); border-bottom-width: 2px; border-radius: 6px; background: var(--surface); color: var(--text); font: 600 var(--text-xs)/1.4 var(--font-ui); text-align: center; }
+@media (max-width: 520px) {
+  .app-confirm { width: calc(100% - 24px); margin: auto auto 12px; }
+  .app-confirm-actions { flex-direction: column-reverse; }
+  .app-confirm-actions button { width: 100%; min-height: 46px; }
+}
+
 @media (max-width: 1080px) {
   :is(.header-btn, .settings-close, .tools-close) { min-width: 44px; min-height: 44px; width: 44px; height: 44px; flex-shrink: 0; }
-  :is(.segmented button, .font-btn, .filter-btn, .sort-btn, .settings-action, .side-settings-btn, .chapter-tools button, .selection-tools button, .tools-actions button, .workbench-tabs button, .workbench-groups button, .reader-aa-theme button, .shelf-card-controls button, .skim-controls button, .tools-panel .btn-link, .workbench-panel .btn-link) { min-height: 44px; touch-action: manipulation; }
+  :is(.segmented button, .font-btn, .filter-btn, .sort-btn, .settings-action, .side-settings-btn, .chapter-tools button, .selection-tools button, .tools-actions button, .workbench-tabs button, .workbench-groups button, .reader-aa-theme button, .skim-controls button, .tools-panel .btn-link, .workbench-panel .btn-link) { min-height: 44px; touch-action: manipulation; }
   .selection-tools button { min-width: 44px; }
+  .shelf-card-more summary { width: 44px; height: 44px; }
   :is(.workbench-check, .library-check, .character-show-all, .hand-camera-check) { min-height: 44px; }
-  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"] { height: 44px; }
+  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"] { height: 44px; }
   :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .shelf-filters, #ebook-txt-tools, .workbench-section-select, .motion-field) select:not([multiple]):not([size]),
   select.reader-select:not([multiple]):not([size]),
   :is(.tools-panel, .workbench-panel, .shelf-filters, .ebook-dialog) :is(input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), textarea) { font-size: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :is(.tools-panel, .workbench-panel, .shelf-card-controls) :is(button, input, select) { transition: none; }
+  :is(.tools-panel, .workbench-panel) :is(button, input, select) { transition: none; }
 }
 @media (forced-colors: active) {
-  input[type="checkbox"]:not([role="switch"]) { appearance: auto; }
+  input[type="checkbox"]:not([role="switch"]),
+  input[type="checkbox"][role="switch"] { appearance: auto; }
+  input[type="checkbox"][role="switch"]::after { display: none; }
   input[type="checkbox"]:not([role="switch"])::after,
   input[type="checkbox"]:not([role="switch"]):checked::after,
   input[type="checkbox"]:not([role="switch"]):indeterminate::after { display: none; }
   :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .shelf-filters, #ebook-txt-tools, .workbench-section-select, .motion-field) select:not([multiple]):not([size]),
   select.reader-select:not([multiple]):not([size]) { appearance: auto; background-image: none; }
-  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"] { appearance: auto; }
-  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]::-webkit-slider-runnable-track,
-  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]::-webkit-slider-thumb,
-  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]::-moz-range-track,
-  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]::-moz-range-progress,
-  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings) input[type="range"]::-moz-range-thumb { all: revert; }
+  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"] { appearance: auto; }
+  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-webkit-slider-runnable-track,
+  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-webkit-slider-thumb,
+  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-moz-range-track,
+  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-moz-range-progress,
+  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-moz-range-thumb { all: revert; }
   button.ui-danger { color: ButtonText; border-color: ButtonText; }
 }
