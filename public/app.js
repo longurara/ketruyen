@@ -163,6 +163,7 @@
   const btnDownloadsAll = $("#btn-downloads-all");
   const btnDownloadsClear = $("#btn-downloads-clear");
   const btnResetVolume = $("#btn-reset-volume");
+  const volumeMore = $("#volume-more");
   const btnResetProgress = $("#btn-reset-progress");
   const settingsProgressSection = $("#settings-progress-section");
   const btnSortChapters = $("#btn-sort-chapters");
@@ -1249,9 +1250,21 @@
     tabLibraryAll.addEventListener("click", () => setLibraryTab("all"));
     tabLibrarySaved.addEventListener("click", () => setLibraryTab("saved"));
     btnResetVolume.addEventListener("click", () => {
+      volumeMore.open = false;
       const volume = DATA[currentVolIdx];
       if (!volume) return;
       resetReadingProgressUndoably(currentVolIdx, `Đã đặt lại tiến độ ${volume.name}.`);
+      btnOpenFirstChapter.focus({ preventScroll: true });
+    });
+    volumeMore.addEventListener("toggle", () => { if (volumeMore.open) btnResetVolume.focus({ preventScroll: true }); });
+    volumeMore.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && volumeMore.open) {
+        event.preventDefault(); event.stopPropagation(); volumeMore.open = false;
+        volumeMore.querySelector("summary").focus({ preventScroll: true });
+      }
+    });
+    document.addEventListener("click", (event) => {
+      if (volumeMore.open && !volumeMore.contains(event.target)) volumeMore.open = false;
     });
     btnResetProgress.addEventListener("click", () => {
       closeSettings();
@@ -2379,7 +2392,8 @@
 
     renderChapterList();
     updateOfflineButton(volIdx);
-    btnResetVolume.hidden = !hasVolumeProgress(volIdx);
+    volumeMore.open = false;
+    volumeMore.hidden = btnResetVolume.hidden = !hasVolumeProgress(volIdx);
   }
 
   function resumesVolume(volIdx) {

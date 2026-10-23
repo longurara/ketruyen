@@ -9,8 +9,8 @@
   const STORAGE = "tenshi-hand-camera-v1";
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const PINCH_CLOSE_RATIO = 0.16, PINCH_RELEASE_RATIO = 0.24, PINCH_HOLD_MS = 160;
-  const CALIBRATION_VERSION = 2;
-  const GEOMETRY_METRICS = ["world3d", "image3d", "image2d"];
+  const CALIBRATION_VERSION = 3;
+  const GEOMETRY_METRICS = ["image2d"];
 
   function preferences(value) {
     const calibration = value?.calibration;
@@ -34,9 +34,9 @@
     const worldValid = Array.isArray(world) && world.length === 21 && world.every((p) => Number.isFinite(p?.x) && Number.isFinite(p?.y) && Number.isFinite(p?.z)) &&
       distanceIn(world, 0, 9) > 1e-6 && [...fingers, [1, 2, 3, 4]].every((chain) => chain.slice(1).every((i, j) => distanceIn(world, chain[j], i) > 1e-6));
     const geometry = worldValid ? world : image;
-    const metric = worldValid ? "world3d" : hasDepth ? "image3d" : "image2d";
     const distance = (a, b) => distanceIn(geometry, a, b);
-    const size = Math.hypot(image[0].x - image[9].x, image[0].y - image[9].y);
+    const imageDistance = (a, b) => Math.hypot(image[a].x - image[b].x, image[a].y - image[b].y);
+    const size = imageDistance(0, 9);
     const palmSize = distance(0, 9);
     const center = [0, 5, 9, 13, 17].reduce((sum, i) => ({ x: sum.x + points[i].x / 5, y: sum.y + points[i].y / 5 }), { x: 0, y: 0 });
     if (size < 0.035 || size > 0.65 || palmSize < 1e-6 || center.x < 0.06 || center.x > 0.94 || center.y < 0.06 || center.y > 0.94) return null;
@@ -59,8 +59,12 @@
     });
     const extended = shapes.map((shape) => shape.extended);
     const open = extended.filter(Boolean).length >= 3;
+    // The close/release thresholds were tuned for visible fingertip separation.
+    // Estimated depth can separate touching fingertips drastically, especially
+    // when they occlude one another. Keep pinch geometry in aspect-corrected 2D;
+    // joint poses may still use the estimated 3D geometry above.
     const pinch = { x: (points[4].x + points[8].x) / 2, y: (points[4].y + points[8].y) / 2,
-      ratio: distance(4, 8) / palmSize, metric, usable: distance(0, 8) > palmSize * 0.9 && distance(0, 4) > palmSize * 0.75 };
+      ratio: imageDistance(4, 8) / size, metric: "image2d", usable: imageDistance(0, 8) > size * 0.9 && imageDistance(0, 4) > size * 0.75 };
     const curled = shapes.every((shape) => shape.curled);
     const thumbAngle = angle(2, 3, 4), thumbLength = distance(2, 3) + distance(3, 4);
     const thumbUp = curled && thumbAngle !== null && thumbAngle >= 150 && thumbLength > 1e-6 && distance(2, 4) / thumbLength >= 0.88 &&
@@ -239,6 +243,7 @@
     let prefs = preferences(saved), swipe = createSwipeDetector(prefs.sensitivity), horizontal = createSwipeDetector(prefs.sensitivity, "x"), pinch = createPinchDetector(prefs.calibration);
     const poses = createPoseDetector();
     const continuity = tracking.createHandContinuity(), frameGate = tracking.createFrameGate({ maxAgeMs: 300 });
+    const videoFrames = tracking.createVideoFrameSource({ maxAgeMs: 300 });
     const motionFilters = Object.fromEntries(["x", "y", "pinchX", "pinchY"].map((key) => [key, tracking.createAdaptiveFilter({ minCutoff: 4, beta: 12 })]));
     let metric = null, obsoleteCalibration = Boolean(saved?.calibration && !prefs.calibration);
     let pointer, paused = false, autoSince = null, bookmarkAt = -Infinity, calibration = null, calibrationTimer = null, lastResultAt = 0;
@@ -251,7 +256,7 @@
           x: motionFilters.pinchX.push(sample.pinch.x, time), y: motionFilters.pinchY.push(sample.pinch.y, time) } };
     }
     let stream = null, worker = null, generation = 0, timer = null, readyTimer = null, frameTimer = null;
-    let videoFrameCallback = null, latestVideoFrame = null, lastVideoFrame = null, nextFrameId = 0, inFlight = null, cameraMuted = false;
+    let videoFrameCallback = null, latestVideoFrame = null, nextFrameId = 0, inFlight = null, cameraMuted = false;
     let active = false, starting = false, frameBusy = false, blockedLast = false, ignoreBefore = 0, lastFeedback = 0;
     let finishReady = null;
     const desktopLayout = window.matchMedia("(min-width: 1081px)");
@@ -351,7 +356,7 @@
       generation++; active = false; starting = false; frameBusy = false;
       clearTimeout(timer); clearTimeout(readyTimer); clearTimeout(frameTimer);
       if (videoFrameCallback !== null) video.cancelVideoFrameCallback?.(videoFrameCallback);
-      videoFrameCallback = latestVideoFrame = lastVideoFrame = inFlight = null; nextFrameId = 0; cameraMuted = false; frameGate.reset();
+      videoFrameCallback = latestVideoFrame = inFlight = null; nextFrameId = 0; cameraMuted = false; frameGate.reset(); videoFrames.reset();
       if (finishReady) { finishReady(new Error("cancelled")); finishReady = null; }
       if (worker) { worker.terminate(); worker = null; }
       if (stream) { stream.getTracks().forEach((track) => track.stop()); stream = null; }
@@ -425,6 +430,12 @@
         setStatus("Tạm dừng khi mở bảng điều khiển hoặc chọn chữ."); return;
       }
       if (blockedLast) { resetGestures(); blockedLast = false; }
+      if (!rawSample) {
+        resetGestures(); draw(data.landmarks);
+        setStatus(!data.landmarks ? "Camera đang nhận hình nhưng chưa thấy bàn tay · Đưa cả bàn tay vào nơi đủ sáng."
+          : "Đã thấy tay · Đưa tay vào giữa khung và giữ cách camera vừa phải.");
+        return;
+      }
       const continuous = continuity.push(rawSample, data.timestamp);
       if (!continuous || rawSample?.pinch.metric !== metric) { resetMovement(); poses.reset(); }
       metric = rawSample?.pinch.metric ?? null;
@@ -458,7 +469,7 @@
         lastFeedback = performance.now();
         setStatus(prefs.mode === "chapters" ? (direction > 0 ? "Đã yêu cầu chương sau" : "Đã yêu cầu chương trước") : direction > 0 ? "↓ Đã cuộn xuống" : "↑ Đã cuộn lên");
       } else if (performance.now() - lastFeedback > 1000) {
-        setStatus(!sample ? "Đưa bàn tay vào khung camera." : prefs.mode === "chapters" ? "Mở tay, giữ một nhịp rồi phất ngang để chuyển chương." : "Chụm ngón để kéo · Mở tay và phất để cuộn");
+        setStatus(prefs.mode === "chapters" ? "Mở tay, giữ một nhịp rồi phất ngang để chuyển chương." : "Chụm ngón để kéo · Mở tay và phất để cuộn");
       }
     }
     function watchVideoFrames(session) {
@@ -466,7 +477,7 @@
       videoFrameCallback = video.requestVideoFrameCallback((now, metadata) => {
         videoFrameCallback = null;
         if (!active || session !== generation) return;
-        latestVideoFrame = { key: metadata.presentedFrames ?? metadata.mediaTime, timestamp: now };
+        latestVideoFrame = { mediaTime: metadata.mediaTime, timestamp: now };
         watchVideoFrames(session);
       });
     }
@@ -484,11 +495,11 @@
         resetGestures(); blockedLast = true;
         setStatus("Tạm dừng khi mở bảng điều khiển hoặc chọn chữ.");
       } else if (video.readyState >= 2 && !frameBusy) {
-        const frame = typeof video.requestVideoFrameCallback === "function" ? latestVideoFrame : { key: video.currentTime, timestamp: now };
-        if (!frame || !Number.isFinite(frame.key) || frame.key === lastVideoFrame || now - frame.timestamp > 300) {
+        const frame = videoFrames.read(video.currentTime, latestVideoFrame, now);
+        if (!frame) {
+          if (now - lastResultAt > 1500) setStatus("Camera chưa cung cấp hình mới · Thử tắt và bật lại camera.");
           timer = setTimeout(() => tick(session), 80); return;
         }
-        lastVideoFrame = frame.key;
         const timestamp = frame.timestamp, id = ++nextFrameId;
         frameBusy = true;
         let bitmap;
@@ -529,7 +540,7 @@
           track.addEventListener("unmute", () => {
             if (session !== generation) return;
             cameraMuted = stream.getVideoTracks().some((item) => item.muted);
-            latestVideoFrame = lastVideoFrame = null; resetGestures(); ignoreBefore = performance.now() + 300;
+            latestVideoFrame = null; videoFrames.reset(); resetGestures(); ignoreBefore = performance.now() + 300;
           });
         });
         video.srcObject = stream; video.muted = true; panel.classList.remove("is-compact");
@@ -558,7 +569,7 @@
           worker.postMessage({ type: "init" });
         });
         if (session !== generation) return;
-        starting = false; active = true; paused = false; blockedLast = false; lastResultAt = performance.now(); frameGate.reset(); resetGestures(); refresh();
+        starting = false; active = true; paused = false; blockedLast = false; lastResultAt = performance.now(); frameGate.reset(); videoFrames.reset(); resetGestures(); refresh();
         settings.open = false;
         setStatus("Đưa bàn tay vào khung camera."); watchVideoFrames(session); tick(session);
       } catch (error) {

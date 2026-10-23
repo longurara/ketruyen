@@ -10,6 +10,7 @@
 - Khi chưa đọc sách nào, đầu kệ giới thiệu một cuốn cùng lý do lựa chọn; ưu tiên sách gói gọn trong một tập. Nút **Đổi sách gợi ý** chọn cuốn khác, không cần tải nội dung truyện. Khi đã có sách đang đọc, gợi ý xuất hiện bên cạnh hoặc bên dưới thẻ đọc tiếp.
 - Các nút **Đang đọc / Muốn đọc / Yêu thích / Ebook cá nhân** mở kệ riêng trên tất cả nguồn sách, có số lượng tương ứng. **Ghi chú** mở toàn bộ đánh dấu và ghi chú; **Thư viện** trở về duyệt theo nguồn. Trên điện thoại có thể cuộn ngang hàng nút này.
 - **Nhập ebook** luôn hiện; kiểm tra chương mới và sao lưu nằm trong menu **⋯**. Kệ dùng điểm nhấn xanh rêu trong cả giao diện sáng, giấy và tối; thẻ danh sách trên điện thoại được thu gọn để dễ lướt.
+- Trong mục lục tập, **Đọc tiếp / Đọc từ chương đầu** là thao tác chính; **Đọc từ đầu / Chương cuối tập** là thao tác phụ. Tải offline nằm ở hàng tiện ích; **Đặt lại tiến độ tập này** nằm trong menu **Thêm** và vẫn có nút hoàn tác sau khi đặt lại.
 - Bấm **Quản lý** để đặt nhóm và trạng thái. Để trống trạng thái để ứng dụng nhận diện theo tiến độ; trạng thái đặt thủ công không thay đổi đánh dấu từng chương.
 - Ebook cá nhân cho phép sửa tên/tác giả, đổi bìa bằng PNG/JPG/WebP/GIF tối đa 8 MB hoặc dùng bìa chữ. Xóa ebook giữ ghi chú và tiến độ để nhập lại sau.
 

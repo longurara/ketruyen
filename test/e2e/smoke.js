@@ -256,7 +256,13 @@ async function run(name, context) {
 
   await step("resetting progress can be undone", async () => {
     await open(page, "/truyen/thien-su-nha-ben/tap-1");
-    await page.waitForSelector("#btn-reset-volume:not([hidden])");
+    await page.waitForSelector("#volume-more:not([hidden])");
+    check(!await page.locator("#btn-reset-volume").isVisible(), "reset is exposed outside the volume menu");
+    await page.click("#volume-more summary");
+    await page.waitForSelector("#volume-more[open]");
+    await page.keyboard.press("Escape");
+    check(await page.locator("#volume-more[open]").count() === 0, "Escape did not close the volume menu");
+    await page.click("#volume-more summary");
     const before = await page.evaluate(() => localStorage.getItem("tenshi-chapters"));
     await page.click("#btn-reset-volume");
     await page.waitForSelector("#app-toast:not([hidden]) button");

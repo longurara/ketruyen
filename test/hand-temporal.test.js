@@ -30,11 +30,11 @@ test("low FPS jitter, movement during confirmation and dropped tracking cannot t
 });
 
 test("personal thresholds are only used with the metric that was calibrated", () => {
-  const fitted = fitPinchCalibration(Array(12).fill(.06), Array(12).fill(.6), { metric: "world3d" });
+  const fitted = fitPinchCalibration(Array(12).fill(.06), Array(12).fill(.6), { metric: "image2d" });
   const detector = createPinchDetector(fitted);
   const pinch = (metric) => sample({ pinch: { x: .5, y: .5, ratio: .13, usable: true, metric } });
-  assert.equal(detector.push(pinch("world3d"), 0).pinched, false);
-  assert.equal(detector.push(pinch("image3d"), 80).pinched, true);
+  assert.equal(detector.push(pinch("image2d"), 0).pinched, false);
+  assert.equal(detector.push(pinch("world3d"), 80).pinched, true);
 });
 
 test("pointer filtering follows elapsed time across camera frame rates", () => {

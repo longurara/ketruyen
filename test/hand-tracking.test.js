@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const { createAdaptiveFilter, createHandContinuity, createFrameGate } = require("../public/hand-tracking");
+const { createAdaptiveFilter, createHandContinuity, createVideoFrameSource, createFrameGate } = require("../public/hand-tracking");
 const hand = (extra = {}) => ({ x: 0.5, y: 0.5, size: 0.2, hand: "Right", ...extra });
 
 test("adaptive filtering suppresses stationary tremor and follows motion faster when beta rises", () => {
@@ -98,4 +98,28 @@ test("frame freshness accepts its limit and refuses malformed metadata", () => {
   assert.equal(gate.accept({ id: 1, timestamp: 0 }, -1), false);
   assert.equal(gate.accept({ id: 1, timestamp: 0 }, 200), true);
   assert.equal(gate.accept({ id: 2, timestamp: 1 }, 202), false);
+});
+
+test("video frames recover when a supported presentation callback never fires or stops firing", () => {
+  const source = createVideoFrameSource();
+  assert.deepEqual(source.read(0, null, 0), { key: 0, timestamp: 0 });
+  assert.deepEqual(source.read(.08, null, 80), { key: .08, timestamp: 80 });
+  const callback = { mediaTime: .16, timestamp: 160 };
+  assert.deepEqual(source.read(.17, callback, 180), { key: .16, timestamp: 160 });
+  assert.equal(source.read(.24, callback, 240), null);
+  assert.deepEqual(source.read(.48, callback, 480), { key: .48, timestamp: 480 });
+  assert.equal(source.read(.48, { mediaTime: .48, timestamp: 490 }, 500), null);
+  assert.deepEqual(source.read(.56, { mediaTime: .56, timestamp: 560 }, 570), { key: .56, timestamp: 560 });
+});
+
+test("video clock fallback cannot replay a frozen frame or a delayed callback", () => {
+  const source = createVideoFrameSource();
+  assert.deepEqual(source.read(1, null, 100), { key: 1, timestamp: 100 });
+  for (const now of [180, 500, 2000]) assert.equal(source.read(1, null, now), null);
+  assert.equal(source.read(1, { mediaTime: .9, timestamp: 2100 }, 2100), null);
+  assert.equal(source.read(.8, null, 2500), null);
+  for (const value of [NaN, Infinity, -1]) assert.equal(source.read(value, null, 2600), null);
+  assert.equal(source.read(2, null, NaN), null);
+  source.reset();
+  assert.deepEqual(source.read(0, null, 2700), { key: 0, timestamp: 2700 });
 });

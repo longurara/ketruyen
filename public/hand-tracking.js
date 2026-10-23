@@ -53,6 +53,24 @@
     return { push, reset };
   }
 
+  function createVideoFrameSource(options = {}) {
+    const maxAgeMs = positive(options.maxAgeMs, 300);
+    let lastMediaTime = -Infinity;
+    function reset() { lastMediaTime = -Infinity; }
+    function read(mediaTime, callback, nowMs) {
+      if (!Number.isFinite(nowMs) || nowMs < 0) return null;
+      // Some browsers expose requestVideoFrameCallback without delivering it
+      // reliably. Fall back to the video clock only when the callback is stale.
+      const fresh = callback && Number.isFinite(callback.mediaTime) && callback.mediaTime >= 0 &&
+        Number.isFinite(callback.timestamp) && callback.timestamp <= nowMs && nowMs - callback.timestamp <= maxAgeMs;
+      const key = fresh ? callback.mediaTime : mediaTime;
+      if (!Number.isFinite(key) || key < 0 || key <= lastMediaTime) return null;
+      lastMediaTime = key;
+      return { key, timestamp: fresh ? callback.timestamp : nowMs };
+    }
+    return { read, reset };
+  }
+
   function createFrameGate(options = {}) {
     const maxAgeMs = positive(options.maxAgeMs, 300);
     let lastId = -1, lastTimestamp = -Infinity;
@@ -70,5 +88,5 @@
     return { accept, reset };
   }
 
-  return { createAdaptiveFilter, createHandContinuity, createFrameGate };
+  return { createAdaptiveFilter, createHandContinuity, createVideoFrameSource, createFrameGate };
 });

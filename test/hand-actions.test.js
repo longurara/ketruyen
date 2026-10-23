@@ -37,7 +37,7 @@ test("thumbs-up, fist, open hand and index pointer are distinguishable in landma
   for (const [dip, tip] of [[11, 12], [15, 16], [19, 20]]) { points[dip] = { ...points[dip], y: .4 }; points[tip] = { ...points[tip], y: .3 }; }
   assert.equal(sampleHand(points).open, true); assert.equal(sampleHand(points).pointing, false);
 });
-test("pinch geometry accounts for camera aspect and depth, with safe world fallback", () => {
+test("pinch geometry accounts for camera aspect without treating estimated depth as fingertip separation", () => {
   const points = landmarkHand(); points[4] = { x: .4275, y: .3 };
   assert.ok(sampleHand(points).pinch.ratio < .16);
   const corrected = sampleHand(points, "Right", { width: 640, height: 480 });
@@ -47,14 +47,34 @@ test("pinch geometry accounts for camera aspect and depth, with safe world fallb
   assert.equal(sampleHand(points, "Right", { width: NaN, height: 0 }).pinch.ratio, sampleHand(points).pinch.ratio);
   const deep = points.map((p) => ({ ...p, z: 0 })); deep[4].z = -.2; deep[8].z = .2;
   const depthSample = sampleHand(deep, "Right", { width: 640, height: 480 });
-  assert.equal(depthSample.pinch.metric, "image3d"); assert.ok(depthSample.pinch.ratio > 1);
+  assert.equal(depthSample.pinch.metric, "image2d"); assert.equal(depthSample.pinch.ratio, corrected.pinch.ratio);
   const world = deep.map((p) => ({ x: (p.x - .5) * .3, y: (p.y - .6) * .3, z: p.z * .3 }));
   const worldSample = sampleHand(points, "Right", { width: 640, height: 480, worldLandmarks: world });
-  assert.equal(worldSample.pinch.metric, "world3d"); assert.ok(worldSample.pinch.ratio > 1);
+  assert.equal(worldSample.pinch.metric, "image2d"); assert.equal(worldSample.pinch.ratio, corrected.pinch.ratio);
   assert.equal(worldSample.size, corrected.size);
-  assert.equal(sampleHand(deep, "Right", { worldLandmarks: world.map(() => ({ x: 0, y: 0, z: 0 })) }).pinch.metric, "image3d");
+  assert.equal(sampleHand(deep, "Right", { worldLandmarks: world.map(() => ({ x: 0, y: 0, z: 0 })) }).pinch.metric, "image2d");
   world[7].z = NaN;
-  assert.equal(sampleHand(deep, "Right", { worldLandmarks: world }).pinch.metric, "image3d");
+  assert.equal(sampleHand(deep, "Right", { worldLandmarks: world }).pinch.metric, "image2d");
+});
+
+test("touching fingertips can grab, drag and release despite incorrect or disappearing depth estimates", () => {
+  const points = landmarkHand().map((p) => ({ ...p, z: 0 }));
+  points[4] = { x: .41, y: .3, z: -.2 };
+  points[8].z = .2;
+  const world = points.map((p) => ({ x: p.x * .3, y: p.y * .3, z: p.z * .3 }));
+  const detector = createPinchDetector();
+  for (const [time, worldLandmarks] of [[0, world], [80, null], [160, world]]) {
+    const hand = sampleHand(points, "Right", { width: 640, height: 480, worldLandmarks });
+    assert.equal(hand.pinch.usable, true);
+    assert.ok(hand.pinch.ratio < .16);
+    const result = detector.push(hand, time);
+    assert.equal(result.pinched, true);
+    assert.equal(result.dragging, time === 160);
+  }
+  const moved = points.map((p) => ({ ...p, y: p.y - .05 }));
+  assert.ok(detector.push(sampleHand(moved, "Right", { width: 640, height: 480, worldLandmarks: world }), 240).delta > 0);
+  moved[4].x = .6;
+  assert.deepEqual(detector.push(sampleHand(moved, "Right", { width: 640, height: 480, worldLandmarks: world }), 320), { pinched: false, dragging: false, delta: 0 });
 });
 test("joint geometry rejects a bent open pose and accepts tilted thumbs-up but not thumbs-down", () => {
   const bent = landmarkHand();
@@ -80,7 +100,11 @@ test("calibration version and geometry metric prevent reuse of old distance thre
   assert.equal(preferences({ calibration: values }).calibration, null);
   assert.equal(preferences({ calibration: { ...values, version: CALIBRATION_VERSION - 1, metric: "image2d" } }).calibration, null);
   assert.equal(preferences({ calibration: { ...values, version: CALIBRATION_VERSION, metric: "unknown" } }).calibration, null);
-  const valid = { ...values, version: CALIBRATION_VERSION, metric: "world3d" };
+  for (const metric of ["world3d", "image3d"]) {
+    assert.equal(preferences({ calibration: { ...values, version: CALIBRATION_VERSION, metric } }).calibration, null);
+    assert.equal(fitPinchCalibration(Array(12).fill(.06), Array(12).fill(.6), { metric }), null);
+  }
+  const valid = { ...values, version: CALIBRATION_VERSION, metric: "image2d" };
   assert.deepEqual(preferences({ calibration: valid }).calibration, valid);
   assert.equal(fitPinchCalibration(Array(12).fill(.06), Array(12).fill(.6), { metric: "invalid" }), null);
 });
@@ -89,9 +113,9 @@ test("calibration never succeeds with thresholds that reject its own closed/open
   assert.equal(fitPinchCalibration(Array.from({ length: 12 }, (_, i) => i % 2 ? .2 : .02), Array(12).fill(.6)), null);
   for (const ratio of [.02, .06, .1, .16, .19, .205]) {
     const closed = Array(12).fill(ratio), opened = Array(12).fill(.6);
-    const fitted = fitPinchCalibration(closed, opened, { metric: "world3d" });
+    const fitted = fitPinchCalibration(closed, opened, { metric: "image2d" });
     assert.ok(fitted); assert.ok(closed.every((value) => value < fitted.close)); assert.ok(opened.every((value) => value > fitted.release));
-    assert.equal(fitted.metric, "world3d");
+    assert.equal(fitted.metric, "image2d");
   }
 });
 test("held poses trigger once, reject moving hands and can re-arm after release", () => {
