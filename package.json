@@ -21,16 +21,16 @@
     "check": "npm run lint && npm test && npm run check-data"
   },
   "dependencies": {
-    "@mediapipe/tasks-vision": "1.0.1",
+    "@mediapipe/tasks-vision": "1.1.1",
     "@supabase/supabase-js": "2.118.0",
     "axios": "^1.7.0",
     "cheerio": "^1.0.0",
-    "docx": "^9.6.1",
+    "docx": "^9.13.0",
     "epub-gen-memory": "^1.1.1",
     "express": "^4.22.1",
-    "jszip": "^3.10.1",
-    "pdfjs-dist": "6.3.289",
-    "sharp": "^0.34.5"
+    "jszip": "^3.10.2",
+    "pdfjs-dist": "6.4.299",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.11",
