@@ -1047,7 +1047,7 @@
       message: showMessage, renderShelf, openChapter, openSeries,
       openMark: async (seriesIdx, mark) => { if (seriesIdx < 0 || !SERIES[seriesIdx]) return; try { await ensureSeriesIndex(SERIES[seriesIdx]); } catch (_) { showMessage("Không tải được mục lục truyện."); return; } if (mark.type !== "bookmark") returnReaderPosition ||= captureReaderPosition(); activateSeries(seriesIdx); openChapter(mark.volIdx, mark.chapIdx, mark.type === "bookmark" ? { anchor: mark.anchor } : { hit: { p: mark.parts[0]?.p || 0 } }); },
       capturePosition: () => { recordReadingPosition(); return captureReaderPosition()?.anchor || null; },
-      deleteBook: (book) => ebookUI?.deleteBook(book),
+      deleteBook: (book, settings) => ebookUI?.deleteBook(book, settings),
       preservePosition: preserveReaderPosition
     });
     readerSurfaces = ReaderSurfaces.create({ capture: captureReaderPosition, restore: restoreReaderSnapshot });
@@ -4889,6 +4889,7 @@
     };
 
     localStorage.setItem(seriesStorageKey("progress"), JSON.stringify(readingProgress));
+    libraryTools?.resumeReading(SERIES_META);
     recordReadingHistory(volIdx, chapIdx);
     window.dispatchEvent(new Event("ketruyen-library-change"));
     updateContinueUI();

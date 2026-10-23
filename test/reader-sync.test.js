@@ -76,22 +76,16 @@ test("deleted notes and reset positions propagate as tombstones instead of reapp
   assert.equal(server.rows.get("mark/a").revision, 2);
 });
 
-test("offline edits are journaled before the failed request and conflicts preserve both versions for an explicit choice", async () => {
-  const server = cloud(), a = device(server, { "tenshi-progress": position(1) }), b = device(server);
+test("offline note edits stay journaled and require a choice without losing either version", async () => {
+  const server = cloud(), key = "mark/a", initial = { "tenshi-library-v1": { version: 1, books: {}, marks: [mark("a")] } }, a = device(server, initial), b = device(server);
   await a.run(); await b.run();
-  b.storage.setItem("tenshi-progress", JSON.stringify(position(2)));
-  const pull = b.io.pull; b.io.pull = async () => { throw new Error("offline"); };
-  await assert.rejects(b.run(), /offline/); assert.equal(b.saved().pending["progress/tenshi"].value.chapIdx, 2);
-  a.storage.setItem("tenshi-progress", JSON.stringify(position(3))); await a.run();
-  b.io.pull = pull;
-  const result = await b.run(); assert.equal(result.conflicts, 1);
-  assert.equal(server.rows.get("progress/tenshi").value.chapIdx, 3);
-  assert.equal(JSON.parse(b.storage.getItem("tenshi-progress")).chapIdx, 2);
-  // Keep local after reviewing the conflict; a new CAS uses the remote revision.
-  b.state.baseline["progress/tenshi"] = b.state.conflicts["progress/tenshi"];
-  delete b.state.conflicts["progress/tenshi"];
-  await b.run(); await a.run();
-  assert.equal(JSON.parse(a.storage.getItem("tenshi-progress")).chapIdx, 2);
+  const edit = (d, note) => { const lib = JSON.parse(d.storage.getItem("tenshi-library-v1")); lib.marks[0].note = note; d.storage.setItem("tenshi-library-v1", JSON.stringify(lib)); };
+  edit(b, "Offline B"); const pull = b.io.pull; b.io.pull = async () => { throw new Error("offline"); };
+  await assert.rejects(b.run(), /offline/); assert.equal(b.saved().pending[key].value.note, "Offline B");
+  edit(a, "Online A"); await a.run(); b.io.pull = pull;
+  assert.equal((await b.run()).conflicts, 1); assert.equal(b.state.conflicts[key].value.note, "Online A");
+  b.state.baseline[key] = b.state.conflicts[key]; delete b.state.conflicts[key];
+  await b.run(); await a.run(); assert.equal(sync.readLocal(a.storage)[key].note, "Offline B");
 });
 
 test("a read position changed during network I/O stays pending and is not replaced by an older acknowledgement", async () => {
@@ -103,14 +97,41 @@ test("a read position changed during network I/O stays pending and is not replac
   a.io.push = push; await a.run(); assert.equal(server.rows.get("progress/tenshi").value.chapIdx, 2);
 });
 
-test("an RPC race reports the remote version instead of acknowledging or losing a concurrent edit", async () => {
+test("an RPC race automatically accepts the farther remote position", async () => {
   const server = cloud(), a = device(server, { "tenshi-progress": position(1) });
-  a.io.push = async (changes) => {
-    await server.push([{ key: "progress/tenshi", value: position(8), expected_revision: 0 }]); return server.push(changes);
-  };
-  assert.equal((await a.run()).conflicts, 1);
-  assert.equal(a.state.conflicts["progress/tenshi"].value.chapIdx, 8);
-  assert.equal(JSON.parse(a.storage.getItem("tenshi-progress")).chapIdx, 1);
+  a.io.push = async (changes) => { await server.push([{ key: "progress/tenshi", value: position(8), expected_revision: 0 }]); return server.push(changes); };
+  assert.equal((await a.run()).conflicts, 0); assert.equal(JSON.parse(a.storage.getItem("tenshi-progress")).chapIdx, 8);
+});
+
+test("a farther local position retries CAS instead of asking the reader to choose", async () => {
+  const server = cloud(), a = device(server, { "tenshi-progress": position(8) }); let calls = 0;
+  a.io.push = async (changes) => { if (!calls++) await server.push([{ key: "progress/tenshi", value: position(2), expected_revision: 0 }]); return server.push(changes); };
+  const result = await a.run(); assert.equal(result.conflicts, 0); assert.equal(result.pending, 0); assert.equal(calls, 2); assert.equal(server.rows.get("progress/tenshi").value.chapIdx, 8);
+});
+
+test("24% and 28% merge to 28%, with done flags and the winning anchor intact", async () => {
+  const server = cloud(), a = device(server, { "tenshi-chapters": { "0:1": { pct: 24, block: 4, textOffset: 7, done: true } } }), b = device(server, { "tenshi-chapters": { "0:1": { pct: 28, block: 5, textOffset: 10 } } });
+  await a.run(); assert.equal((await b.run()).conflicts, 0); await a.run();
+  for (const d of [a, b]) assert.deepEqual(sync.readLocal(d.storage)["chapter/tenshi/0:1"], { pct: 28, block: 5, textOffset: 10, done: true });
+  b.storage.setItem("tenshi-chapters", JSON.stringify({ "0:1": { pct: 12, block: 2 } })); await b.run(); assert.equal(sync.readLocal(b.storage)["chapter/tenshi/0:1"].pct, 28);
+});
+
+test("volume and chapter order beat timestamps, and old saved conflicts resolve automatically", async () => {
+  const server = cloud(), a = device(server, { "tenshi-progress": { volIdx: 1, chapIdx: 2, timestamp: 1 } }), b = device(server, { "tenshi-progress": { volIdx: 0, chapIdx: 20, timestamp: 100 } });
+  await a.run(); b.state.conflicts["progress/tenshi"] = server.rows.get("progress/tenshi"); await b.run(); await a.run();
+  assert.deepEqual(sync.readLocal(b.storage)["progress/tenshi"], { volIdx: 1, chapIdx: 2, timestamp: 100 }); assert.deepEqual(b.state.conflicts, {});
+});
+
+test("an explicit reset wins against stale offline progress and reading may restart after seeing it", async () => {
+  const server = cloud(), a = device(server, { "tenshi-progress": position(2) }), b = device(server); await a.run(); await b.run();
+  b.storage.setItem("tenshi-progress", JSON.stringify(position(9))); a.storage.removeItem("tenshi-progress"); await a.run(); await b.run();
+  assert.equal(b.storage.getItem("tenshi-progress"), null); assert.equal(server.rows.get("progress/tenshi").value, null);
+  b.storage.setItem("tenshi-progress", JSON.stringify(position(0))); await b.run(); assert.equal(server.rows.get("progress/tenshi").value.chapIdx, 0);
+});
+
+test("clearing reading status is shared without deleting the reading position", async () => {
+  const server = cloud(), a = device(server, { "tenshi-progress": position(5), "tenshi-library-v1": { version: 1, books: { book: { status: null } }, marks: [] } }), b = device(server); await a.run(); await b.run();
+  assert.equal(JSON.parse(b.storage.getItem("tenshi-library-v1")).books.book.status, null); assert.equal(sync.readLocal(b.storage)["progress/tenshi"].chapIdx, 5);
 });
 
 test("a quota error rolls back downloaded records and leaves the merge baseline unchanged", async () => {
@@ -142,8 +163,9 @@ test("sync receipts count confirmed transfers and never mark conflicts or failed
   const b = device(server);
   const received = await b.run(); assert.equal(received.downloaded, 1); assert.equal(received.uploaded, 0);
   const checked = await b.run(); assert.equal(checked.downloaded, 0); assert.equal(checked.uploaded, 0);
-  a.storage.setItem("tenshi-progress", JSON.stringify(position(2))); await a.run();
-  b.storage.setItem("tenshi-progress", JSON.stringify(position(3))); b.state.lastSyncedAt = 123;
+  a.storage.setItem("tenshi-library-v1", JSON.stringify({ version: 1, books: {}, marks: [mark("note")] })); await a.run(); await b.run();
+  const edit = (d, note) => { const lib = JSON.parse(d.storage.getItem("tenshi-library-v1")); lib.marks[0].note = note; d.storage.setItem("tenshi-library-v1", JSON.stringify(lib)); };
+  edit(a, "A"); await a.run(); edit(b, "B"); b.state.lastSyncedAt = 123;
   assert.equal((await b.run()).conflicts, 1); assert.equal(b.saved().lastSyncedAt, 123);
   b.io.pull = async () => { throw new Error("offline"); };
   await assert.rejects(b.run(), /offline/); assert.equal(b.saved().lastSyncedAt, 123);

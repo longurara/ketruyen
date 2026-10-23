@@ -20,6 +20,13 @@ body[data-theme="dark"] .shelf-shell { --shelf-accent: #abc6ad; --shelf-accent-r
 .shelf-menu-action:hover { background: var(--surface-2); }
 .shelf-menu-action:disabled { opacity: 0.5; cursor: wait; }
 .shelf-resume { margin-top: 26px; }
+.shelf-reading-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.shelf-remove-reading { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; padding: 0; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--text-muted); font: 22px/1 var(--font-ui); cursor: pointer; }
+.shelf-remove-reading:hover { color: var(--text); background: var(--surface-2); }
+.shelf-remove-reading:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.shelf-resume-entry { position: relative; min-width: 0; }
+.shelf-resume-entry .shelf-resume-card { width: 100%; height: 100%; padding-right: 52px; }
+.shelf-resume-entry .shelf-remove-reading { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; border-color: transparent; }
 .shelf-feature-layout { display: grid; gap: 18px; }
 .shelf-feature-layout.has-discovery { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); }
 .shelf-feature { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 32px; min-width: 0; padding: 24px 30px; border: 1px solid rgba(var(--shelf-accent-rgb), 0.2); border-radius: 22px; background: linear-gradient(115deg, rgba(var(--shelf-accent-rgb), 0.09), transparent 85%), var(--surface); }

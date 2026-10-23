@@ -475,18 +475,29 @@
   const list = () => transaction("readonly", (store) => store.getAll(), ["summaries"]);
   const all = () => transaction("readonly", (store) => store.getAll());
   const get = (slug) => transaction("readonly", (store) => store.get(slug));
-  const save = (book) => transaction("readwrite", (store, tx) => {
+  function changed(detail) {
+    const change = { ...detail, nonce: crypto.randomUUID() };
+    try {
+      const ignored = new Set(JSON.parse(localStorage.getItem("ketruyen-ebook-ignored-v1") || "[]"));
+      if (detail.removed) ignored.add(detail.removed);
+      for (const slug of detail.saved || []) ignored.delete(slug);
+      localStorage.setItem("ketruyen-ebook-ignored-v1", JSON.stringify([...ignored].slice(-10000)));
+    } catch (_) {}
+    try { localStorage.setItem("ketruyen-ebooks-change-v1", JSON.stringify(change)); } catch (_) {}
+    dispatchEvent(new CustomEvent("ketruyen-ebooks-change", { detail: change }));
+  }
+  const save = async (book) => { const result = await transaction("readwrite", (store, tx) => {
     const { txtSource, ...stored } = book;
     tx.objectStore("summaries").put(summary(stored));
     return store.put(stored);
-  }, ["books", "summaries"]);
-  const remove = (slug) => transaction("readwrite", (store, tx) => {
+  }, ["books", "summaries"]); changed({ saved: [book.slug] }); return result; };
+  const remove = async (slug) => { const result = await transaction("readwrite", (store, tx) => {
     tx.objectStore("summaries").delete(slug); return store.delete(slug);
-  }, ["books", "summaries"]);
-  const saveMany = (books) => transaction("readwrite", (store, tx) => {
+  }, ["books", "summaries"]); changed({ removed: slug }); return result; };
+  const saveMany = async (books) => { const result = await transaction("readwrite", (store, tx) => {
     for (const book of books) { store.put(book); tx.objectStore("summaries").put(summary(book)); }
     return store.count();
-  }, ["books", "summaries"]);
+  }, ["books", "summaries"]); changed({ saved: books.map((b) => b.slug) }); return result; };
   const urls = new Set();
   function hydrate(book) {
     if (!book.assets) {
@@ -657,10 +668,10 @@
         status.textContent = `Còn ${failed.length} sách chưa lưu được. Kiểm tra chỗ trống/quyền lưu trữ rồi thử lại, hoặc đóng để xem các sách đã thêm.`;
       }
     });
-    return { async deleteBook(book) {
-      const confirmed = await AppDialog.confirm({ title: `Xóa “${book.titleVi}” khỏi thiết bị này?`, message: "Tệp ebook sẽ bị xóa khỏi trình duyệt. Ghi chú và tiến độ đọc vẫn được giữ để bạn nhập lại sau.", confirmLabel: "Xóa ebook", danger: true });
+    return { async deleteBook(book, settings = {}) {
+      const confirmed = settings.confirmed || await AppDialog.confirm({ title: `Xóa “${book.titleVi}” khỏi thiết bị này?`, message: "Tệp ebook sẽ bị xóa khỏi trình duyệt. Ghi chú và tiến độ đọc vẫn được giữ để bạn nhập lại sau.", confirmLabel: "Xóa ebook", danger: true });
       if (!confirmed) return;
-      try { await remove(book.slug); location.href = "/"; }
+      try { await remove(book.slug); settings.onDeleted?.(); location.href = "/"; }
       catch (_) { message("Không xóa được ebook. Hãy thử lại."); }
     } };
   }

@@ -30,6 +30,7 @@ async function runWorkspaceChecks(browser, base) {
         return ok({ ...devices.get(sessionId), server_time: new Date().toISOString() });
       }
       if (!d || d.revoked_at) return error("42501", "device-revoked", 403);
+      if (rpc === "reader_ebook_inventory_set") return error("PGRST202", "Automatic sync migration not installed", 404);
       if (rpc === "reader_require_device") return ok(null);
       if (rpc === "reader_device_touch") { Object.assign(d, { last_seen: new Date().toISOString(), reading: body.reading_position }); return ok(d.last_seen); }
       if (rpc === "reader_device_manage") { if (body.action === "rename") devices.get(body.target).name = body.label; else for (const [id, dev] of devices) if (body.action === "revoke_others" ? id !== sessionId : id === body.target) dev.revoked_at = new Date().toISOString(); return ok(null); }

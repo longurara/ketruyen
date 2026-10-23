@@ -54,7 +54,7 @@
     if (library) {
       if (library.version !== 1 || !object(library.books) || !Array.isArray(library.marks)) throw new Error("Kệ sách trên máy chưa hợp lệ.");
       for (const [slug, book] of Object.entries(library.books)) {
-        add(`favorite/${slug}`, book.favorite === true); add(`status/${slug}`, book.status || ""); add(`groups/${slug}`, book.groups || []);
+        add(`favorite/${slug}`, book.favorite === true); add(`status/${slug}`, book.status === null ? null : book.status || ""); add(`groups/${slug}`, book.groups || []);
       }
       for (const mark of library.marks) add(`mark/${mark.id}`, mark);
     }
@@ -88,7 +88,7 @@
         } else {
           if (!Object.hasOwn(library.books, prefix)) library.books[prefix] = { favorite: false, status: "", groups: [] };
           const book = library.books[prefix];
-          book[type] = value ?? (type === "favorite" ? false : type === "groups" ? [] : "");
+          book[type] = type === "status" && value === null ? null : value ?? (type === "favorite" ? false : type === "groups" ? [] : "");
         }
       }
     }
@@ -108,42 +108,79 @@
   function stage(state, local) {
     for (const key of new Set([...Object.keys(local), ...Object.keys(state.baseline)])) {
       const value = local[key] ?? null, base = state.baseline[key];
-      if (equal(value, base?.value)) { delete state.pending[key]; delete state.conflicts[key]; }
+      if (equal(value, base?.value) && (base || !Object.hasOwn(local, key) || value !== null)) { delete state.pending[key]; delete state.conflicts[key]; }
       else state.pending[key] = { value, expected_revision: base?.revision || 0 };
     }
+  }
+  function mergeReading(key, local, remote, base, hasBase = true) {
+    const type = key.split("/")[0];
+    if (!["progress", "chapter", "history"].includes(type)) return undefined;
+    // A tombstone is an intentional reset, not a smaller reading percentage.
+    // Reading may start again after a device has actually seen that reset.
+    if (local === null || remote === null) {
+      if (local === null && remote === null) return null;
+      return hasBase && base === null ? (local ?? remote) : null;
+    }
+    const number = (v) => Number.isFinite(v) ? v : 0;
+    const rank = (v) => type === "chapter" ? [number(v.pct), number(v.block), number(v.textOffset), number(v.offset)] : [v.volIdx, v.chapIdx];
+    const a = rank(local), b = rank(remote);
+    let order = 0;
+    for (let i = 0; i < a.length && !order; i++) order = Math.sign(a[i] - b[i]);
+    const winner = order > 0 ? local : order < 0 ? remote : canonical(local) > canonical(remote) ? local : remote;
+    if (type === "chapter") return local.done === true || remote.done === true ? { ...winner, done: true } : winner;
+    return { ...winner, timestamp: Math.max(local.timestamp, remote.timestamp) };
   }
   async function synchronize(state, io) {
     const capture = () => stage(state, io.read());
     capture(); await io.save(state); // Durable outbox before attempting the network.
     const rows = await io.pull();
     capture();
-    const updates = {}, accepted = [];
+    const updates = {}, accepted = [], local = io.read();
     for (const row of rows) {
       if (!validRecord(row.record_key, row.value) || !Number.isSafeInteger(row.revision) || row.revision < 1) throw new Error("Dữ liệu đồng bộ không đúng định dạng.");
       const pending = state.pending[row.record_key];
+      if (pending || Object.hasOwn(local, row.record_key)) {
+        const merged = mergeReading(row.record_key, local[row.record_key] ?? null, row.value, state.baseline[row.record_key]?.value, Object.hasOwn(state.baseline, row.record_key));
+        if (merged !== undefined) {
+          if (!equal(local[row.record_key], merged)) updates[row.record_key] = merged;
+          accepted.push(row); continue;
+        }
+      }
       if (pending && !equal(pending.value, row.value)) {
         if (pending.expected_revision !== row.revision) state.conflicts[row.record_key] = row;
         continue;
       }
-      if (!equal(state.baseline[row.record_key]?.value, row.value)) updates[row.record_key] = row.value;
+      if (!Object.hasOwn(state.baseline, row.record_key) || !equal(state.baseline[row.record_key]?.value, row.value)) updates[row.record_key] = row.value;
       accepted.push(row);
     }
     if (Object.keys(updates).length) io.apply(updates);
     for (const row of accepted) { state.baseline[row.record_key] = row; delete state.pending[row.record_key]; delete state.conflicts[row.record_key]; }
     capture();
     await io.save(state);
-    const changes = Object.entries(state.pending).filter(([key]) => !state.conflicts[key]).map(([key, value]) => ({ key, ...value }));
+    let changes = Object.entries(state.pending).filter(([key]) => !state.conflicts[key]).map(([key, value]) => ({ key, ...value }));
     let uploaded = 0;
-    for (let offset = 0; offset < changes.length; offset += 100) {
-      const replies = await io.push(changes.slice(offset, offset + 100));
-      for (const row of replies) {
-        if (!validRecord(row.record_key, row.value) || !Number.isSafeInteger(row.revision) || row.revision < 0) throw new Error("Phản hồi đồng bộ không hợp lệ.");
-        if (row.applied || equal(state.pending[row.record_key]?.value, row.value)) {
-          if (row.applied) uploaded++;
-          state.baseline[row.record_key] = row; delete state.pending[row.record_key]; delete state.conflicts[row.record_key];
-        } else state.conflicts[row.record_key] = row;
+    for (let round = 0; round < 3 && changes.length; round++) {
+      const retry = new Set();
+      for (let offset = 0; offset < changes.length; offset += 100) {
+        const replies = await io.push(changes.slice(offset, offset + 100));
+        for (const row of replies) {
+          if (!validRecord(row.record_key, row.value) || !Number.isSafeInteger(row.revision) || row.revision < 0) throw new Error("Phản hồi đồng bộ không hợp lệ.");
+          if (row.applied || equal(state.pending[row.record_key]?.value, row.value)) {
+            if (row.applied) uploaded++;
+            state.baseline[row.record_key] = row; delete state.pending[row.record_key]; delete state.conflicts[row.record_key];
+          } else {
+            const current = io.read()[row.record_key] ?? null;
+            const merged = row.revision > 0 ? mergeReading(row.record_key, current, row.value, state.baseline[row.record_key]?.value, Object.hasOwn(state.baseline, row.record_key)) : undefined;
+            if (merged === undefined) state.conflicts[row.record_key] = row;
+            else {
+              if (!equal(current, merged)) { io.apply({ [row.record_key]: merged }); updates[row.record_key] = merged; }
+              state.baseline[row.record_key] = row; delete state.pending[row.record_key]; delete state.conflicts[row.record_key]; retry.add(row.record_key);
+            }
+          }
+        }
+        capture(); await io.save(state);
       }
-      capture(); await io.save(state);
+      changes = [...retry].filter((key) => state.pending[key] && !state.conflicts[key]).map((key) => ({ key, ...state.pending[key] }));
     }
     const pending = Object.keys(state.pending).length, conflicts = Object.keys(state.conflicts).length, downloaded = Object.keys(updates).length;
     state.lastCheckedAt = Date.now(); state.lastTransfer = { uploaded, downloaded };
@@ -170,5 +207,5 @@
       });
     };
   }
-  return { AUTH_KEY, LINK_KEY, canonical, validRecord, readLocal, applyLocal, newState, stage, synchronize, journal };
+  return { AUTH_KEY, LINK_KEY, canonical, validRecord, readLocal, applyLocal, newState, stage, mergeReading, synchronize, journal };
 });

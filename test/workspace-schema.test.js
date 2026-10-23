@@ -17,7 +17,7 @@ test("workspace migrations: real session binding, account RLS, revoked JWT denia
       create function realtime.topic() returns text language sql stable as $$ select current_setting('realtime.topic',true) $$; grant usage on schema realtime to authenticated;`);
     await db.query("insert into auth.users values($1),($2)", [a, b]);
     await db.query("insert into auth.sessions values($1,$4),($2,$4),($3,$4),($5,$6)", [sa, sb, sc, a, other, b]);
-    for (const name of ["202610230001_reader_sync.sql", "202610230002_ebook_transfers.sql", "202610230003_reader_workspace.sql", "202610230003_reader_workspace.sql", "202610230004_enforce_reader_devices.sql", "202610230004_enforce_reader_devices.sql"]) await db.exec(fs.readFileSync(path.join(__dirname, "../supabase/migrations", name), "utf8"));
+    for (const name of ["202610230001_reader_sync.sql", "202610230002_ebook_transfers.sql", "202610230003_reader_workspace.sql", "202610230003_reader_workspace.sql", "202610230004_enforce_reader_devices.sql", "202610230004_enforce_reader_devices.sql", "202610230005_auto_ebook_sync.sql", "202610230005_auto_ebook_sync.sql"]) await db.exec(fs.readFileSync(path.join(__dirname, "../supabase/migrations", name), "utf8"));
     const user = async (id, sid) => { await db.exec("reset role; set role authenticated"); await db.query("select set_config('request.jwt.claim.sub',$1,false),set_config('request.jwt.claim.sid',$2,false)", [id, sid]); };
     const rpc = async (sql, args = []) => (await db.query(sql, args)).rows;
     const register = (id) => rpc("select reader_device_register($1,'Test device')", [id]);
@@ -26,6 +26,26 @@ test("workspace migrations: real session binding, account RLS, revoked JWT denia
     await write("favorite/book", true); await user(a, sb); await register(dbid); await user(a, sc); await register(dc);
     await user(b, other); await register(randomUUID()); assert.equal((await rpc("select * from reader_devices")).length, 1); assert.equal((await rpc("select * from reader_sync_records")).length, 0);
     await rpc("select reader_device_manage($1,'revoke')", [sa]); await user(a, sa); assert.equal((await rpc("select reader_device_active() as active"))[0].active, true, "other account revoked a device");
+    // Automatic inventory is private and reservation is idempotent across sources.
+    const autoSlug = "ebook-" + "f".repeat(24), autoArgs = [autoSlug, "Automatic book", 10, "f".repeat(64), dbid];
+    const inventory = (books, ignored = [], active = true) => rpc("select reader_ebook_inventory_set($1,$2,$3)", [JSON.stringify(books), JSON.stringify(ignored), active]);
+    const reserve = () => rpc("select reader_ebook_auto_reserve($1,$2,$3,$4,$5) as id", autoArgs);
+    await inventory([autoSlug]); await assert.rejects(inventory(["not-an-ebook"]), /Invalid ebook inventory/);
+    await user(a, sb); await inventory([]); await user(a, sa);
+    const autoId = (await reserve())[0].id; assert.ok(autoId); assert.equal((await reserve())[0].id, null, "duplicate automatic transfer reserved");
+    await user(a, sc); await inventory([autoSlug]); assert.equal((await reserve())[0].id, null, "another source reserved the same ebook for the same recipient"); await user(a, sa);
+    await user(b, other); assert.equal((await rpc("select * from reader_ebook_inventory")).length, 0);
+    assert.equal((await reserve())[0].id, null, "cross-account reservation");
+    await user(a, sb); await assert.rejects(rpc("update reader_ebook_transfers set ready=true where id=$1 returning id", [autoId]), /row-level security/);
+    await user(a, sa); await rpc("update reader_ebook_transfers set ready=true where id=$1", [autoId]);
+    await user(a, sb); await rpc("select reader_ebook_received($1)", [autoId]);
+    assert.ok((await rpc("select slugs from reader_ebook_inventory where device_id=$1", [dbid]))[0].slugs.includes(autoSlug));
+    await rpc("select reader_ebook_forget($1)", [autoId]); await user(a, sa); assert.equal((await reserve())[0].id, null, "receipt inventory gap caused another send");
+    await user(a, sb); await inventory([], [autoSlug]); await user(a, sa); assert.equal((await reserve())[0].id, null, "deleted local ebook was redelivered");
+    await user(a, sb); await inventory([], [], false); await user(a, sa); assert.equal((await reserve())[0].id, null, "paused recipient got automatic ebook");
+    await db.exec("reset role"); await db.query("update reader_devices set last_seen=now()-interval '91 seconds' where session_id=$1", [sb]);
+    await user(a, sb); await inventory([]); await user(a, sa); assert.equal((await reserve())[0].id, null, "offline recipient got automatic ebook");
+    await user(a, sb); await rpc("select reader_device_touch()"); await user(a, sa);
     const e = { id: randomUUID(), kind: "read", slug: "book", start: Date.now() - 10000, end: Date.now(), interaction: Date.now() };
     await rpc("select reader_activity_upload($1)", [JSON.stringify([e])]); await rpc("select reader_activity_upload($1)", [JSON.stringify([e])]); assert.equal((await rpc("select * from reader_activity")).length, 1);
     await assert.rejects(rpc("select reader_activity_upload($1)", [JSON.stringify([{ ...e, id: randomUUID(), kind: null }])]), /Invalid activity/);
@@ -53,6 +73,7 @@ test("workspace migrations: real session binding, account RLS, revoked JWT denia
     await rpc("select set_config('storage.operation','object.upload',false)");
     await assert.rejects(rpc("insert into storage.objects(bucket_id,name) values('ebook-transfers',$1)", [file]), /row-level security/);
     assert.equal((await rpc("delete from storage.objects where name=$1 returning *", [file])).length, 0);
+    assert.equal((await rpc("select * from reader_ebook_inventory")).length, 0); await assert.rejects(inventory([autoSlug]), /device-revoked/); await assert.rejects(reserve(), /device-revoked/);
     await assert.rejects(register(da), /device-revoked/); await assert.rejects(register(randomUUID()), /device-revoked/);
     await assert.rejects(write("favorite/new", true), /row-level security/); await assert.rejects(rpc("select reader_activity_upload('[]')"), /device-revoked/); await assert.rejects(rpc("select reader_ebook_received($1)", [tid]), /device-revoked/);
     await db.exec("reset role"); await db.query("delete from auth.sessions where id=$1", [sb]); await user(a, sb); await assert.rejects(register(dbid), /device-revoked/);

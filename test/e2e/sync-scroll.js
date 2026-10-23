@@ -3,7 +3,7 @@ const { authSession } = require("./sync");
 
 async function runSyncScrollChecks(browser, base) {
   const session = authSession(), engine = browser.browserType().name();
-  const rows = Array.from({ length: 10 }, (_, i) => ({ record_key: `progress/tenshi-scroll-${i}`, value: { volIdx: 0, chapIdx: 2, timestamp: 2 }, revision: 1 }));
+  const rows = Array.from({ length: 10 }, (_, i) => ({ record_key: `mark/scroll-${i}`, value: { id: `scroll-${i}`, slug: "thien-su-nha-ben", volIdx: 0, chapIdx: 1, note: "Ghi chú trên cloud" }, revision: 1 }));
   // WebKit does not support wheel input in its mobile emulation; use its
   // responsive viewport for native wheel checks, and Chromium for touch swipes.
   const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: engine === "chromium", hasTouch: engine === "chromium", serviceWorkers: "block" });
@@ -22,7 +22,7 @@ async function runSyncScrollChecks(browser, base) {
       localStorage.setItem("ketruyen-auth-v1", JSON.stringify(session));
       localStorage.setItem("ketruyen-sync-link-v1", session.user.id);
       localStorage.setItem("tenshi-eink", "off");
-      for (let i = 0; i < 10; i++) localStorage.setItem(`tenshi-scroll-${i}-progress`, JSON.stringify({ volIdx: 0, chapIdx: 1, timestamp: 1 }));
+      localStorage.setItem("tenshi-library-v1", JSON.stringify({ version: 1, books: {}, marks: Array.from({ length: 10 }, (_, i) => ({ id: `scroll-${i}`, slug: "thien-su-nha-ben", volIdx: 0, chapIdx: 1, note: "Ghi chú trên máy" })) }));
     }, session);
     await page.goto(base); await page.waitForSelector(".ebook-shelf-item");
     await page.evaluate(() => window.scrollTo(0, 350));

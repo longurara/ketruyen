@@ -336,6 +336,10 @@ async function checkLinkPreviews() {
     catch (error) { failed = true; console.error(`✖ workspace: ${error.stack}`); }
     try { await require("./ebook-transfer").runEbookTransferChecks(browser, BASE); }
     catch (error) { failed = true; console.error(`✖ ebook handoff: ${error.stack}`); }
+    try { await require("./ebook-transfer").runAutoEbookSyncChecks(browser, BASE); }
+    catch (error) { failed = true; console.error(`✖ automatic ebooks: ${error.stack}`); }
+    try { await require("./remove-reading").runRemoveReadingChecks(browser, BASE); }
+    catch (error) { failed = true; console.error(`✖ remove reading: ${error.stack}`); }
   } finally {
     await browser.close();
     server.kill();

@@ -31,7 +31,7 @@
   function normalizeState(value) {
     const source = value?.version === 1 ? value : {};
     const books = Object.fromEntries(Object.entries(source.books || {}).filter(([key]) => /^[a-z\d_-]{1,100}$/i.test(key)).map(([key, row]) => [key, {
-      favorite: row?.favorite === true, status: ["want", "reading", "done"].includes(row?.status) ? row.status : "",
+      favorite: row?.favorite === true, status: row?.status === null ? null : ["want", "reading", "done"].includes(row?.status) ? row.status : "",
       groups: (Array.isArray(row?.groups) ? row.groups : []).filter((g) => typeof g === "string").map((g) => g.trim().slice(0, 60)).filter(Boolean).slice(0, 10)
     }]));
     const marks = (Array.isArray(source.marks) ? source.marks : []).filter((m) => m && /^[a-z\d_-]{1,100}$/i.test(m.id) && typeof m.slug === "string" && Number.isInteger(m.volIdx) && Number.isInteger(m.chapIdx) && m.volIdx >= 0 && m.chapIdx >= 0)
@@ -110,6 +110,7 @@
       catch (_) { return {}; }
     }
     function status(series) {
+      if (row(series).status === null) return "";
       if (row(series).status) return row(series).status;
       try {
         const chapters = JSON.parse(localStorage.getItem(series.legacyStorage ? "tenshi-chapters" : `tenshi-${series.slug}-chapters`)) || {};
@@ -164,7 +165,7 @@
     function updateShelfResume(series) {
       const host = $("#shelf-resume");
       const recent = series
-        .filter((book) => Array.isArray(book.volumesData))
+        .filter((book) => Array.isArray(book.volumesData) && row(book).status !== null)
         .map((book) => ({ book, saved: progress(book) }))
         .filter(({ book, saved }) => Number.isInteger(saved.volIdx) && Number.isInteger(saved.chapIdx) && Number(saved.timestamp) > 0 && book.volumesData?.[saved.volIdx]?.chapters[saved.chapIdx])
         .sort((a, b) => Number(b.saved.timestamp) - Number(a.saved.timestamp))
@@ -199,13 +200,14 @@
       let featured = recommendation();
       if (recent.length) {
         const { book, saved } = recent[0], volume = book.volumesData[saved.volIdx], chapter = volume.chapters[saved.chapIdx], share = bookShare(book);
-        featured = `<article class="shelf-feature is-reading"><div class="shelf-feature-copy"><p class="shelf-feature-kicker"><span class="shelf-reading-dot" aria-hidden="true"></span>Câu chuyện đang dở</p><h2>${escape(book.titleVi)}</h2><p class="shelf-feature-author">${escape(book.author || "")}</p><p class="shelf-feature-place">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</p><div class="shelf-feature-progress"><span class="shelf-resume-meter" role="progressbar" aria-label="Tiến độ cả sách" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${share.percent}"><span style="width:${share.percent}%"></span></span><span>${share.percent}% · ${share.done}/${share.total} chương</span></div><button type="button" class="shelf-feature-button" data-resume="0">Đọc tiếp <span aria-hidden="true">→</span></button></div><button type="button" class="shelf-feature-art" data-resume="0" aria-label="Đọc tiếp ${escape(book.titleVi)}">${cover(book, "shelf-feature-cover")}</button></article>${recommendation(true)}`;
+        featured = `<article class="shelf-feature is-reading"><div class="shelf-feature-copy"><p class="shelf-feature-kicker"><span class="shelf-reading-dot" aria-hidden="true"></span>Câu chuyện đang dở</p><h2>${escape(book.titleVi)}</h2><p class="shelf-feature-author">${escape(book.author || "")}</p><p class="shelf-feature-place">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</p><div class="shelf-feature-progress"><span class="shelf-resume-meter" role="progressbar" aria-label="Tiến độ cả sách" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${share.percent}"><span style="width:${share.percent}%"></span></span><span>${share.percent}% · ${share.done}/${share.total} chương</span></div><div class="shelf-reading-actions"><button type="button" class="shelf-feature-button" data-resume="0">Đọc tiếp <span aria-hidden="true">→</span></button><button type="button" class="shelf-remove-reading" data-dismiss-reading="${escape(book.slug)}" aria-label="Bỏ ${escape(book.titleVi)} khỏi Đang đọc" title="Bỏ khỏi Đang đọc">×</button></div></div><button type="button" class="shelf-feature-art" data-resume="0" aria-label="Đọc tiếp ${escape(book.titleVi)}">${cover(book, "shelf-feature-cover")}</button></article>${recommendation(true)}`;
       }
       host.innerHTML = `<div class="shelf-feature-layout${recent.length && suggested ? " has-discovery" : ""}">${featured}</div>${recent.length > 1 ? `<div class="shelf-other-reading"><p>Cũng đang đọc</p><div class="shelf-resume-row">${recent.slice(1).map(({ book, saved }, offset) => {
         const index = offset + 1;
         const volume = book.volumesData[saved.volIdx], chapter = volume.chapters[saved.chapIdx], share = bookShare(book);
-        return `<button type="button" class="shelf-resume-card" data-resume="${index}" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}, đã đọc ${share.done} trên ${share.total} chương">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="" width="104" height="148" loading="lazy" decoding="async">` : '<span class="shelf-resume-cover" aria-hidden="true"></span>'}<span class="shelf-resume-copy"><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span><span class="shelf-resume-meter" aria-hidden="true"><span style="width:${Math.max(share.percent, share.done ? 2 : 0)}%"></span></span><span class="shelf-resume-share">${share.done}/${share.total}</span></span></button>`;
+        return `<div class="shelf-resume-entry"><button type="button" class="shelf-resume-card" data-resume="${index}" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}, đã đọc ${share.done} trên ${share.total} chương">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="" width="104" height="148" loading="lazy" decoding="async">` : '<span class="shelf-resume-cover" aria-hidden="true"></span>'}<span class="shelf-resume-copy"><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span><span class="shelf-resume-meter" aria-hidden="true"><span style="width:${Math.max(share.percent, share.done ? 2 : 0)}%"></span></span><span class="shelf-resume-share">${share.done}/${share.total}</span></span></button><button type="button" class="shelf-remove-reading" data-dismiss-reading="${escape(book.slug)}" aria-label="Bỏ ${escape(book.titleVi)} khỏi Đang đọc" title="Bỏ khỏi Đang đọc">×</button></div>`;
       }).join("")}</div></div>` : ""}`;
+      host.querySelectorAll("[data-dismiss-reading]").forEach((button) => button.onclick = () => removeReading(series.find((book) => book.slug === button.dataset.dismissReading)));
       host.querySelectorAll("[data-resume]").forEach((button) => {
         const { book, saved } = recent[Number(button.dataset.resume)];
         button.onclick = () => options.openMark(options.series.indexOf(book), { type: "bookmark", volIdx: saved.volIdx, chapIdx: saved.chapIdx });
@@ -400,10 +402,11 @@
     updateGroups();
     function shelfItem(series, card) {
       const item = document.createElement("div"); item.className = "ebook-shelf-item"; item.dataset.book = series.slug;
+      if (row(series).status === null) { delete card.dataset.resume; card.querySelector(".shelf-card-action").textContent = series.personal ? "Mở sách →" : "Xem bộ truyện →"; }
       const favorite = row(series).favorite;
       // Per-book actions live in one overflow menu so the grid reads as books, not toolbars.
       const actions = document.createElement("details"); actions.className = "shelf-card-more";
-      actions.innerHTML = `<summary aria-label="Thao tác cho ${escape(series.titleVi)}" title="Thao tác">${ICONS.more}</summary><div class="shelf-more-menu" role="menu"><button type="button" class="shelf-menu-action" role="menuitem" data-favorite aria-pressed="${favorite}">${favorite ? ICONS.starFilled : ICONS.star}<span>${favorite ? "Bỏ yêu thích" : "Thêm vào yêu thích"}</span></button><button type="button" class="shelf-menu-action" role="menuitem" data-manage>${ICONS.edit}<span>Trạng thái &amp; nhóm…</span></button>${series.personal ? `<button type="button" class="shelf-menu-action is-danger" role="menuitem" data-delete>${ICONS.trash}<span>Xóa khỏi thiết bị…</span></button>` : ""}</div>`;
+      actions.innerHTML = `<summary aria-label="Thao tác cho ${escape(series.titleVi)}" title="Thao tác">${ICONS.more}</summary><div class="shelf-more-menu" role="menu"><button type="button" class="shelf-menu-action" role="menuitem" data-favorite aria-pressed="${favorite}">${favorite ? ICONS.starFilled : ICONS.star}<span>${favorite ? "Bỏ yêu thích" : "Thêm vào yêu thích"}</span></button><button type="button" class="shelf-menu-action" role="menuitem" data-manage>${ICONS.edit}<span>Trạng thái &amp; nhóm…</span></button>${(status(series) === "reading" || progress(series).timestamp) && row(series).status !== null ? `<button type="button" class="shelf-menu-action" role="menuitem" data-dismiss>${ICONS.trash}<span>Bỏ khỏi Đang đọc…</span></button>` : ""}${series.personal ? `<button type="button" class="shelf-menu-action is-danger" role="menuitem" data-delete>${ICONS.trash}<span>Xóa khỏi thiết bị…</span></button>` : ""}</div>`;
       const closeMenu = () => { actions.open = false; };
       actions.querySelector("[data-favorite]").onclick = () => {
         const old = state.books[series.slug]; state.books[series.slug] = { ...row(series), favorite: !row(series).favorite };
@@ -411,6 +414,7 @@
         closeMenu(); options.renderShelf();
         options.message(row(series).favorite ? "Đã thêm vào yêu thích." : "Đã bỏ khỏi yêu thích.");
       };
+      const dismiss = actions.querySelector("[data-dismiss]"); if (dismiss) dismiss.onclick = () => { closeMenu(); removeReading(series); };
       actions.querySelector("[data-manage]").onclick = () => { closeMenu(); manageBook(series); };
       if (series.personal) actions.querySelector("[data-delete]").onclick = () => { closeMenu(); options.deleteBook(series); };
       if (favorite) {
@@ -426,6 +430,25 @@
       }
       item.append(card, actions); return item;
     }
+    function dismissReading(series, undo = true) {
+      const previous = state.books[series.slug], previousStatus = row(series).status;
+      state.books[series.slug] = { ...row(series), status: null };
+      if (!persist()) { if (previous) state.books[series.slug] = previous; else delete state.books[series.slug]; return false; }
+      if (isOpen()) close(); options.renderShelf();
+      options.message("Đã bỏ sách khỏi Đang đọc. Tiến độ và ghi chú vẫn được giữ.", undo ? { label: "Hoàn tác", run() {
+        const before = state.books[series.slug]; state.books[series.slug] = { ...row(series), status: previousStatus };
+        if (!persist()) { state.books[series.slug] = before; return; } options.renderShelf();
+      } } : undefined);
+      return true;
+    }
+    function removeReading(series) {
+      if (!series) return;
+      if (!series.personal) { dismissReading(series); return; }
+      show("Bỏ ebook khỏi Đang đọc", `<p class="tools-hint">${escape(series.titleVi)}</p><p>Giữ ebook để đọc sau, hoặc xóa tệp khỏi thiết bị này. Tiến độ và ghi chú vẫn được giữ.</p><div class="tools-actions"><button id="reading-keep-ebook" type="button" class="btn-primary">Chỉ bỏ trạng thái · Giữ ebook</button><button id="reading-delete-ebook" type="button" class="btn-secondary">Xóa ebook khỏi máy</button><button id="reading-cancel" type="button" class="btn-link">Hủy</button></div>`);
+      $("#reading-keep-ebook").onclick = () => dismissReading(series);
+      $("#reading-cancel").onclick = close;
+      $("#reading-delete-ebook").onclick = () => { close(); options.deleteBook(series, { confirmed: true, onDeleted: () => dismissReading(series, false) }); };
+    }
     async function coverBlob(file) {
       if (file.size > 8 * 1024 * 1024 || !["image/png", "image/jpeg", "image/webp", "image/gif"].includes(file.type)) throw new Error("Chọn ảnh PNG/JPG/WebP/GIF tối đa 8 MB.");
       const bytes = new Uint8Array(await file.arrayBuffer());
@@ -440,7 +463,7 @@
     }
     function manageBook(series) {
       const current = row(series);
-      show("Quản lý sách", `<form id="book-edit-form"><label>Trạng thái<select name="status">${[["", "Tự nhận diện theo tiến độ"], ["want", "Muốn đọc"], ["reading", "Đang đọc"], ["done", "Đã đọc"]].map(([v, label]) => `<option value="${v}"${current.status === v ? " selected" : ""}>${label}</option>`).join("")}</select></label><label>Nhóm · phân cách bằng dấu phẩy<input name="groups" maxlength="600" value="${escape(current.groups.join(", "))}" placeholder="Light novel, Đọc cuối tuần"></label>${series.personal ? `<label>Tên sách<input name="title" maxlength="250" required value="${escape(series.titleVi)}"></label><label>Tác giả<input name="author" maxlength="150" value="${escape(series.author)}"></label><img class="book-edit-cover" src="${escape(series.cover)}" alt="Bìa hiện tại"><label>Đổi bìa<input name="cover" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label><label class="library-check"><input name="resetCover" type="checkbox">Dùng bìa chữ theo tên sách</label>` : `<p class="tools-hint">${escape(series.titleVi)}</p>`}<button class="btn-primary" type="submit">Lưu thay đổi</button></form>`);
+      show("Quản lý sách", `<form id="book-edit-form"><label>Trạng thái<select name="status">${[["", "Tự nhận diện theo tiến độ"], ["cleared", "Không nằm trong Đang đọc"], ["want", "Muốn đọc"], ["reading", "Đang đọc"], ["done", "Đã đọc"]].map(([v, label]) => `<option value="${v}"${(current.status === null ? "cleared" : current.status) === v ? " selected" : ""}>${label}</option>`).join("")}</select></label><label>Nhóm · phân cách bằng dấu phẩy<input name="groups" maxlength="600" value="${escape(current.groups.join(", "))}" placeholder="Light novel, Đọc cuối tuần"></label>${series.personal ? `<label>Tên sách<input name="title" maxlength="250" required value="${escape(series.titleVi)}"></label><label>Tác giả<input name="author" maxlength="150" value="${escape(series.author)}"></label><img class="book-edit-cover" src="${escape(series.cover)}" alt="Bìa hiện tại"><label>Đổi bìa<input name="cover" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label><label class="library-check"><input name="resetCover" type="checkbox">Dùng bìa chữ theo tên sách</label>` : `<p class="tools-hint">${escape(series.titleVi)}</p>`}<button class="btn-primary" type="submit">Lưu thay đổi</button></form>`);
       $("#book-edit-form").onsubmit = async (event) => {
         event.preventDefault(); if (busy) return;
         const form = event.target, data = new FormData(form), button = form.querySelector('button[type="submit"]');
@@ -460,7 +483,7 @@
             }
             await EbookImport.save(book);
           }
-          state.books[series.slug] = { ...current, status: String(data.get("status")), groups: [...new Set(String(data.get("groups")).split(",").map((g) => g.trim().slice(0, 60)).filter(Boolean))].slice(0, 10) };
+          state.books[series.slug] = { ...current, status: data.get("status") === "cleared" ? null : String(data.get("status")), groups: [...new Set(String(data.get("groups")).split(",").map((g) => g.trim().slice(0, 60)).filter(Boolean))].slice(0, 10) };
           if (!persist()) throw new Error("Không lưu được nhóm sách.");
           if (series.personal) location.reload(); else { close(); updateGroups(); options.renderShelf(); }
         } catch (error) { feedback(error.message || "Không lưu được sách."); }
@@ -653,6 +676,7 @@
     return { filterSeries, setSection, shelfItem, decorate, quickBookmark, openMarks: () => { markScope = ctx().view === "reader" ? ctx().series.slug : ""; showMarks(); }, openLayout: showLayout, openToc: showToc,
       reload: () => { const next = normalizeState(JSON.parse(localStorage.getItem(KEY) || "null")); Object.assign(state, next); updateGroups(); },
       attachHost: (host) => { embeddedHost = host; }, canClose: () => !busy,
+      resumeReading(series) { if (row(series).status !== null) return; const previous = state.books[series.slug]; state.books[series.slug] = { ...row(series), status: "reading" }; if (!persist()) state.books[series.slug] = previous; },
       getMarks: () => state.marks.filter((m) => m.slug === ctx().series.slug), getLayout: () => ({ ...state.layout }),
       setLayout: (layout) => { state.layout = normalizeState({ ...state, layout }).layout; persist(); options.preservePosition(applyLayout); },
       isOpen, onView() { pendingSelection = null; if (isOpen() && !busy) close(); } };

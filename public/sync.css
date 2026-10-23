@@ -86,3 +86,6 @@ body[data-theme="dark"] .sync-feedback[data-sync-state="error"] { --sync-accent:
   .device-reading-icon { width: 36px; height: 36px; }
   .device-reading-action { grid-column: 2; justify-self: start; padding: 6px 0; }
 }
+
+.ebook-auto-toggle { display: flex; align-items: center; gap: 12px; font-weight: 600; cursor: pointer; }
+.sync-dialog .ebook-auto-toggle input { width: 20px; height: 20px; padding: 0; flex: 0 0 20px; accent-color: var(--ink); }

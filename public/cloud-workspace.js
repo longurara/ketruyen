@@ -10,7 +10,7 @@
     const tabs = document.createElement("div"); tabs.className = "sync-tabs"; tabs.hidden = true; tabs.setAttribute("aria-label", "Tài khoản");
     tabs.innerHTML = '<button type="button" data-panel="sync" aria-pressed="true">Đồng bộ</button><button type="button" data-panel="devices" aria-pressed="false">Thiết bị</button><button type="button" data-panel="security" aria-pressed="false">Bảo mật</button>';
     $("sync-account").before(tabs);
-    const syncPanel = document.createElement("section"); syncPanel.dataset.accountPanel = "sync"; $("ebook-transfer-panel").before(syncPanel); syncPanel.append($("ebook-transfer-panel"));
+    const syncPanel = document.createElement("section"); syncPanel.dataset.accountPanel = "sync"; $("ebook-auto-panel").before(syncPanel); syncPanel.append($("ebook-auto-panel"), $("ebook-transfer-panel"));
     const syncActions = document.createElement("div"); syncActions.className = "sync-actions"; syncActions.append($("sync-connect"), $("sync-now"));
     syncPanel.prepend($("sync-account-hint"), syncActions);
     $("sync-account").classList.add("workspace-account"); $("sync-account").replaceChildren($("sync-email-label"), $("sync-signout"));
@@ -102,7 +102,7 @@
       const purges = await all(a, "reader_note_purges", "mark_id,purged_at", (q) => q.order("mark_id"));
       mergeVersions(versions, purges); await processPurges(a);
       devices = await all(a, "reader_devices", "*", (q) => q.order("last_seen", { ascending: false })); paintDevices();
-      options.transfers.setDevices(devices.filter((d) => !d.revoked_at && d.device_id !== device));
+      options.transfers.setDevices(devices.filter((d) => !d.revoked_at && d.device_id !== device).map((d) => ({ ...d, online: Date.now() + offset - Date.parse(d.last_seen) < 90000 })));
       const requests = await all(a, "reader_book_requests", "*", (q) => q.eq("source_session", a.sid).eq("resolved", false).order("id")); paintRequests(requests);
       $("workspace-baseline").hidden = false; $("workspace-import").hidden = Boolean(meta?.legacy);
       $("workspace-import-status").textContent = meta?.legacy ? "Đã nhập thống kê gốc một lần · Phần trước đồng bộ được giữ riêng trong tổng số." : "Chưa chọn máy gốc. Thống kê đồng bộ mới vẫn được ghi nhận.";

@@ -43,7 +43,7 @@ Xóa vĩnh viễn cần xác nhận, xóa các bản lưu trữ và giữ tombst
 
 ### Kiểm tra trước khi mở rộng cho người dùng
 
-`npm test` chạy Postgres/PGlite với cả bốn migration, chạy lại migration để kiểm tra tính lặp, hai tài khoản/ba phiên, JWT còn hạn bị thu hồi, Storage đúng máy nhận, CAS khôi phục/xóa và hàng đợi hoạt động trùng ID. Các test thuần kiểm tra giao nhau, phân xử ổn định, mốc nửa đêm Việt Nam, chuỗi ngày, mục tiêu cạnh tranh và mốc nhập thống kê.
+`npm test` chạy Postgres/PGlite với cả năm migration, chạy lại migration để kiểm tra tính lặp, hai tài khoản/ba phiên, JWT còn hạn bị thu hồi, Storage đúng máy nhận, CAS khôi phục/xóa và hàng đợi hoạt động trùng ID. Các test thuần kiểm tra giao nhau, phân xử ổn định, mốc nửa đêm Việt Nam, chuỗi ngày, mục tiêu cạnh tranh và mốc nhập thống kê.
 
 `npm run test:e2e` dùng SDK browser thật với HTTP/WebSocket fixture: không tạo tài khoản và không gửi email thật. Bao gồm desktop/mobile, đổi tên/thu hồi máy, OTP xác thực lại khi đổi mật khẩu, đổi email, callback khôi phục, đọc tiếp khi khác kích thước màn hình, thiếu ebook, khôi phục ghi chú, lịch đọc và gửi ZIP đến máy offline đã chọn. Tải hỏng/quota/xóa bucket lỗi được kiểm tra riêng.
 
@@ -53,7 +53,23 @@ Mở biểu tượng đám mây trên thanh đầu trang hoặc **Thư viện �
 
 Mật khẩu do Supabase Auth băm bằng bcrypt với salt phía server; ứng dụng không lưu mật khẩu trong localStorage, IndexedDB hay bảng đồng bộ. Đăng ký và đổi mật khẩu yêu cầu ít nhất 8 ký tự, tối đa 72 byte theo giới hạn bcrypt. Phiên đăng nhập/refresh token do SDK quản lý riêng. Nếu quên mật khẩu, nhập email rồi chọn **Quên mật khẩu?**, mở email khôi phục và nhập mật khẩu mới hai lần. Liên kết xác nhận/khôi phục chạy qua trang `sync-auth.html`, cho phép mở email trên trình duyệt khác.
 
-Đồng bộ vị trí đang đọc, vị trí trong từng chương, dấu đã đọc, lịch sử gần đây, yêu thích, trạng thái/nhóm sách và đánh dấu/ghi chú. Tệp ebook không tự động tải lên cùng tiến độ. Bạn có thể chủ động **Chuyển ebook sang máy khác** bằng bucket tạm; mã sách theo digest được giữ để tiến độ tiếp tục khớp. Tệp tải offline của truyện có sẵn và cài đặt riêng của máy không được tải lên.
+Đồng bộ vị trí đang đọc, vị trí trong từng chương, dấu đã đọc, lịch sử gần đây, yêu thích, trạng thái/nhóm sách và đánh dấu/ghi chú. Sau migration 0005, ebook tự chuyển qua bucket tạm giữa các máy cùng tài khoản đang mở. Mã sách theo digest được giữ để tiến độ tiếp tục khớp. Vẫn có **Chuyển ebook sang máy khác** cho việc chọn máy nhận thủ công, gồm cả máy offline có thể nhận trong 30 phút. Tệp tải offline của truyện có sẵn và cài đặt riêng của máy không được tải lên.
+
+## Tự đồng bộ ebook (0005)
+
+Chạy `supabase/migrations/202610230005_auto_ebook_sync.sql` trong SQL Editor sau 0004; file có thể chạy lại. Giữ bucket và lịch dọn ebook hiện có, không cần tạo bucket hay cron mới. Tải lại ứng dụng trên các máy. Frontend khi chưa có 0005 hiện hướng dẫn và vẫn cho chuyển thủ công; không coi tự đồng bộ đã hoạt động trên project thật chỉ vì test local qua.
+
+**Tự đồng bộ ebook trên máy này** mặc định bật cho thiết bị đã liên kết tài khoản. Mở ứng dụng cùng tài khoản trên hai máy có mạng; ebook đã có và ebook mới nhập sẽ tự gửi tới máy còn thiếu, không cần mở hộp Đồng bộ hay bấm Gửi/Nhận. Máy nhận thêm sách vào kệ, giữ nguyên sách/chương đang xem. Kiểm tra sau thay đổi khoảng một giây và mỗi 20 giây khi tab đang hiển thị; Realtime báo thay đổi để kiểm tra sớm hơn. Trình duyệt iPhone/PWA có thể dừng tác vụ khi ứng dụng chạy nền: mở lại app để tiếp tục.
+
+Server lưu danh sách mã ebook theo thiết bị trong `reader_ebook_inventory`, không lưu nội dung sách trong bảng. RLS và RPC kiểm tra cùng tài khoản, phiên Supabase chưa bị thu hồi, thiết bị nhận có heartbeat trong 90 giây, bật tự đồng bộ và chưa có sách. Reservation duy nhất theo tài khoản/máy nhận/mã sách ngăn hai nguồn gửi trùng. Web Locks tránh nhiều tab trên cùng trình duyệt cùng chạy một lượt. Mỗi lượt gửi tối đa bốn gói; các gói còn lại đợi lượt kế tiếp.
+
+Gói dùng cùng giới hạn và bước kiểm tra như chuyển thủ công: tối đa 50 MB, SHA-256, cấu trúc gói, commit IndexedDB và đọc lại. Biên nhận đồng thời cập nhật danh sách sách trên server rồi mới xóa object qua Storage API, sau đó xóa metadata. Lỗi dung lượng/tệp hỏng không xác nhận đã nhận và không xóa bản tạm; lỗi mạng hoặc xóa object được thử lại. Tệp hết hạn/tải lên dở dùng job dọn hiện có. Bucket chỉ giữ tạm tối đa thời hạn phiên 30 phút và lượt cron tiếp theo, không làm kho ebook lâu dài.
+
+Có thể tắt tự đồng bộ riêng từng máy, hoặc dùng **Kiểm tra ebook** để thử ngay. Máy offline không được tạo phiên tự gửi mới; chuyển thủ công vẫn hỗ trợ máy offline. Khi xóa ebook khỏi một máy, mã sách được ghi vào danh sách bỏ qua của máy đó để tránh tải về lại. Muốn có lại sách, nhập lại ebook hoặc nhận thủ công từ máy khác. Xóa dữ liệu trình duyệt sẽ xóa cả tùy chọn/danh sách bỏ qua cục bộ. Đăng xuất, đổi tài khoản hoặc bị thu hồi dừng lượt gửi của phiên cũ trước thao tác tiếp theo.
+
+## Bỏ khỏi Đang đọc
+
+Bấm dấu × ở thẻ đang đọc hoặc menu sách → **Bỏ khỏi Đang đọc…**. Truyện online chỉ bỏ trạng thái; ebook hỏi giữ tệp hay xóa ebook khỏi thiết bị. Tiến độ và ghi chú vẫn giữ. Trạng thái bỏ khỏi Đang đọc đồng bộ sang máy khác bằng tombstone, không bị suy lại từ tiến độ cũ; mở sách đọc tiếp sẽ đưa sách trở lại. Xóa tệp chỉ tác động đến máy hiện tại, không xóa ebook trên thiết bị khác.
 
 ## Chuyển ebook bằng bucket tạm
 
@@ -92,7 +108,7 @@ Project hiện đã được kiểm tra kết nối đến Auth và đã có b�
 - Tự đồng bộ sau khi thay đổi khoảng một giây, khi mở lại tab, khi có mạng trở lại và mỗi 20 giây trong tab đang hiển thị. Có nút **Kiểm tra đồng bộ** để chạy ngay.
 - **Kiểm tra đồng bộ** thực sự đọc dữ liệu đám mây và gửi các thay đổi đang chờ. Biểu tượng xoay trong lúc chờ phản hồi, hiện dấu tích khi mọi mục đã khớp; có giờ thành công gần nhất, số mục đã gửi/nhận và số mục đang chờ. Trạng thái offline, lỗi và xung đột dùng màu/ký hiệu riêng; thông báo lỗi không cập nhật giờ thành công. Yêu cầu sync hết hạn sau 15 giây để tránh xoay mãi. Hiệu ứng tắt theo cài đặt giảm chuyển động của hệ điều hành.
 - Mỗi vị trí đọc, chương, ghi chú và trường yêu thích/trạng thái/nhóm là một record riêng. Không đẩy nguyên file backup hoặc ghi đè toàn bộ thư viện.
-- Mỗi record có revision do server tăng. RPC chỉ cập nhật khi revision gốc vẫn khớp. Khi hai máy thay đổi cùng record, cả hai phiên bản được giữ: người dùng chọn **Giữ trên máy này** hoặc **Nhận từ đám mây**. Nếu có thay đổi mới trong lúc chọn, ứng dụng kiểm tra revision lần nữa.
+- Mỗi record có revision do server tăng. RPC chỉ cập nhật khi revision gốc vẫn khớp. Vị trí đọc, tiến độ chương và lịch sử tự gộp theo vị trí xa hơn: tập sau → chương sau → phần trăm cao hơn, giữ neo văn bản của bản thắng và dấu hoàn thành. Thời gian truy cập mới hơn không kéo lùi vị trí đọc; đặt lại tiến độ vẫn thắng dữ liệu cũ. Những xung đột nội dung như ghi chú, nhóm hoặc mục tiêu vẫn giữ lựa chọn **Giữ trên máy này** / **Nhận từ đám mây**. Nếu có thay đổi mới trong lúc chọn, ứng dụng kiểm tra revision lần nữa.
 - Xóa ghi chú hoặc đặt lại tiến độ tạo tombstone để máy cũ không làm dữ liệu đã xóa xuất hiện lại. Không có quyền xóa vật lý record từ browser.
 - Dữ liệu đọc vẫn lưu cục bộ khi offline. Nhật ký revision/outbox nằm trong IndexedDB `ketruyen-sync-v1`; phiên đăng nhập dùng key `ketruyen-auth-v1`, ngoài phạm vi sao lưu `tenshi-*`.
 - Web Locks tránh hai tab cùng đồng bộ một lượt khi trình duyệt hỗ trợ; CAS trên server vẫn kiểm tra mọi lần ghi.

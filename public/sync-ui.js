@@ -46,7 +46,7 @@
       const enabled = Boolean(session && linked === session.user.id);
       workspace.setContext(enabled && !recovery ? { owner: session.user.id, client, session } : null);
       transfers.setContext(enabled && !recovery ? { owner: session.user.id, client, sessionKey: workspace.sessionKey(session) } : null);
-      $("sync-account-hint").textContent = enabled ? "Thiết bị này đã bật đồng bộ. Dùng Chuyển ebook bên dưới để gửi sách sang máy khác." : "Bật đồng bộ để kết hợp thư viện trên máy này với tài khoản và chuyển ebook giữa các máy.";
+      $("sync-account-hint").textContent = enabled ? "Thiết bị này đã bật đồng bộ. Tiến độ tự giữ vị trí đọc xa hơn; ebook tự chuyển khi các máy đang mở." : "Bật đồng bộ để kết hợp thư viện trên máy này với tài khoản và chuyển ebook giữa các máy.";
       $("sync-connect").hidden = enabled; $("sync-now").hidden = !enabled;
       for (const id of ["sync-send", "sync-signup", "sync-forgot", "sync-reset-save", "sync-connect", "sync-now", "sync-signout"]) $(id).disabled = busy;
       $("btn-sync").classList.toggle("is-connected", enabled);

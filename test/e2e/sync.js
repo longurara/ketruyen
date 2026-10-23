@@ -104,10 +104,10 @@ async function runSyncChecks(browser, base) {
     assert.equal(await b.page.evaluate(() => JSON.parse(localStorage.getItem("tenshi-library-v1")).marks[0].note), mark.note);
     assert.equal(await b.page.evaluate(() => JSON.parse(localStorage.getItem("tenshi-library-v1")).books["thien-su-nha-ben"].favorite), true);
     assert.ok(await b.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), "mobile dialog overflows");
-    // Two positions edited against the same baseline; one remains local until
-    // the person selects the cloud version in the actual conflict UI.
+    // Progress picks the farther chapter automatically; divergent notes still ask.
     await Promise.all([a.page, b.page].map((page, i) => page.evaluate((chapIdx) => {
       localStorage.setItem("tenshi-progress", JSON.stringify({ volIdx: 0, chapIdx, timestamp: Date.now() }));
+      const lib = JSON.parse(localStorage.getItem("tenshi-library-v1")); lib.marks[0].note = `Ghi chú máy ${chapIdx}`; localStorage.setItem("tenshi-library-v1", JSON.stringify(lib));
     }, i + 3)));
     await flush(a.page); await flush(b.page);
     await b.page.waitForSelector(".sync-conflict");
@@ -115,7 +115,8 @@ async function runSyncChecks(browser, base) {
     await screenshot(b.page, "sync-state-conflict-mobile");
     assert.equal(await b.page.evaluate(() => JSON.parse(localStorage.getItem("tenshi-progress")).chapIdx), 4);
     await b.page.getByRole("button", { name: "Nhận từ đám mây", exact: true }).click();
-    await b.page.waitForFunction(() => JSON.parse(localStorage.getItem("tenshi-progress")).chapIdx === 3);
+    await b.page.waitForFunction(() => JSON.parse(localStorage.getItem("tenshi-library-v1")).marks[0].note === "Ghi chú máy 3");
+    assert.equal(await b.page.evaluate(() => JSON.parse(localStorage.getItem("tenshi-progress")).chapIdx), 4);
     await b.page.waitForFunction(() => !document.getElementById("sync-now").disabled);
     await b.page.click("#sync-close");
     await b.page.locator('.shelf-card-more summary').first().click();

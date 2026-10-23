@@ -1,9 +1,10 @@
 // Exercise the real SDK + archive + IndexedDB across isolated browser devices.
 // All Supabase HTTP is mocked: no live account, bucket or email is changed.
+const { randomUUID } = require("node:crypto");
 const assert = require("node:assert/strict"), fs = require("node:fs"), path = require("node:path");
 const { authSession } = require("./sync");
-async function runEbookTransferChecks(browser, base) {
-  const contexts = [], registry = new Map(), rows = new Map(), files = new Map(), receipts = [];
+async function runEbookTransferChecks(browser, base, automatic = false) {
+  const contexts = [], registry = new Map(), rows = new Map(), files = new Map(), receipts = [], inventory = new Map(), uploads = [];
   let failDelete = false, corruptDownload = false;
   async function device(mobile = false) {
     const session = authSession(), sid = JSON.parse(Buffer.from(session.access_token.split(".")[1], "base64url")).session_id;
@@ -16,6 +17,15 @@ async function runEbookTransferChecks(browser, base) {
       if (url.pathname.endsWith("/rpc/reader_device_register")) { const d = registry.get(sid) || { user_id: session.user.id, session_id: sid, device_id: body.installation, name: mobile ? "Điện thoại nhận" : "Máy gửi", last_seen: new Date().toISOString() }; registry.set(sid, d); return route.fulfill({ json: { ...d, server_time: new Date().toISOString() } }); }
       if (url.pathname.endsWith("/rpc/reader_require_device")) return route.fulfill({ json: null });
       if (url.pathname.endsWith("/rpc/reader_device_touch")) return route.fulfill({ json: new Date().toISOString() });
+      if (automatic && url.pathname.endsWith("/rpc/reader_ebook_inventory_set")) {
+        const id = registry.get(sid).device_id; inventory.set(id, { device_id: id, slugs: body.books, ignored: body.excluded_books, enabled: body.active }); return route.fulfill({ json: null });
+      }
+      if (automatic && url.pathname.endsWith("/reader_ebook_inventory")) return route.fulfill({ json: [...inventory.values()] });
+      if (automatic && url.pathname.endsWith("/rpc/reader_ebook_auto_reserve")) {
+        const target = inventory.get(body.target), duplicate = [...rows.values()].some((r) => r.slug === body.book && r.recipient_device === body.target && !r.received_at);
+        if (!target?.enabled || target.slugs.includes(body.book) || target.ignored.includes(body.book) || duplicate) return route.fulfill({ json: null });
+        const id = randomUUID(); rows.set(id, { id, user_id: session.user.id, sender_device: registry.get(sid).device_id, recipient_device: body.target, slug: body.book, title: body.label, bytes: body.size, sha256: body.digest, automatic: true, ready: false, received_at: null, expires_at: new Date(Date.now() + 1800000).toISOString() }); return route.fulfill({ json: id });
+      }
       if (url.pathname.endsWith("/reader_devices")) return route.fulfill({ json: [...registry.values()] });
       if (url.pathname.endsWith("/reader_workspace_meta")) return route.fulfill({ json: null });
       if (["reader_activity", "reader_note_versions", "reader_note_purges", "reader_book_requests"].some((name) => url.pathname.endsWith("/" + name))) return route.fulfill({ json: [] });
@@ -26,7 +36,7 @@ async function runEbookTransferChecks(browser, base) {
         if (method === "PATCH") { const id = url.searchParams.get("id").slice(3); Object.assign(rows.get(id), body); return route.fulfill({ json: [{ id }] }); }
         return route.fulfill({ json: [...rows.values()].filter((r) => r.sender_device === registry.get(sid)?.device_id || r.recipient_device === registry.get(sid)?.device_id) });
       }
-      if (url.pathname.endsWith("/rpc/reader_ebook_received")) { receipts.push(body.transfer_id); rows.get(body.transfer_id).received_at = new Date().toISOString(); return route.fulfill({ json: null }); }
+      if (url.pathname.endsWith("/rpc/reader_ebook_received")) { receipts.push(body.transfer_id); const row = rows.get(body.transfer_id); row.received_at = new Date().toISOString(); if (automatic) { const own = inventory.get(registry.get(sid).device_id); if (!own.slugs.includes(row.slug)) own.slugs.push(row.slug); } return route.fulfill({ json: null }); }
       if (url.pathname.endsWith("/rpc/reader_ebook_forget")) {
         const key = `${session.user.id}/${body.transfer_id}/book.zip`;
         if (files.has(key)) return route.fulfill({ status: 403, json: { code: "42501", message: "Remove the temporary object first" } });
@@ -34,7 +44,7 @@ async function runEbookTransferChecks(browser, base) {
       }
       const prefix = "/storage/v1/object/ebook-transfers/", download = "/storage/v1/object/authenticated/ebook-transfers/";
       if (method === "POST" && url.pathname.startsWith(prefix)) {
-        const key = decodeURIComponent(url.pathname.slice(prefix.length)); files.set(key, request.postDataBuffer());
+        const key = decodeURIComponent(url.pathname.slice(prefix.length)); files.set(key, request.postDataBuffer()); uploads.push(key);
         return route.fulfill({ json: { Key: "ebook-transfers/" + key, Id: "fixture" } });
       }
       if (method === "GET" && (url.pathname.startsWith(download) || url.pathname.startsWith(prefix))) {
@@ -46,7 +56,7 @@ async function runEbookTransferChecks(browser, base) {
         for (const key of body.prefixes) files.delete(key);
         return route.fulfill({ json: body.prefixes.map((name) => ({ name })) });
       }
-      if (url.pathname.endsWith("/rpc/reader_device_register")) return route.fulfill({ status: 404, json: { code: "PGRST202", message: "Legacy fixture" } });
+      if (url.pathname.endsWith("/rpc/reader_ebook_inventory_set")) return route.fulfill({ status: 404, json: { code: "PGRST202", message: "Legacy fixture" } });
       return route.abort();
     });
     await context.addInitScript((session) => { localStorage.setItem("ketruyen-auth-v1", JSON.stringify(session)); localStorage.setItem("ketruyen-sync-link-v1", session.user.id); }, session);
@@ -61,6 +71,55 @@ async function runEbookTransferChecks(browser, base) {
   const finished = (page) => page.waitForFunction(() => document.getElementById("ebook-transfer-panel").getAttribute("aria-busy") === "false" && !document.getElementById("ebook-transfer-refresh").disabled);
   try {
     const a = await device(), b = await device(true);
+    if (automatic) {
+      await a.page.click("#sync-close"); await b.page.click("#sync-close");
+      const importBook = (page, title) => page.evaluate(async (title) => {
+        const book = await globalThis.EbookImport.parseFile(new File(["Chương 1\n\n" + title + "\n\nNội dung ebook tự đồng bộ."], title + ".txt", { type: "text/plain" }));
+        book.titleVi = title; await globalThis.EbookImport.save(book); return book.slug;
+      }, title);
+      const hasBook = async (page, slug) => {
+        const until = Date.now() + 35000;
+        while (Date.now() < until) { if (await page.evaluate(async (slug) => Boolean(await globalThis.EbookImport.get(slug)), slug)) return; await new Promise((r) => setTimeout(r, 150)); }
+        assert.fail("Ebook did not arrive: " + await page.textContent("#ebook-auto-status"));
+      };
+      const first = await importBook(a.page, "Tự chuyển từ A");
+      await hasBook(b.page, first);
+      await b.page.waitForFunction(() => document.getElementById("ebook-transfer-panel").getAttribute("aria-busy") === "false");
+      assert.equal(receipts.length, 1, await b.page.textContent("#ebook-auto-status")); assert.equal(files.size, 0); assert.equal(rows.size, 0);
+      assert.equal(uploads.length, 1, "automatic sync uploaded the same ebook twice");
+      const second = await importBook(b.page, "Tự chuyển từ B"); await hasBook(a.page, second);
+      await a.page.waitForFunction(() => document.getElementById("ebook-transfer-panel").getAttribute("aria-busy") === "false");
+      assert.equal(receipts.length, 2); assert.equal(files.size, 0); assert.equal(rows.size, 0); assert.equal(uploads.length, 2);
+      assert.equal(new URL(a.page.url()).pathname, "/"); assert.equal(new URL(b.page.url()).pathname, "/");
+      assert.equal(await a.page.locator("#sync-dialog").evaluate((d) => d.open), false, "automatic transfer opened a modal");
+      await b.page.evaluate((slug) => globalThis.EbookImport.remove(slug), first);
+      await b.page.waitForFunction(() => /khớp|Sẵn sàng/.test(document.getElementById("ebook-auto-status").textContent));
+      await b.page.click("#btn-sync"); await b.page.click("#ebook-auto-retry");
+      await b.page.waitForFunction(() => document.getElementById("ebook-transfer-panel").getAttribute("aria-busy") === "false" && /khớp/.test(document.getElementById("ebook-auto-status").textContent));
+      assert.ok(inventory.get(b.device).ignored.includes(first));
+      if (process.env.SYNC_PREVIEW_DIR) { fs.mkdirSync(process.env.SYNC_PREVIEW_DIR, { recursive: true }); await b.page.screenshot({ path: path.join(process.env.SYNC_PREVIEW_DIR, "auto-ebook-mobile.png") }); }
+      await a.page.click("#btn-sync"); await a.page.click("#ebook-auto-retry");
+      await a.page.waitForFunction(() => document.getElementById("ebook-transfer-panel").getAttribute("aria-busy") === "false" && /khớp/.test(document.getElementById("ebook-auto-status").textContent));
+      assert.equal(await b.page.evaluate((slug) => globalThis.EbookImport.get(slug), first), undefined, "automatic sync restored a locally deleted ebook");
+      await b.page.uncheck("#ebook-auto-enabled");
+      await b.page.waitForFunction(() => /tạm dừng/.test(document.getElementById("ebook-auto-status").textContent));
+      const third = await importBook(a.page, "Không chuyển đến máy tạm dừng");
+      await a.page.click("#ebook-auto-retry");
+      await a.page.waitForFunction(() => document.getElementById("ebook-transfer-panel").getAttribute("aria-busy") === "false" && /khớp/.test(document.getElementById("ebook-auto-status").textContent));
+      assert.equal(await b.page.evaluate((slug) => globalThis.EbookImport.get(slug), third), undefined);
+      await b.page.check("#ebook-auto-enabled");
+      await b.page.evaluate(() => { window.originalEbookSave = globalThis.EbookImport.save; globalThis.EbookImport.save = async () => { throw new Error("QuotaExceededError"); }; });
+      await a.page.click("#ebook-auto-retry");
+      await b.page.waitForFunction(() => /QuotaExceeded/.test(document.getElementById("ebook-auto-status").textContent), null, { timeout: 35000 });
+      assert.equal(receipts.length, 2); assert.equal(files.size, 1, "failed auto save prematurely deleted the temporary object");
+      await b.page.evaluate(() => { globalThis.EbookImport.save = window.originalEbookSave; }); await b.page.click("#ebook-auto-retry"); await hasBook(b.page, third);
+      await b.page.waitForFunction(() => document.getElementById("ebook-transfer-panel").getAttribute("aria-busy") === "false");
+      assert.equal(receipts.length, 3); assert.equal(files.size, 0); assert.equal(rows.size, 0);
+      assert.ok(await b.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+      assert.deepEqual(a.errors, []); assert.deepEqual(b.errors, []);
+      console.log("automatic ebooks:\n  ✔ bidirectional imports without send/receive clicks, closed dialogs, durable receipt, no duplicate upload, local deletion exclusion, pause, quota retry and bucket cleanup");
+      return;
+    }
     await a.page.click("#sync-now"); await a.page.waitForFunction(() => !document.getElementById("sync-now").disabled);
     await a.page.selectOption("#ebook-transfer-recipient", b.device);
     await b.context.setOffline(true);
@@ -107,4 +166,4 @@ async function runEbookTransferChecks(browser, base) {
     console.log("ebook handoff:\n  ✔ selected offline recipient, two devices, real ZIP/assets + IndexedDB, corrupt download, quota failure, cleanup retry and automatic bucket deletion");
   } finally { await Promise.all(contexts.map((context) => context.close())); }
 }
-module.exports = { runEbookTransferChecks };
+module.exports = { runEbookTransferChecks, runAutoEbookSyncChecks: (browser, base) => runEbookTransferChecks(browser, base, true) };
