@@ -4,6 +4,8 @@
     const core = root.EbookTransfer, $ = (id) => document.getElementById(id);
     const panel = $("ebook-transfer-panel"), status = $("ebook-transfer-status"), list = $("ebook-transfer-list");
     let context = null, generation = 0, busy = false, refreshing = false, rows = [];
+    let devices = null, offered = null;
+    const receiver = document.createElement("select"); receiver.id = "ebook-transfer-recipient"; receiver.setAttribute("aria-label", "Thiết bị nhận ebook"); receiver.hidden = true; $("ebook-transfer-book").after(receiver);
     let device;
     try { device = localStorage.getItem("ketruyen-transfer-device-v1"); } catch (_) {}
     if (!/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(device || "")) {
@@ -12,13 +14,13 @@
     }
     const report = (text) => { status.textContent = text; };
     function setContext(next) {
-      if (context?.owner !== next?.owner) { generation++; context = next; rows = []; list.replaceChildren(); report(""); $("ebook-transfer-open").hidden = true; }
+      if (context?.owner !== next?.owner || context?.sessionKey !== next?.sessionKey) { generation++; context = next; rows = []; list.replaceChildren(); report(""); $("ebook-transfer-open").hidden = true; }
       else context = next;
       panel.hidden = !context;
     }
     function io() {
       const own = context, token = generation;
-      const guard = () => { if (!own || token !== generation || context?.owner !== own.owner) throw new Error("transfer-cancelled"); };
+      const guard = () => { if (!own || token !== generation || context?.owner !== own.owner || context?.sessionKey !== own.sessionKey) throw new Error("transfer-cancelled"); };
       // A timed-out upload may finish server-side; its reserved metadata lets
       // the scheduled cleanup find it even if the browser has gone away.
       const request = async (query) => {
@@ -48,7 +50,7 @@
       };
     }
     function paint() {
-      $("ebook-transfer-send").disabled = busy || !$("ebook-transfer-book").value;
+      $("ebook-transfer-send").disabled = busy || !$("ebook-transfer-book").value || (devices !== null && !receiver.value);
       $("ebook-transfer-refresh").disabled = busy || refreshing;
       panel.setAttribute("aria-busy", String(busy));
       $("ebook-transfer-progress").hidden = !busy;
@@ -83,8 +85,8 @@
       if (!context || busy || refreshing || !panel.open || !$("sync-dialog").open || !navigator.onLine) return;
       refreshing = true; const api = io(); paint();
       try {
-        const data = await api.request(api.client.from("reader_ebook_transfers").select("id,user_id,sender_device,slug,title,bytes,sha256,ready,expires_at,received_at").eq("user_id", api.owner).order("created_at", { ascending: false }).limit(100));
-        api.guard(); rows = data;
+        const data = await api.request(api.client.from("reader_ebook_transfers").select("id,user_id,sender_device,recipient_device,slug,title,bytes,sha256,ready,expires_at,received_at").eq("user_id", api.owner).order("created_at", { ascending: false }).limit(100));
+        api.guard(); rows = data.filter((r) => !r.recipient_device || r.sender_device === device || r.recipient_device === device);
         const books = await root.EbookImport.list(); api.guard();
         const select = $("ebook-transfer-book"), chosen = select.value; select.replaceChildren();
         for (const book of books) { const option = document.createElement("option"); option.value = book.slug; option.textContent = book.titleVi; select.append(option); }
@@ -103,7 +105,7 @@
       finally { busy = false; paint(); if (context?.owner === api.owner) await refresh(); }
     }
     $("ebook-transfer-send").onclick = () => run(async (api) => {
-      const slug = $("ebook-transfer-book").value; api.report("Đang đóng gói sách…");
+      const slug = $("ebook-transfer-book").value, target = receiver.value; if (devices !== null && !target) throw new Error("Chọn thiết bị nhận trước khi gửi."); api.report("Đang đóng gói sách…");
       const book = await root.EbookImport.get(slug); api.guard();
       if (!book) throw new Error("Sách không còn trên máy này.");
       // Reuse the validated backup format with exactly one book and no settings
@@ -113,12 +115,13 @@
       root.EbookImport.inspectArchive(new Uint8Array(await blob.arrayBuffer()), core.MAX_EXPANDED, 20000); api.guard();
       const sha256 = await core.digest(blob); api.guard();
       const id = crypto.randomUUID(), path = core.objectPath(api.owner, id);
-      await api.request(api.client.from("reader_ebook_transfers").insert({ id, sender_device: device, slug, title: book.titleVi.slice(0, 250), bytes: blob.size, sha256 }));
+      await api.request(api.client.from("reader_ebook_transfers").insert({ id, sender_device: device, slug, title: book.titleVi.slice(0, 250), bytes: blob.size, sha256, ...(devices !== null ? { recipient_device: target } : {}) }));
       api.report("Đang tải sách lên bucket tạm…");
       const payload = await blob.arrayBuffer(); api.guard();
       await api.request(api.client.storage.from(core.BUCKET).upload(path, payload, { contentType: "application/zip", cacheControl: "0", upsert: false }));
       const ready = await api.request(api.client.from("reader_ebook_transfers").update({ ready: true }).eq("id", id).select("id"));
       if (!ready?.length) throw new Error("Phiên chuyển sách không còn. Hãy gửi lại.");
+      if (offered && offered.slug === slug && offered.target === target) { await api.request(api.client.from("reader_book_requests").update({ resolved: true }).eq("id", offered.id)); offered = null; }
       api.report("Đã tải lên. Mở Đồng bộ → Chuyển ebook trên máy khác để nhận trong 30 phút.");
     });
     $("ebook-transfer-book").onchange = paint;
@@ -127,7 +130,18 @@
     document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
     addEventListener("online", refresh);
     setInterval(refresh, 10000);
-    return { setContext, refresh };
+    receiver.onchange = paint;
+    function setDevices(rows) {
+      devices = rows === null ? null : [...new Map(rows.map((d) => [d.device_id, d])).values()];
+      const chosen = receiver.value; receiver.replaceChildren(); receiver.hidden = devices === null;
+      if (devices) {
+        const placeholder = document.createElement("option"); placeholder.value = ""; placeholder.textContent = "Chọn máy nhận (online hoặc offline)"; receiver.append(placeholder);
+        for (const d of devices) { const option = document.createElement("option"); option.value = d.device_id; option.textContent = d.name; receiver.append(option); }
+        if (devices.some((d) => d.device_id === chosen)) receiver.value = chosen;
+      }
+      paint();
+    }
+    return { setContext, refresh, setDevices, async offer(slug, target, id) { panel.open = true; await refresh(); $("ebook-transfer-book").value = slug; receiver.value = target; offered = { slug, target, id }; paint(); $("ebook-transfer-send").focus(); report("Kiểm tra sách và máy nhận, rồi bấm Gửi sách để xác nhận."); } };
   }
   root.EbookTransferUI = { create };
 })(globalThis);

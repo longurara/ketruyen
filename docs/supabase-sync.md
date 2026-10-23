@@ -1,5 +1,54 @@
 # Đồng bộ giữa các máy
 
+## Nâng cấp đa thiết bị (0003 → frontend → 0004)
+
+Không chạy hai migration mới cùng lúc trước khi cập nhật frontend. Bản cũ chưa đăng ký `session_id` sẽ bị chặn sau bước 3.
+
+1. Trong SQL Editor, chạy `supabase/migrations/202610230003_reader_workspace.sql`. Migration này bổ sung bảng/API, chưa chặn các bản frontend cũ đọc tiến độ. Có thể chạy lại.
+2. Deploy frontend mới, gồm `reader-workspace.js`, `cloud-workspace.js` và service worker `tenshi-shell-v34`. Tải lại trang trên các máy, bật đồng bộ và mở **Thiết bị** để thấy máy đã đăng ký. Trước 0004, kết nối Presence riêng tư có thể chưa được phép; kiểm tra 20 giây và heartbeat vẫn hoạt động.
+3. Chạy `supabase/migrations/202610230004_enforce_reader_devices.sql`. Từ đây dữ liệu đọc và bucket chỉ cho phiên đã đăng ký, còn trong `auth.sessions`, chưa bị thu hồi. Chạy lại file an toàn. Nếu dùng CLI, đừng `db push` cả 0003/0004 trước bước deploy ở giữa.
+4. Chạy `supabase/setup/reader-workspace-cleanup.sql`. Job `reader-workspace-cleanup` chạy mỗi giờ, xóa phiên bản ghi chú quá 30 ngày, hoạt động quá 366 ngày và yêu cầu sách quá 30 phút. Giữ job/Edge Function dọn ebook đã thiết lập trước đó; SQL này không thay thế việc xóa object qua Storage API.
+
+Ứng dụng chỉ có anon key và không tự thực hiện các bước quản trị này. Kiểm thử local không chứng minh migration, cron hay cấu hình Auth đã được bật trên project thật.
+
+### Thiết bị, bảo mật và chuyển tiếp
+
+- **Tài khoản → Đồng bộ / Thiết bị / Bảo mật**: đổi tên từng trình duyệt/PWA, xem hoạt động gần nhất, thu hồi một máy hoặc đăng xuất các phiên khác. Một lần đăng nhập mới trên cùng cài đặt thay thế ràng buộc phiên cũ và giữ tên tùy chỉnh.
+- Đăng ký gắn với `session_id` trong JWT do Supabase cấp và hàng tương ứng trong `auth.sessions`. Một phiên đã thu hồi không thể đăng ký lại bằng UUID thiết bị khác. Mọi RPC quản lý đều giới hạn trong tài khoản hiện tại. Thu hồi **chặn cloud**, không xóa từ xa sách hay bản đọc đã lưu offline.
+- Vị trí văn bản chỉ gửi khi đổi, tối đa mỗi 5 giây; heartbeat mỗi 30 giây khi app đang hiển thị. Máy được xem là offline khi heartbeat quá 90 giây và không có Presence. Trình duyệt có thể tạm dừng timer khi app ở nền.
+- Banner đọc tiếp chỉ đưa bạn sang sách/chương sau khi bấm **Đọc tiếp tại đây**. Vị trí gồm sách, chương và neo văn bản; không gửi chiều rộng màn hình hay tọa độ cuộn của máy nguồn. Nếu thiếu ebook, xác nhận gửi yêu cầu đến máy nguồn; máy nguồn chọn sách và bấm **Gửi sách** để chấp thuận.
+- Trong **Chuyển ebook**, chọn máy nhận, kể cả máy đang offline. Máy đó có 30 phút để nhận. RLS lọc cả metadata và Storage theo máy gửi/nhận; lưu bền vào IndexedDB thành công rồi mới xác nhận và xóa object.
+- Đổi mật khẩu yêu cầu nhập lại và không lưu mật khẩu vào dữ liệu ứng dụng. Khi Supabase bật Secure password change và yêu cầu xác minh lại, bấm **Gửi mã xác minh**, nhập mã email rồi lưu lại. Quên mật khẩu/callback cũ tiếp tục hoạt động.
+- Đổi email hiển thị địa chỉ hiện tại và `new_email` đang chờ nếu Supabase trả về. Khi bật Secure email change trong Dashboard, phải xác nhận cả hộp thư cũ lẫn mới. Email xác nhận và thông báo bảo mật vẫn dùng Supabase Auth → Resend và các template trong `supabase/email-templates/`.
+
+Realtime chỉ đăng ký bảng `reader_signals` (user ID và bộ đếm); Presence chỉ có UUID thiết bị. Không phát nội dung ghi chú, sách hay mật khẩu lên kênh. Khi kênh mất kết nối, vòng kiểm tra 20 giây vẫn đọc dữ liệu qua API/RLS. Đổi tài khoản/phiên sẽ hủy kênh, đổi chủ hàng đợi và chặn kết quả đang chờ của phiên cũ.
+
+### Thống kê và mục tiêu
+
+Khoảng đọc/nghe có UUID riêng, UTC, sách, thiết bị, lần tương tác gần nhất và ID mục tiêu. Mỗi khoảng tối đa 30 giây, được ghi IndexedDB mỗi nhịp 5 giây và gửi lại cùng ID khi mất mạng. Server tuần tự hóa revision theo tài khoản; frontend đọc đến watermark cố định để không bỏ sót lần ghi đồng thời.
+
+Bộ tổng hợp lấy hợp các khoảng thời gian. Phần giao nhau thuộc lần tương tác mới nhất, sau đó phân xử bằng ID ổn định; không cộng bộ đếm từ từng máy. Mục tiêu chỉ đồng bộ định nghĩa (`id`, loại, đích, thời điểm bắt đầu) qua CAS; tiến độ lấy từ hoạt động và tập ID chương hoàn thành. Hai máy sửa cùng mục tiêu sẽ hiện lựa chọn bản giữ lại.
+
+**Thống kê** có lịch 366 ngày và chuỗi ngày đạt ít nhất một phút đọc/nghe. Múi giờ tài khoản thống nhất `Asia/Ho_Chi_Minh`. Cài đặt đọc, danh sách nhân vật và các tiện ích khác không được tải nguyên trạng lên server.
+
+Khi nâng cấp, máy đóng băng một bản thống kê cũ riêng trước nhịp hoạt động mới. Tại **Đồng bộ → Thống kê trước khi đồng bộ**, chọn **Dùng thống kê cũ của máy này** trên đúng máy gốc. Server chỉ nhận một lần, lưu mốc trước đồng bộ; số liệu từ máy khác vẫn ở cục bộ, không tự cộng vào tài khoản. Khi chưa chọn máy gốc, thống kê cloud chỉ hiển thị hoạt động mới.
+
+### Thùng rác và lịch sử ghi chú
+
+Trong **Ghi chú**, mở **Thùng rác** hoặc **Lịch sử chỉnh sửa** của một đánh dấu, tô màu hay ghi chú. Lưu/xóa mới ghi lịch sử; gõ từng phím không tạo revision. Phiên bản cục bộ và nội dung ghi chú được lưu trong cùng một lần ghi, nên lỗi quota không xác nhận mất dữ liệu thành công.
+
+Khôi phục giữ ID và neo văn bản, tạo revision mới. Khôi phục/xóa trên cloud dùng revision dự kiến; nếu máy khác đã thay đổi ghi chú, thao tác bị chặn để người dùng kiểm tra đồng bộ và chọn bản giữ lại. Khi offline vẫn lưu lịch sử và cho khôi phục cục bộ; xóa vĩnh viễn được xếp hàng và phải kiểm tra xung đột khi có mạng, giao diện báo đang chờ thay vì xác nhận đã xóa trên cloud.
+
+Xóa vĩnh viễn cần xác nhận, xóa các bản lưu trữ và giữ tombstone hiện tại cùng mốc purge. Máy cũ không được tự gửi một bản ghi đã bị purge trở lại. Lịch sử chỉ có từ lần nâng cấp này, hết hạn sau 30 ngày (RLS ẩn ngay khi hết hạn; cron xóa vật lý ở lượt kế tiếp).
+
+### Kiểm tra trước khi mở rộng cho người dùng
+
+`npm test` chạy Postgres/PGlite với cả bốn migration, chạy lại migration để kiểm tra tính lặp, hai tài khoản/ba phiên, JWT còn hạn bị thu hồi, Storage đúng máy nhận, CAS khôi phục/xóa và hàng đợi hoạt động trùng ID. Các test thuần kiểm tra giao nhau, phân xử ổn định, mốc nửa đêm Việt Nam, chuỗi ngày, mục tiêu cạnh tranh và mốc nhập thống kê.
+
+`npm run test:e2e` dùng SDK browser thật với HTTP/WebSocket fixture: không tạo tài khoản và không gửi email thật. Bao gồm desktop/mobile, đổi tên/thu hồi máy, OTP xác thực lại khi đổi mật khẩu, đổi email, callback khôi phục, đọc tiếp khi khác kích thước màn hình, thiếu ebook, khôi phục ghi chú, lịch đọc và gửi ZIP đến máy offline đã chọn. Tải hỏng/quota/xóa bucket lỗi được kiểm tra riêng.
+
+Trên Supabase thật, dùng hai tài khoản thử và hai máy để xác nhận RLS/Storage, thu hồi với JWT chưa hết hạn, thư xác minh trong cả hai hộp thư, Realtime riêng tư và các lượt cron. Thử này cần thao tác quản trị thực tế; không được suy ra từ kết quả fixture.
+
 Mở biểu tượng đám mây trên thanh đầu trang hoặc **Thư viện → ⋯ → Đồng bộ giữa các máy**. Đăng nhập bằng email và mật khẩu; nếu chưa có tài khoản, bấm **Tạo tài khoản** và xác nhận email nếu project yêu cầu. Sau khi đăng nhập, bấm **Bật đồng bộ cho máy này**. Làm tương tự trên thiết bị thứ hai với cùng tài khoản.
 
 Mật khẩu do Supabase Auth băm bằng bcrypt với salt phía server; ứng dụng không lưu mật khẩu trong localStorage, IndexedDB hay bảng đồng bộ. Đăng ký và đổi mật khẩu yêu cầu ít nhất 8 ký tự, tối đa 72 byte theo giới hạn bcrypt. Phiên đăng nhập/refresh token do SDK quản lý riêng. Nếu quên mật khẩu, nhập email rồi chọn **Quên mật khẩu?**, mở email khôi phục và nhập mật khẩu mới hai lần. Liên kết xác nhận/khôi phục chạy qua trang `sync-auth.html`, cho phép mở email trên trình duyệt khác.
@@ -8,7 +57,7 @@ Mật khẩu do Supabase Auth băm bằng bcrypt với salt phía server; ứng 
 
 ## Chuyển ebook bằng bucket tạm
 
-Sau khi bật đồng bộ, mở **Chuyển ebook sang máy khác**, chọn một ebook đã nhập trên máy và bấm **Gửi sách**. Máy còn lại đăng nhập cùng tài khoản, mở mục này và bấm **Nhận sách**. Sau khi tải lên hoàn tất, máy gửi có thể đóng ứng dụng; máy nhận có 30 phút để nhận. Danh sách cập nhật mỗi 10 giây khi hộp thoại/mục chuyển đang mở, hoặc bằng **Kiểm tra sách chờ nhận**.
+Sau khi bật đồng bộ, mở **Chuyển ebook sang máy khác**, chọn một ebook đã nhập trên máy, chọn thiết bị nhận và bấm **Gửi sách**. Máy còn lại đăng nhập cùng tài khoản, mở mục này và bấm **Nhận sách**. Sau khi tải lên hoàn tất, máy gửi có thể đóng ứng dụng; máy nhận có 30 phút để nhận. Danh sách cập nhật mỗi 10 giây khi hộp thoại/mục chuyển đang mở, hoặc bằng **Kiểm tra sách chờ nhận**.
 
 - Bucket `ebook-transfers` là riêng tư. Đường dẫn cố định `<user-id>/<transfer-id>/book.zip`; RLS giới hạn theo tài khoản và phiên còn hiệu lực. Không dùng link public hoặc signed URL. Không được ghi đè object đã tải lên.
 - Chuyển gói ZIP nội bộ chứa đúng một ebook đã phân tích cùng bìa, ảnh, định dạng và thay đổi chương TXT; không gửi nguyên bản EPUB/PDF gốc, cài đặt, ghi chú, token hay mật khẩu. Ghi chú/tiến độ vẫn dùng luồng đồng bộ riêng. Giới hạn gói 50 MB, nội dung giải nén 150 MB.

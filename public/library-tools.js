@@ -40,7 +40,9 @@
         parts: (Array.isArray(m.parts) ? m.parts : []).filter((p) => Number.isInteger(p.p) && p.p >= 0 && Number.isInteger(p.start) && Number.isInteger(p.end) && p.start >= 0 && p.end > p.start && typeof p.quote === "string")
           .slice(0, 50).map((p) => ({ p: p.p, start: p.start, end: p.end, quote: p.quote.slice(0, 6000), prefix: String(p.prefix || "").slice(0, 40), suffix: String(p.suffix || "").slice(0, 40) })),
         anchor: { block: Math.floor(clamp(m.anchor?.block, 0, 1000000, 0)), offset: clamp(m.anchor?.offset, 0, 1, 0), ...(Number.isInteger(m.anchor?.textOffset) && m.anchor.textOffset >= 0 ? { textOffset: Math.min(1000000, m.anchor.textOffset) } : {}) } }));
-    return { version: 1, books, marks, layout: { width: clamp(source.layout?.width, 460, 1100, 700), margin: clamp(source.layout?.margin, 12, 64, 48), gap: clamp(source.layout?.gap, 0.4, 2, 0.85) } };
+    const versions = (Array.isArray(source.versions) ? source.versions : []).filter((v) => v && /^[a-f\d-]{36}$/i.test(v.id) && Number.isFinite(v.at) && v.at > Date.now() - 30 * 86400000 && v.value?.id === v.markId)
+      .slice(-10000).map((v) => ({ ...v, value: normalizeState({ version: 1, marks: [v.value] }).marks[0] })).filter((v) => v.value);
+    return { version: 1, books, marks, versions, layout: { width: clamp(source.layout?.width, 460, 1100, 700), margin: clamp(source.layout?.margin, 12, 64, 48), gap: clamp(source.layout?.gap, 0.4, 2, 0.85) } };
   }
   function highlightRange(element, from, to, attributes) {
     const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT), nodes = []; let node, offset = 0;
@@ -61,8 +63,24 @@
     let stored; try { stored = JSON.parse(localStorage.getItem(KEY)); } catch (_) {}
     const state = normalizeState(stored);
     function persist() {
-      try { localStorage.setItem(KEY, JSON.stringify(state)); window.dispatchEvent(new Event("ketruyen-library-change")); return true; }
+      const previousVersions = state.versions;
+      try {
+        const previous = JSON.parse(localStorage.getItem(KEY) || "null");
+        const versions = [...state.versions.filter((v) => v.at > Date.now() - 30 * 86400000)];
+        const nextMarks = new Map(state.marks.map((m) => [m.id, m]));
+        const serialize = globalThis.ReaderSync?.canonical || JSON.stringify;
+        for (const old of normalizeState({ version: 1, marks: previous?.marks || [] }).marks) {
+          const next = nextMarks.get(old.id);
+          if (serialize(old) !== serialize(next)) {
+            const id = next?.changeId || crypto.randomUUID();
+            if (!versions.some((v) => v.id === id)) versions.push({ id, markId: old.id, value: old, deleted: !next, at: Date.now(), uploaded: false });
+          }
+        }
+        state.versions = versions;
+        localStorage.setItem(KEY, JSON.stringify(state)); window.dispatchEvent(new Event("ketruyen-library-change")); return true;
+      }
       catch (_) {
+        state.versions = previousVersions;
         const message = "Không lưu được thay đổi. Kiểm tra dung lượng hoặc quyền lưu dữ liệu.";
         if (document.querySelector("#library-dialog")?.open || document.querySelector("#workbench-dialog")?.open) feedback(message); else options.message(message);
         return false;
@@ -474,6 +492,7 @@
       $("#mark-form").onsubmit = (event) => {
         event.preventDefault(); const data = new FormData(event.target), previous = state.marks;
         const saved = { ...mark, id: mark.id || crypto.randomUUID(), label: String(data.get("label")).trim().slice(0, 160), note: String(data.get("note")).trim().slice(0, 4000), color: String(data.get("color") || "yellow"), createdAt: mark.createdAt || Date.now() };
+        if (mark.id && JSON.stringify(saved) !== JSON.stringify(mark)) saved.changeId = crypto.randomUUID();
         if (!mark.id && state.marks.length >= 5000) { feedback("Đã đạt 5.000 đánh dấu. Xóa bớt trước khi thêm."); return; }
         state.marks = [...state.marks.filter((item) => item.id !== saved.id), saved];
         if (!persist()) { state.marks = previous; return; }
@@ -508,13 +527,48 @@
       } });
       return true;
     }
+    function showVersions(markId) {
+      // Reload first: another tab or the cloud may have added a revision.
+      Object.assign(state, normalizeState(JSON.parse(localStorage.getItem(KEY) || "null")));
+      const versions = state.versions.filter((v) => markId ? v.markId === markId : !state.marks.some((m) => m.id === v.markId)).sort((a, b) => b.at - a.at);
+      const displayed = markId ? versions : [...new Map(versions.map((v) => [v.markId, v])).keys()].map((id) => versions.find((v) => v.markId === id));
+      show(markId ? "Lịch sử chỉnh sửa" : "Thùng rác", `<p class="tools-hint">Giữ 30 ngày kể từ khi lưu hoặc xóa. Lịch sử bắt đầu từ lần nâng cấp này.</p><button type="button" class="btn-link" id="versions-back">Về ghi chú</button>${displayed.map((v) => `<article class="tool-card"><h3>${escape(v.value.label || "Ghi chú")}</h3><p class="tools-hint">${escape(new Date(v.at).toLocaleString("vi"))} · ${v.deleted ? "Đã xóa" : "Bản trước khi lưu"}</p><p>${escape(v.value.note || v.value.parts?.map((p) => p.quote).join(" ") || "Vị trí đã đánh dấu")}</p><div class="tools-actions"><button type="button" class="btn-secondary" data-restore-version="${escape(v.id)}">Khôi phục bản này</button>${!markId ? `<button type="button" class="btn-link" data-purge-version="${escape(v.id)}">Xóa vĩnh viễn</button><button type="button" class="btn-link" data-versions-mark="${escape(v.markId)}">Lịch sử chỉnh sửa</button>` : ""}</div></article>`).join("") || '<p class="tools-empty">Chưa có phiên bản lưu trữ.</p>'}`);
+      $("#versions-back").onclick = showMarks;
+      panel.querySelectorAll("[data-versions-mark]").forEach((b) => b.onclick = () => showVersions(b.dataset.versionsMark));
+      async function action(button, purge) {
+        const version = versions.find((v) => v.id === (purge ? button.dataset.purgeVersion : button.dataset.restoreVersion));
+        if (!version) return;
+        if (purge && !await globalThis.AppDialog.confirm({ title: "Xóa vĩnh viễn ghi chú và toàn bộ lịch sử? Không thể hoàn tác.", danger: true })) return;
+        const before = JSON.parse(localStorage.getItem(KEY) || "null"), current = before?.marks?.find((m) => m.id === version.markId);
+        if (current && !await globalThis.AppDialog.confirm({ title: "Khôi phục sẽ thay thế ghi chú hiện tại bằng phiên bản đã chọn. Giữ phiên bản này?", danger: true })) return;
+        button.disabled = true;
+        try {
+          const cloud = await globalThis.ReaderWorkspace?.noteAction?.(purge ? "purge" : "restore", version);
+          if (cloud === "queued") { feedback("Đã xếp hàng xóa vĩnh viễn. Cần kết nối để kiểm tra xung đột và hoàn tất."); return; }
+          Object.assign(state, normalizeState(JSON.parse(localStorage.getItem(KEY) || "null")));
+          if (!cloud && purge) { state.versions = state.versions.filter((v) => v.markId !== version.markId); if (!persist()) { Object.assign(state, normalizeState(before)); return; } }
+          else if (!cloud) {
+            const restored = { ...version.value, changeId: crypto.randomUUID() }; state.marks = [...state.marks.filter((m) => m.id !== restored.id), restored];
+            const old = state.versions;
+            state.versions = [...old, { id: crypto.randomUUID(), markId: restored.id, value: restored, deleted: false, at: Date.now(), uploaded: false }];
+            if (!persist()) { Object.assign(state, normalizeState(before)); return; }
+          } else if (purge) { state.versions = state.versions.filter((v) => v.markId !== version.markId); localStorage.setItem(KEY, JSON.stringify(state)); }
+          decorateAll(); showVersions(markId); options.message(purge ? "Đã xóa vĩnh viễn." : "Đã khôi phục ghi chú và vị trí đánh dấu.");
+        } catch (error) { feedback(error.code === "40001" ? "Ghi chú đã đổi trên máy khác. Kiểm tra đồng bộ, chọn bản cần giữ rồi thử lại." : error.message); }
+        finally { button.disabled = false; }
+      }
+      panel.querySelectorAll("[data-restore-version]").forEach((b) => b.onclick = () => action(b, false));
+      panel.querySelectorAll("[data-purge-version]").forEach((b) => b.onclick = () => action(b, true));
+    }
     function showMarks() {
       const current = ctx(), available = state.marks.filter((mark) => !markScope || mark.slug === markScope).sort((a, b) => b.createdAt - a.createdAt);
-      show("Đánh dấu & Ghi chú", `<div class="tools-actions"><button type="button" id="bookmark-position" class="btn-primary"${current.view !== "reader" ? " disabled" : ""}>Lưu vị trí đang đọc</button></div><label>Sách<select id="marks-scope"><option value="">Tất cả sách</option>${options.series.map((book) => `<option value="${escape(book.slug)}"${book.slug === markScope ? " selected" : ""}>${escape(book.titleVi)}</option>`).join("")}</select></label><div class="saved-annotations">${available.length ? available.map((mark) => {
+      show("Đánh dấu & Ghi chú", `<div class="tools-actions"><button type="button" id="bookmark-position" class="btn-primary"${current.view !== "reader" ? " disabled" : ""}>Lưu vị trí đang đọc</button><button type="button" id="marks-trash" class="btn-secondary">Thùng rác</button></div><label>Sách<select id="marks-scope"><option value="">Tất cả sách</option>${options.series.map((book) => `<option value="${escape(book.slug)}"${book.slug === markScope ? " selected" : ""}>${escape(book.titleVi)}</option>`).join("")}</select></label><div class="saved-annotations">${available.length ? available.map((mark) => {
         const book = options.series.find((s) => s.slug === mark.slug), chapter = book?.volumesData?.[mark.volIdx]?.chapters[mark.chapIdx];
-        return `<article class="tool-card"><h3>${mark.type === "bookmark" ? "🔖 " : ""}${escape(mark.label || "Đoạn đã tô màu")}</h3><p class="tools-hint">${escape(book?.titleVi || "Sách chưa có trên kệ")} · ${escape(chapter?.title || "")}</p>${mark.parts.length ? `<blockquote>${escape(mark.parts.map((p) => p.quote).join("\n").slice(0, 250))}</blockquote>` : ""}${mark.note ? `<p>${escape(mark.note)}</p>` : ""}<div class="tools-actions"><button type="button" class="btn-link" data-open-mark="${escape(mark.id)}"${chapter ? "" : " disabled"}>Đến vị trí</button><button type="button" class="btn-link" data-edit-mark="${escape(mark.id)}">Sửa / Xóa</button></div></article>`;
+        return `<article class="tool-card"><h3>${mark.type === "bookmark" ? "🔖 " : ""}${escape(mark.label || "Đoạn đã tô màu")}</h3><p class="tools-hint">${escape(book?.titleVi || "Sách chưa có trên kệ")} · ${escape(chapter?.title || "")}</p>${mark.parts.length ? `<blockquote>${escape(mark.parts.map((p) => p.quote).join("\n").slice(0, 250))}</blockquote>` : ""}${mark.note ? `<p>${escape(mark.note)}</p>` : ""}<div class="tools-actions"><button type="button" class="btn-link" data-open-mark="${escape(mark.id)}"${chapter ? "" : " disabled"}>Đến vị trí</button><button type="button" class="btn-link" data-edit-mark="${escape(mark.id)}">Sửa / Xóa</button><button type="button" class="btn-link" data-history-mark="${escape(mark.id)}">Lịch sử chỉnh sửa</button></div></article>`;
       }).join("") : '<p class="tools-empty">Chưa có đánh dấu. Bôi đen câu để tô màu hoặc lưu vị trí đang đọc.</p>'}</div>`);
       $("#bookmark-position").onclick = bookmark;
+      $("#marks-trash").onclick = () => showVersions();
+      panel.querySelectorAll("[data-history-mark]").forEach((b) => b.onclick = () => showVersions(b.dataset.historyMark));
       $("#marks-scope").onchange = (event) => { markScope = event.target.value; showMarks(); };
       panel.querySelectorAll("[data-edit-mark]").forEach((button) => button.onclick = () => editMark(state.marks.find((m) => m.id === button.dataset.editMark)));
       panel.querySelectorAll("[data-open-mark]").forEach((button) => button.onclick = () => {

@@ -3,20 +3,28 @@
 const assert = require("node:assert/strict"), fs = require("node:fs"), path = require("node:path");
 const { authSession } = require("./sync");
 async function runEbookTransferChecks(browser, base) {
-  const session = authSession(), contexts = [], rows = new Map(), files = new Map(), receipts = [];
+  const contexts = [], registry = new Map(), rows = new Map(), files = new Map(), receipts = [];
   let failDelete = false, corruptDownload = false;
   async function device(mobile = false) {
+    const session = authSession(), sid = JSON.parse(Buffer.from(session.access_token.split(".")[1], "base64url")).session_id;
     const context = await browser.newContext({ viewport: { width: mobile ? 390 : 1280, height: 900 }, serviceWorkers: "block" }); contexts.push(context);
+    await context.routeWebSocket("wss://*.supabase.co/**", (ws) => ws.close());
     await context.route("https://*.supabase.co/**", async (route) => {
       const request = route.request(), url = new URL(request.url()), method = request.method();
       const body = request.headers()["content-type"]?.includes("application/json") ? request.postDataJSON() : null;
       if (url.pathname.endsWith("/user")) return route.fulfill({ json: session.user });
+      if (url.pathname.endsWith("/rpc/reader_device_register")) { const d = registry.get(sid) || { user_id: session.user.id, session_id: sid, device_id: body.installation, name: mobile ? "Điện thoại nhận" : "Máy gửi", last_seen: new Date().toISOString() }; registry.set(sid, d); return route.fulfill({ json: { ...d, server_time: new Date().toISOString() } }); }
+      if (url.pathname.endsWith("/rpc/reader_require_device")) return route.fulfill({ json: null });
+      if (url.pathname.endsWith("/rpc/reader_device_touch")) return route.fulfill({ json: new Date().toISOString() });
+      if (url.pathname.endsWith("/reader_devices")) return route.fulfill({ json: [...registry.values()] });
+      if (url.pathname.endsWith("/reader_workspace_meta")) return route.fulfill({ json: null });
+      if (["reader_activity", "reader_note_versions", "reader_note_purges", "reader_book_requests"].some((name) => url.pathname.endsWith("/" + name))) return route.fulfill({ json: [] });
       if (url.pathname.endsWith("/reader_sync_records")) return route.fulfill({ json: [] });
       if (url.pathname.endsWith("/rpc/reader_sync_apply")) return route.fulfill({ json: body.changes.map((r) => ({ record_key: r.key, value: r.value, revision: 1, applied: true })) });
       if (url.pathname.endsWith("/reader_ebook_transfers")) {
         if (method === "POST") { rows.set(body.id, { ...body, user_id: session.user.id, ready: false, received_at: null, expires_at: new Date(Date.now() + 1800000).toISOString() }); return route.fulfill({ status: 201, json: null }); }
         if (method === "PATCH") { const id = url.searchParams.get("id").slice(3); Object.assign(rows.get(id), body); return route.fulfill({ json: [{ id }] }); }
-        return route.fulfill({ json: [...rows.values()] });
+        return route.fulfill({ json: [...rows.values()].filter((r) => r.sender_device === registry.get(sid)?.device_id || r.recipient_device === registry.get(sid)?.device_id) });
       }
       if (url.pathname.endsWith("/rpc/reader_ebook_received")) { receipts.push(body.transfer_id); rows.get(body.transfer_id).received_at = new Date().toISOString(); return route.fulfill({ json: null }); }
       if (url.pathname.endsWith("/rpc/reader_ebook_forget")) {
@@ -38,6 +46,7 @@ async function runEbookTransferChecks(browser, base) {
         for (const key of body.prefixes) files.delete(key);
         return route.fulfill({ json: body.prefixes.map((name) => ({ name })) });
       }
+      if (url.pathname.endsWith("/rpc/reader_device_register")) return route.fulfill({ status: 404, json: { code: "PGRST202", message: "Legacy fixture" } });
       return route.abort();
     });
     await context.addInitScript((session) => { localStorage.setItem("ketruyen-auth-v1", JSON.stringify(session)); localStorage.setItem("ketruyen-sync-link-v1", session.user.id); }, session);
@@ -46,18 +55,23 @@ async function runEbookTransferChecks(browser, base) {
     await page.waitForSelector("#ebook-transfer-panel:not([hidden])");
     await page.click("#ebook-transfer-panel summary");
     await page.waitForFunction(() => !document.getElementById("ebook-transfer-refresh").disabled);
-    return { page, errors };
+    await page.waitForSelector('#sync-feedback[data-sync-state="synced"]');
+    return { page, context, errors, device: registry.get(sid).device_id };
   }
   const finished = (page) => page.waitForFunction(() => document.getElementById("ebook-transfer-panel").getAttribute("aria-busy") === "false" && !document.getElementById("ebook-transfer-refresh").disabled);
   try {
     const a = await device(), b = await device(true);
+    await a.page.click("#sync-now"); await a.page.waitForFunction(() => !document.getElementById("sync-now").disabled);
+    await a.page.selectOption("#ebook-transfer-recipient", b.device);
+    await b.context.setOffline(true);
     const slug = await a.page.evaluate(async () => {
       const book = await globalThis.EbookImport.parseFile(new File(["Chương 1\n\nNội dung kiểm tra chuyển ebook.\n\nĐoạn hai."], "Sach chuyen may.txt", { type: "text/plain" }));
       book.titleVi = "Sách chuyển máy"; await globalThis.EbookImport.save(book); return book.slug;
     });
     await a.page.click("#ebook-transfer-refresh"); await finished(a.page);
     await a.page.click("#ebook-transfer-send"); await finished(a.page);
-    assert.equal(rows.size, 1); assert.equal(files.size, 1);
+    assert.equal(rows.size, 1); assert.equal(files.size, 1); assert.equal([...rows.values()][0].recipient_device, b.device);
+    await b.context.setOffline(false);
     await b.page.click("#ebook-transfer-refresh"); await finished(b.page);
     if (process.env.SYNC_PREVIEW_DIR) { fs.mkdirSync(process.env.SYNC_PREVIEW_DIR, { recursive: true }); await b.page.screenshot({ path: path.join(process.env.SYNC_PREVIEW_DIR, "ebook-transfer-mobile.png") }); }
     corruptDownload = true;
@@ -90,7 +104,7 @@ async function runEbookTransferChecks(browser, base) {
     assert.match(await b.page.textContent("#ebook-transfer-status"), /Đã xóa bản tạm trên bucket/);
     assert.ok(await b.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), "mobile transfer panel overflows");
     assert.deepEqual(a.errors, []); assert.deepEqual(b.errors, []);
-    console.log("ebook handoff:\n  ✔ two devices, real ZIP/assets + IndexedDB, corrupt download, quota failure, cleanup retry and automatic bucket deletion");
+    console.log("ebook handoff:\n  ✔ selected offline recipient, two devices, real ZIP/assets + IndexedDB, corrupt download, quota failure, cleanup retry and automatic bucket deletion");
   } finally { await Promise.all(contexts.map((context) => context.close())); }
 }
 module.exports = { runEbookTransferChecks };

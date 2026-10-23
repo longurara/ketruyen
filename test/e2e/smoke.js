@@ -330,6 +330,8 @@ async function checkLinkPreviews() {
     }
     try { await runSyncChecks(browser, BASE); }
     catch (error) { failed = true; console.error(`✖ sync: ${error.stack}`); }
+    try { await require("./workspace").runWorkspaceChecks(browser, BASE); }
+    catch (error) { failed = true; console.error(`✖ workspace: ${error.stack}`); }
     try { await require("./ebook-transfer").runEbookTransferChecks(browser, BASE); }
     catch (error) { failed = true; console.error(`✖ ebook handoff: ${error.stack}`); }
   } finally {

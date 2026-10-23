@@ -8,6 +8,11 @@
     let recovery = sessionStorage.getItem("ketruyen-password-recovery") === "1";
     let phase = "idle", syncing = false, dirty = false;
     const transfers = root.EbookTransferUI.create({ onReceived: options.onEbookReceived });
+    const workspace = root.CloudWorkspace.create({ transfers, session: () => recovery ? null : session, client: () => client, request,
+      state: () => state, saveState: saveJournal, schedule, exclusive, bookName: options.bookName, capture: options.capture, resume: options.resume, open,
+      reloadNotes: options.reloadNotes,
+      revoked: () => { generation++; linked = ""; localStorage.removeItem(core.LINK_KEY); transfers.setContext(null); client?.auth.signOut({ scope: "local" }); session = null; render(); message("Quyền truy cập đám mây của phiên này đã bị thu hồi. Đăng nhập lại để tạo phiên mới.", "error"); }
+    });
     try { linked = localStorage.getItem(core.LINK_KEY) || ""; } catch (_) {}
     options.surfaces.attach(dialog);
     const message = (text, next = phase) => { phase = next; status.textContent = text; paintStatus(); };
@@ -39,7 +44,8 @@
       $("sync-email-label").textContent = session?.user?.email || "";
       $("sync-reset-email").value = session?.user?.email || "";
       const enabled = Boolean(session && linked === session.user.id);
-      transfers.setContext(enabled && !recovery ? { owner: session.user.id, client } : null);
+      workspace.setContext(enabled && !recovery ? { owner: session.user.id, client, session } : null);
+      transfers.setContext(enabled && !recovery ? { owner: session.user.id, client, sessionKey: workspace.sessionKey(session) } : null);
       $("sync-account-hint").textContent = enabled ? "Thiết bị này đã bật đồng bộ. Dùng Chuyển ebook bên dưới để gửi sách sang máy khác." : "Bật đồng bộ để kết hợp thư viện trên máy này với tài khoản và chuyển ebook giữa các máy.";
       $("sync-connect").hidden = enabled; $("sync-now").hidden = !enabled;
       for (const id of ["sync-send", "sync-signup", "sync-forgot", "sync-reset-save", "sync-connect", "sync-now", "sync-signout"]) $(id).disabled = busy;
@@ -64,12 +70,13 @@
     }
     function label(key) {
       const [type, id, chapter] = key.split("/");
-      const names = { progress: "Vị trí đọc", chapter: "Tiến độ chương", history: "Lịch sử đọc", favorite: "Yêu thích", status: "Trạng thái sách", groups: "Nhóm sách", mark: "Đánh dấu & ghi chú" };
+      const names = { progress: "Vị trí đọc", chapter: "Tiến độ chương", history: "Lịch sử đọc", favorite: "Yêu thích", status: "Trạng thái sách", groups: "Nhóm sách", mark: "Đánh dấu & ghi chú", goal: "Mục tiêu phiên đọc" };
       return `${names[type]}${type !== "mark" ? ` · ${options.bookName(id) || "Sách"}` : ""}${chapter && type === "chapter" ? ` · Chương ${Number(chapter.split(":")[1]) + 1}` : ""}`;
     }
     function describe(key, value) {
       if (value === null || value === undefined) return "Đã xóa";
       const type = key.split("/")[0];
+      if (type === "goal") return `${value.target} ${value.kind === "minutes" ? "phút" : "chương"}`;
       if (type === "favorite") return value ? "Yêu thích" : "Bỏ yêu thích";
       if (type === "status") return ({ "": "Chưa đặt", want: "Muốn đọc", reading: "Đang đọc", done: "Đã đọc" })[value];
       if (type === "groups") return value.join(", ") || "Chưa có nhóm";
@@ -106,7 +113,8 @@
       try { return await loading; } finally { loading = null; }
     }
     function account(next) {
-      const changed = session?.user?.id !== next?.user?.id;
+      const sessionId = (value) => { try { return JSON.parse(atob(value.access_token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))).session_id; } catch (_) { return null; } };
+      const changed = session?.user?.id !== next?.user?.id || sessionId(session) !== sessionId(next);
       if (changed) { generation++; state = null; phase = "idle"; dirty = false; }
       session = next; render();
       if (session && showAfterLogin) {
@@ -123,14 +131,14 @@
       busy = true; syncing = true; render(); message("Đang đồng bộ…", "syncing");
       try {
         const run = async () => {
-          guard(); state = (await saveJournal(owner)) || core.newState(owner); guard();
+          guard(); await workspace.beforeSync(); guard(); state = (await saveJournal(owner)) || core.newState(owner); guard();
           paintStatus();
           if (state.owner !== owner) throw new Error("Nhật ký đồng bộ không khớp tài khoản.");
           if (resolution && state.conflicts[resolution.key]) {
             core.stage(state, core.readLocal(localStorage));
             const remote = state.conflicts[resolution.key];
             if (remote) {
-              if (resolution.choice === "remote") { core.applyLocal(localStorage, { [resolution.key]: remote.value }); options.onApplied(); }
+              if (resolution.choice === "remote") { core.applyLocal(localStorage, { [resolution.key]: remote.value }, { [resolution.key]: state.pending[resolution.key]?.value }); options.onApplied(); }
               state.baseline[resolution.key] = remote; delete state.conflicts[resolution.key];
             }
           }
@@ -146,22 +154,29 @@
                 if (response.data.length < 500) return rows;
               }
             },
-            push: async (changes) => { guard(); const response = await request(client.rpc("reader_sync_apply", { changes })); guard(); if (response.error) throw response.error; return response.data; }
+            push: async (changes) => { guard(); const response = await request(client.rpc("reader_sync_apply", { changes: changes.map((c) => ({ ...c, mutation_id: workspace.mutationId(c.key, c.value) })) })); guard(); if (response.error) throw response.error; return response.data; }
           });
           guard();
+          await workspace.flush(); guard();
           dirty = result.pending > 0;
           message(result.conflicts ? "Có thay đổi trên cả hai máy. Chọn bản cần giữ bên dưới; các mục khác vẫn đồng bộ."
             : result.pending ? "Còn thay đổi chờ gửi · Sẽ thử lại tự động." : `Đã đồng bộ lúc ${new Date(state.lastCheckedAt).toLocaleTimeString("vi", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}.`, result.conflicts ? "conflict" : result.pending ? "pending" : "synced");
         };
         if (navigator.locks) await navigator.locks.request("ketruyen-reader-sync", { ifAvailable: true }, async (lock) => { if (lock) await run(); else message("Đang đồng bộ ở tab khác.", "pending"); });
         else await run();
-      } catch (error) { failure(error); }
+      } catch (error) { workspace.report(error); if (!/device-revoked/.test(error?.message || "")) failure(error); }
       finally { busy = false; syncing = false; render(); }
     }
     async function request(query) {
       const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 15000);
       try { const result = await query.abortSignal(controller.signal); if (controller.signal.aborted) throw new Error("sync-timeout"); return result; }
       finally { clearTimeout(timeout); }
+    }
+    async function exclusive(action) {
+      if (busy) throw new Error("Đang đồng bộ. Đợi kiểm tra hoàn tất rồi thử lại.");
+      busy = true; render();
+      try { return navigator.locks ? await navigator.locks.request("ketruyen-reader-sync", action) : await action(); }
+      finally { busy = false; render(); schedule(); }
     }
     function schedule(delay = 1000) { clearTimeout(timer); timer = setTimeout(() => sync(), delay); }
     function changed() {
@@ -227,6 +242,7 @@
       catch (error) { failure(error); } finally { render(); }
     };
     addEventListener("ketruyen-library-change", changed);
+    addEventListener("ketruyen-workspace-change", () => schedule());
     addEventListener("storage", (event) => { if (event.key?.startsWith("tenshi-")) { options.onApplied(); changed(); } });
     addEventListener("online", () => { if (session && linked === session.user.id) message("Đã có mạng · Đang chờ kiểm tra lại dữ liệu.", "pending"); else paintStatus(); schedule(0); });
     addEventListener("offline", () => message("Thay đổi vẫn lưu trên máy và sẽ gửi khi có mạng trở lại.", "offline"));

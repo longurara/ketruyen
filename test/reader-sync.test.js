@@ -9,6 +9,18 @@ class Storage {
   setItem(key, value) { this.map.set(key, value); }
   removeItem(key) { this.map.delete(key); }
 }
+test("concurrent shared goal edits require a version choice and do not upload local utility settings", async () => {
+  const server = cloud(), id = "11111111-1111-4111-8111-111111111111";
+  const goal = { id, kind: "minutes", target: 15, startedAt: 100 };
+  const a = device(server, { "tenshi-cloud-goal-v1": goal }), b = device(server);
+  await a.run(); await b.run();
+  a.storage.setItem("tenshi-cloud-goal-v1", JSON.stringify({ ...goal, target: 20 }));
+  b.storage.setItem("tenshi-cloud-goal-v1", JSON.stringify({ ...goal, target: 30 }));
+  await a.run(); const result = await b.run(); assert.equal(result.conflicts, 1);
+  assert.equal(b.state.conflicts["goal/current"].value.target, 20);
+  assert.equal(JSON.parse(b.storage.getItem("tenshi-cloud-goal-v1")).target, 30);
+  assert.equal(b.storage.getItem("tenshi-reader-tools-v1"), null);
+});
 const position = (chapter, timestamp = 1) => ({ volIdx: 0, chapIdx: chapter, timestamp });
 const mark = (id) => ({ id, slug: "book", type: "bookmark", volIdx: 0, chapIdx: 0, anchor: { block: 1, offset: 0 }, note: "Ghi chú riêng" });
 function cloud() {

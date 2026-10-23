@@ -4,9 +4,9 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs"), path = require("node:path");
 const USER = "11111111-1111-4111-8111-111111111111";
 const OTHER = "22222222-2222-4222-8222-222222222222";
-function authSession(id = USER) {
+function authSession(id = USER, sessionId = require("node:crypto").randomUUID()) {
   const expires = Math.floor(Date.now() / 1000) + 3600;
-  const payload = Buffer.from(JSON.stringify({ sub: id, role: "authenticated", exp: expires })).toString("base64url");
+  const payload = Buffer.from(JSON.stringify({ sub: id, role: "authenticated", exp: expires, session_id: sessionId })).toString("base64url");
   return { access_token: `eyJhbGciOiJIUzI1NiJ9.${payload}.test`, refresh_token: "local-fixture", token_type: "bearer", expires_in: 3600, expires_at: expires,
     user: { id, email: "reader@example.test", aud: "authenticated", role: "authenticated" } };
 }
@@ -44,6 +44,7 @@ async function runSyncChecks(browser, base) {
         });
         return route.fulfill({ json: result });
       }
+      if (url.pathname.endsWith("/rpc/reader_device_register")) return route.fulfill({ status: 404, json: { code: "PGRST202", message: "Additive migration not installed in legacy fixture" } });
       return route.abort();
     });
     await context.addInitScript(({ initial, account, linked, callback }) => {

@@ -13,6 +13,7 @@
     return JSON.stringify(value);
   }
   function validRecord(key, value) {
+    if (key === "goal/current") return value === null || object(value) && Object.keys(value).every((k) => ["id", "kind", "target", "startedAt"].includes(k)) && /^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(value.id) && ["minutes", "chapters"].includes(value.kind) && Number.isInteger(value.target) && value.target >= 1 && value.target <= (value.kind === "minutes" ? 240 : 50) && Number.isFinite(value.startedAt);
     if (typeof key !== "string" || key.length > 300 || !/^(progress|chapter|history|favorite|status|groups|mark)\/[a-z\d_:/-]+$/i.test(key)) return false;
     if (value === undefined) return false;
     if (JSON.stringify(value).length > 524288) return false;
@@ -57,9 +58,10 @@
       }
       for (const mark of library.marks) add(`mark/${mark.id}`, mark);
     }
+    const goal = storage.getItem("tenshi-cloud-goal-v1"); if (goal) add("goal/current", JSON.parse(goal));
     return records;
   }
-  function applyLocal(storage, updates) {
+  function applyLocal(storage, updates, preserve = {}) {
     const writes = new Map(), previous = new Map();
     const get = (key, fallback) => {
       if (!writes.has(key)) writes.set(key, JSON.parse(storage.getItem(key) || "null") ?? fallback);
@@ -68,7 +70,8 @@
     for (const [key, value] of Object.entries(updates)) {
       if (!validRecord(key, value)) throw new Error("Dữ liệu đồng bộ không đúng định dạng.");
       const [type, prefix, id] = key.split("/");
-      if (type === "progress") writes.set(`${prefix}-progress`, value);
+      if (type === "goal") writes.set("tenshi-cloud-goal-v1", value);
+      else if (type === "progress") writes.set(`${prefix}-progress`, value);
       else if (type === "chapter") {
         const chapters = get(`${prefix}-chapters`, {});
         if (value === null) delete chapters[id]; else chapters[id] = value;
@@ -79,6 +82,7 @@
       } else {
         const library = get("tenshi-library-v1", { version: 1, books: {}, marks: [] });
         if (type === "mark") {
+          if (preserve[key]) (library.versions ||= []).push({ id: crypto.randomUUID(), markId: prefix, value: preserve[key], deleted: false, at: Date.now(), uploaded: false });
           library.marks = library.marks.filter((m) => m.id !== prefix);
           if (value !== null) library.marks.push(value);
         } else {

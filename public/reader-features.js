@@ -145,6 +145,31 @@
       day.series = object(day.series);
     }
     const seriesList = options.series;
+    const workspace = globalThis.ReaderWorkspace;
+    try { if (state.goal && !localStorage.getItem("tenshi-cloud-goal-v1")) { state.goal.id ||= crypto.randomUUID(); localStorage.setItem("tenshi-cloud-goal-v1", JSON.stringify({ id: state.goal.id, kind: state.goal.kind, target: state.goal.target, startedAt: state.goal.startedAt || Date.now() })); } } catch (_) {}
+    // Freeze the pre-upgrade source once; future local ticks must not enter it.
+    try { if (!localStorage.getItem("ketruyen-legacy-stats-v1")) localStorage.setItem("ketruyen-legacy-stats-v1", JSON.stringify({ at: Date.now(), days: state.days, completedTotal: seriesList.reduce((n, book) => n + options.completed(book), 0) })); } catch (_) {}
+    let activityChunk = null, activityOwner = null;
+    const chapterRecording = new Set();
+    const recordActivity = async (event) => { try { await workspace?.record(event); return true; } catch (_) { message("Chưa lưu được hàng đợi hoạt động. Kiểm tra dung lượng trình duyệt."); return false; } };
+    function saveGoal() {
+      const goal = state.goal;
+      try { localStorage.setItem("tenshi-cloud-goal-v1", JSON.stringify(goal ? { id: goal.id, kind: goal.kind, target: goal.target, startedAt: goal.startedAt } : null)); globalThis.dispatchEvent(new Event("ketruyen-library-change")); }
+      catch (_) { message("Không lưu được mục tiêu. Kiểm tra dung lượng trình duyệt."); }
+    }
+    function reloadCloud() {
+      if (!workspace?.owner()) return;
+      try {
+        const shared = JSON.parse(localStorage.getItem("tenshi-cloud-goal-v1") || "null");
+        const progress = shared && workspace.summary()?.goals[shared.id];
+        state.goal = shared ? { ...shared, seconds: progress?.seconds || 0, chapters: progress?.chapters || [], notified: state.goal?.id === shared.id && state.goal.notified || false } : null;
+      } catch (_) {}
+      updateGoalButtons();
+      if (isOpen() && activeTab === "stats" && !panel.contains(document.activeElement)) renderStats();
+      // Leave a form being edited intact while background sync updates counters.
+      if (isOpen() && activeTab === "goal" && !panel.contains(document.activeElement)) renderGoal();
+    }
+    globalThis.addEventListener("ketruyen-stats-updated", reloadCloud);
     let storageWarning = false, activeTab = "characters", selectedQuote = null, quoteDraft = null;
     let showAllCharacters = false, characterSearch = "", characterSearchSeries = null;
     let lastActivity = Date.now(), lastTick = Date.now(), dialogOpener = null, savedSelection = "";
@@ -335,19 +360,21 @@
     }
 
     function renderStats() {
-      const dates = Array.from({ length: 7 }, (_, i) => { const date = new Date(); date.setDate(date.getDate() - 6 + i); return date; });
-      const week = dates.map((date) => ({ date, day: state.days[dayKey(date)] || {} }));
-      const total = Object.values(state.days).reduce((sum, day) => sum + (day.read || 0) + (day.listen || 0), 0);
+      const cloud = workspace?.owner() && workspace.summary(), days = cloud?.days || state.days;
+      const dates = Array.from({ length: 7 }, (_, i) => { if (cloud) return new Date(Date.now() - (6 - i) * workspace.DAY); const date = new Date(); date.setDate(date.getDate() - 6 + i); return date; });
+      const dateLabel = (date) => cloud ? workspace.dayKey(date.getTime()).slice(5).split("-").reverse().map(Number).join("/") : `${date.getDate()}/${date.getMonth() + 1}`;
+      const week = dates.map((date) => ({ date, day: days[cloud ? workspace.dayKey(date.getTime()) : dayKey(date)] || {} }));
+      const total = Object.values(days).reduce((sum, day) => sum + (day.read || 0) + (day.listen || 0), 0);
       const weekTotal = week.reduce((sum, { day }) => sum + (day.read || 0) + (day.listen || 0), 0);
       const max = Math.max(60, ...week.map(({ day }) => (day.read || 0) + (day.listen || 0)));
-      const completed = seriesList.reduce((sum, series) => sum + options.completed(series), 0);
-      if (!total && !completed) {
+      const completed = cloud ? cloud.completed : seriesList.reduce((sum, series) => sum + options.completed(series), 0);
+      if (!total && !completed && !cloud) {
         panel.innerHTML = `<div class="tools-empty-state"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 20h16M7 16v-4M12 16V7M17 16v-7"></path></svg><strong>Chưa có gì để thống kê</strong><p>Đọc hoặc nghe vài phút, thời gian và số chương đã xong sẽ hiện ở đây. Mọi số liệu chỉ lưu trên trình duyệt này.</p></div>`;
         return;
       }
-      panel.innerHTML = `<p class="tools-hint">Hoạt động trên trình duyệt này. Dừng đếm khi chuyển tab, mở tiện ích hoặc không tương tác quá 2 phút.</p>
+      panel.innerHTML = `<p class="tools-hint">${cloud ? "Hoạt động đồng bộ · Thời gian trùng giữa các máy chỉ tính một lần · Asia/Ho_Chi_Minh." : "Hoạt động trên trình duyệt này. Dừng đếm khi chuyển tab, mở tiện ích hoặc không tương tác quá 2 phút."}</p>${cloud ? `<p class="tools-hint">Chuỗi ngày đọc: <strong>${cloud.streak} ngày</strong>${cloud.legacy ? " · Có số liệu gốc trước đồng bộ" : ""}</p><h3 class="tools-subtitle">Lịch đọc · 366 ngày</h3><div class="reading-calendar" aria-label="Lịch đọc 366 ngày">${Array.from({ length: 366 }, (_, i) => { const key = workspace.dayKey(Date.now() - (365 - i) * workspace.DAY), day = days[key], seconds = (day?.read || 0) + (day?.listen || 0); return `<button type="button" data-date="${key}" data-seconds="${seconds}" data-level="${seconds < 60 ? 0 : seconds < 900 ? 1 : seconds < 1800 ? 2 : 3}" aria-label="${key}: ${Math.floor(seconds / 60)} phút" title="${key}: ${Math.floor(seconds / 60)} phút"></button>`; }).join("")}</div><p id="reading-calendar-detail" class="tools-hint" role="status">Chọn một ngày để xem thời gian đọc và nghe.</p>` : ""}
         <div class="tools-stat-grid"><div><strong>${duration(weekTotal)}</strong><span>7 ngày gần đây</span></div><div><strong>${completed}</strong><span>Chương đã hoàn thành</span></div><div><strong>${duration(total)}</strong><span>Tổng thời gian đã ghi</span></div></div>
-        <h3 class="tools-subtitle">Tuần đọc của bạn</h3>${weekTotal ? `<div class="reading-chart" role="img" aria-label="Thời gian đọc và nghe trong 7 ngày: ${escape(week.map(({ date, day }) => `${date.getDate()}/${date.getMonth() + 1}: ${duration((day.read || 0) + (day.listen || 0))}`).join("; "))}">${week.map(({ date, day }) => `<div class="reading-day"><span>${Math.floor(((day.read || 0) + (day.listen || 0)) / 60)}′</span><div class="reading-bar"><i style="height:${(day.read || 0) / max * 100}%"></i><b style="height:${(day.listen || 0) / max * 100}%"></b></div><small>${date.getDate()}/${date.getMonth() + 1}</small></div>`).join("")}</div>
+        <h3 class="tools-subtitle">Tuần đọc của bạn</h3>${weekTotal ? `<div class="reading-chart" role="img" aria-label="Thời gian đọc và nghe trong 7 ngày: ${escape(week.map(({ date, day }) => `${dateLabel(date)}: ${duration((day.read || 0) + (day.listen || 0))}`).join("; "))}">${week.map(({ date, day }) => `<div class="reading-day"><span>${Math.floor(((day.read || 0) + (day.listen || 0)) / 60)}′</span><div class="reading-bar"><i style="height:${(day.read || 0) / max * 100}%"></i><b style="height:${(day.listen || 0) / max * 100}%"></b></div><small>${dateLabel(date)}</small></div>`).join("")}</div>
         <p class="chart-legend"><span>● Đọc</span><span>● Nghe</span></p>` : '<p class="tools-empty">Chưa ghi nhận phút đọc hay nghe nào trong 7 ngày qua.</p>'}
         ${(() => {
           // Only books actually read this week, most time first.
@@ -355,6 +382,7 @@
             .filter((row) => row.seconds > 0).sort((a, b) => b.seconds - a.seconds);
           return rows.length ? `<h3 class="tools-subtitle">Theo bộ truyện · 7 ngày</h3>${rows.map(({ series, seconds }) => `<div class="tool-card tool-rule"><span>${escape(series.titleVi)}</span><strong>${duration(seconds)}</strong></div>`).join("")}` : "";
         })()}`;
+      panel.querySelectorAll(".reading-calendar button").forEach((button) => button.onclick = () => { $("#reading-calendar-detail").textContent = `${button.dataset.date.split("-").reverse().join("/")}: ${duration(Number(button.dataset.seconds))} · Giờ Việt Nam`; });
     }
 
     function renderGoal() {
@@ -363,8 +391,8 @@
         ${goal ? `<div class="goal-summary"><strong>${goal.notified ? "Đã hoàn thành phiên đọc" : progress.reached ? "Đã đạt mục tiêu · nhắc ở cuối chương" : "Phiên đọc đang diễn ra"}</strong><p>${goal.kind === "chapters" ? `${Math.min(progress.value, progress.target)}/${progress.target} chương` : `${duration(goal.seconds || 0)}/${goal.target} phút`}</p><progress value="${Math.min(progress.value, progress.target)}" max="${progress.target}"></progress><button type="button" class="btn-secondary tool-action" id="goal-stop">Kết thúc phiên</button></div>` : ""}
         <form id="goal-form" class="tools-editor"><label>Đặt mục tiêu<select name="kind" id="goal-kind"><option value="minutes">Thời gian đọc / nghe</option><option value="chapters">Số chương</option></select></label><label id="goal-target-label">Số phút<input name="target" id="goal-target" type="number" min="1" max="240" value="15" required></label><button class="btn-primary" type="submit">${goal ? "Bắt đầu phiên mới" : "Bắt đầu phiên đọc"}</button></form>`;
       $("#goal-kind").addEventListener("change", (event) => { const chapters = event.target.value === "chapters"; $("#goal-target-label").firstChild.textContent = chapters ? "Số chương" : "Số phút"; $("#goal-target").max = chapters ? "50" : "240"; $("#goal-target").value = chapters ? "2" : "15"; });
-      $("#goal-form").addEventListener("submit", (event) => { event.preventDefault(); const data = new FormData(event.target); state.goal = { kind: data.get("kind"), target: Number(data.get("target")), seconds: 0, chapters: [], startedAt: Date.now(), notified: false }; lastActivity = Date.now(); persist(); renderGoal(); updateGoalButtons(); message("Đã bắt đầu phiên đọc. Lời nhắc sẽ hiện ở cuối chương."); });
-      $("#goal-stop")?.addEventListener("click", () => { state.goal = null; persist(); renderGoal(); updateGoalButtons(); });
+      $("#goal-form").addEventListener("submit", (event) => { event.preventDefault(); const data = new FormData(event.target); state.goal = { id: crypto.randomUUID(), kind: data.get("kind"), target: Number(data.get("target")), seconds: 0, chapters: [], startedAt: Date.now(), notified: false }; lastActivity = Date.now(); saveGoal(); persist(); renderGoal(); updateGoalButtons(); message("Đã bắt đầu phiên đọc. Lời nhắc sẽ hiện ở cuối chương."); });
+      $("#goal-stop")?.addEventListener("click", () => { state.goal = null; saveGoal(); persist(); renderGoal(); updateGoalButtons(); });
     }
 
     function quoteContext(text, article) {
@@ -575,8 +603,13 @@
       const day = state.days[dayKey()] ||= { read: 0, listen: 0, completed: [], series: {} };
       let changed = false;
       if (!day.completed.includes(id)) { day.completed.push(id); changed = true; }
-      if (state.goal && !state.goal.notified) { if (!state.goal.chapters.includes(id)) { state.goal.chapters.push(id); changed = true; } notifyGoal(); }
+      if (state.goal && !state.goal.notified && !workspace?.owner()) { if (!state.goal.chapters.includes(id)) { state.goal.chapters.push(id); changed = true; } notifyGoal(); }
       if (changed) persist();
+      const eventKey = `${workspace?.owner()}:${state.goal?.id || ""}:${dayKey()}:${id}`;
+      if (workspace?.owner() && !chapterRecording.has(eventKey)) {
+        chapterRecording.add(eventKey); const now = Date.now();
+        recordActivity({ id: crypto.randomUUID(), kind: "chapter", slug: currentSeries().slug, start: now, end: now, interaction: lastActivity, chapter: id, ...(state.goal?.id ? { goalId: state.goal.id } : {}) }).then((saved) => { if (!saved) chapterRecording.delete(eventKey); else notifyGoal(); });
+      }
       updateGoalButtons();
     }
     function notifyGoal() {
@@ -593,9 +626,13 @@
       const now = Date.now(), delta = Math.max(0, Math.min(10, (now - lastTick) / 1000)); lastTick = now;
       const ctx = context();
       if (ctx.view !== "reader" || document.visibilityState !== "visible" || !document.hasFocus() || dialog.open || ctx.blocked || (!ctx.listening && now - lastActivity > 120000)) return;
+      const kind = ctx.listening ? "listen" : "read", start = now - delta * 1000, goalId = state.goal?.id;
+      if (!activityChunk || activityOwner !== workspace?.owner() || activityChunk.kind !== kind || activityChunk.slug !== ctx.series.slug || activityChunk.goalId !== goalId || start - activityChunk.end > 1000 || now - activityChunk.start > 30000) activityChunk = { id: crypto.randomUUID(), kind, slug: ctx.series.slug, start, end: now, interaction: lastActivity, ...(goalId ? { goalId } : {}) };
+      else activityChunk = { ...activityChunk, end: now, interaction: lastActivity };
+      activityOwner = workspace?.owner(); recordActivity(activityChunk);
       const day = state.days[dayKey()] ||= { read: 0, listen: 0, completed: [], series: {} };
       day[ctx.listening ? "listen" : "read"] += delta; day.series[ctx.series.slug] = (day.series[ctx.series.slug] || 0) + delta;
-      if (state.goal && !state.goal.notified) { state.goal.seconds += delta; if (ctx.percent >= 97) notifyGoal(); }
+      if (state.goal && !state.goal.notified) { if (!workspace?.owner()) state.goal.seconds += delta; if (ctx.percent >= 97) notifyGoal(); }
       // Retain one year; private statistics never grow without a bound.
       Object.keys(state.days).sort().slice(0, -366).forEach((key) => delete state.days[key]);
       persist(); updateGoalButtons();
@@ -634,7 +671,7 @@
       const character = event.target.closest("[data-character-id]"); if (character) open("characters", character.dataset.characterId);
       const button = event.target.closest("[data-reader-feature]"); if (button) { if (button.dataset.readerFeature === "quotes") readSelection(); open(button.dataset.readerFeature); }
     });
-    return { open, renderEmbedded, attachHost: (host) => { embeddedHost = host; }, characterList: visibleCharacters, reached: () => [...(state.reached[currentSeries().slug] || [])], isOpen, updates, syncSeries, onView, openedChapter, completeChapter, decorateChapter, speech: (text) => applyPronunciation(text, pronunciationRules()) };
+    return { open, reloadCloud, renderEmbedded, attachHost: (host) => { embeddedHost = host; }, characterList: visibleCharacters, reached: () => [...(state.reached[currentSeries().slug] || [])], isOpen, updates, syncSeries, onView, openedChapter, completeChapter, decorateChapter, speech: (text) => applyPronunciation(text, pronunciationRules()) };
   }
 
   return { create, chapterEntries, newChapters, applyPronunciation, dayKey, goalProgress, unlockedCharacters, mergeCharacterCatalog, wrapLines };
