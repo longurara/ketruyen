@@ -1,0 +1,42 @@
+{
+  "Confirm sign up": {
+    "subject": "Xác nhận email để bắt đầu đọc | Kệ truyện",
+    "file": "confirm-signup.html",
+    "supabaseKey": "confirmation"
+  },
+  "Invite user": {
+    "subject": "Một lời mời đến Kệ truyện dành cho bạn",
+    "file": "invite-user.html",
+    "supabaseKey": "invite"
+  },
+  "Magic link or OTP": {
+    "subject": "Liên kết đăng nhập của bạn | Kệ truyện",
+    "file": "magic-link.html",
+    "supabaseKey": "magic_link"
+  },
+  "Change email address": {
+    "subject": "Xác nhận thay đổi email của bạn | Kệ truyện",
+    "file": "change-email.html",
+    "supabaseKey": "email_change"
+  },
+  "Reset password": {
+    "subject": "Đặt lại mật khẩu tài khoản | Kệ truyện",
+    "file": "reset-password.html",
+    "supabaseKey": "recovery"
+  },
+  "Reauthentication": {
+    "subject": "Mã xác minh tài khoản của bạn | Kệ truyện",
+    "file": "reauthentication.html",
+    "supabaseKey": "reauthentication"
+  },
+  "Password changed": {
+    "subject": "Mật khẩu của bạn đã được thay đổi | Kệ truyện",
+    "file": "password-changed.html",
+    "supabaseKey": "password_changed_notification"
+  },
+  "Email address changed": {
+    "subject": "Địa chỉ email tài khoản đã được thay đổi | Kệ truyện",
+    "file": "email-address-changed.html",
+    "supabaseKey": "email_changed_notification"
+  }
+}
