@@ -1141,6 +1141,25 @@
     renderRecentChapters();
     attachEvents();
     await restoreRoute();
+    CloudSync.create({ surfaces: readerSurfaces, closeSettings,
+      bookName: (id) => SERIES.find((s) => id === s.slug || id === (s.legacyStorage ? "tenshi" : `tenshi-${s.slug}`))?.titleVi,
+      onEbookReceived: async (slug) => {
+        if (!SERIES.some((book) => book.slug === slug)) {
+          const book = (await EbookImport.list()).find((item) => item.slug === slug);
+          if (book) SERIES.push(EbookImport.hydrate(book));
+        }
+        renderShelf();
+      },
+      onApplied: () => {
+        libraryTools.reload(); readingProgress = null; readingHistory = []; chapterState = {};
+        loadReadingProgress(); loadChapterState(); loadReadingHistory();
+        renderShelf(); renderVolumeGrid(); renderChapterList(); renderRecentChapters();
+        preserveReaderPosition(() => document.querySelectorAll(".reader-frame").forEach((element) => libraryTools.decorate(element)));
+        const recent = SERIES.filter((book) => !Array.isArray(book.volumesData) && savedSeriesState(book).progress)
+          .sort((a, b) => savedSeriesState(b).progress.timestamp - savedSeriesState(a).progress.timestamp).slice(0, 8);
+        if (recent.length) Promise.allSettled(recent.map(ensureSeriesIndex)).then(() => renderShelf());
+      }
+    });
     isReadyForRefresh = true;
     registerServiceWorker();
     updateSaveAllButton();
@@ -1897,6 +1916,7 @@
 
   function saveChapterState() {
     localStorage.setItem(seriesStorageKey("chapters"), JSON.stringify(chapterState));
+    window.dispatchEvent(new Event("ketruyen-library-change"));
   }
 
   // Accent-folded, lower-case copy used for matching. The text is NFC
@@ -4867,6 +4887,7 @@
 
     localStorage.setItem(seriesStorageKey("progress"), JSON.stringify(readingProgress));
     recordReadingHistory(volIdx, chapIdx);
+    window.dispatchEvent(new Event("ketruyen-library-change"));
     updateContinueUI();
     renderChapterList();
     renderVolumeGrid();

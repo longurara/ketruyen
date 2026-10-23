@@ -8,6 +8,7 @@ const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const { chromium, devices } = require("playwright");
+const { runSyncChecks } = require("./sync");
 
 const PORT = Number(process.env.E2E_PORT) || 3123;
 const BASE = `http://localhost:${PORT}`;
@@ -327,6 +328,10 @@ async function checkLinkPreviews() {
       }
       await context.close();
     }
+    try { await runSyncChecks(browser, BASE); }
+    catch (error) { failed = true; console.error(`✖ sync: ${error.stack}`); }
+    try { await require("./ebook-transfer").runEbookTransferChecks(browser, BASE); }
+    catch (error) { failed = true; console.error(`✖ ebook handoff: ${error.stack}`); }
   } finally {
     await browser.close();
     server.kill();

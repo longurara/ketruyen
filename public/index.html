@@ -10,6 +10,7 @@
   <!-- The online listening voice (translate.google.com audio) refuses
        requests that carry another site's address. -->
   <meta name="referrer" content="no-referrer">
+  <script>if (new URLSearchParams(location.hash.slice(1)).has("access_token") || new URLSearchParams(location.hash.slice(1)).has("error_description")) location.replace("/sync-auth.html" + location.hash);</script>
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
@@ -39,6 +40,7 @@
   <link rel="stylesheet" href="ui-controls.css">
   <link rel="stylesheet" href="motion.css">
   <link rel="stylesheet" href="reading-comfort.css">
+  <link rel="stylesheet" href="sync.css">
 </head>
 <body data-view="home" data-theme="sepia" data-images="color" data-eink="off">
   <script>
@@ -95,6 +97,7 @@
       </button>
 
       <div class="header-actions">
+        <button id="btn-sync" class="header-btn" type="button" data-open-sync aria-label="Đồng bộ giữa các máy" title="Đồng bộ giữa các máy"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17H6a4 4 0 0 1-.7-7.9 7 7 0 0 1 13.4 0A4 4 0 0 1 18 17h-1M9 15l3-3 3 3M12 12v8"></path></svg></button>
         <button id="btn-reader-tools" class="header-btn" aria-label="Thống kê đọc" title="Thống kê đọc">
           <svg class="header-icon-stats" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"></path></svg>
           <svg class="header-icon-tools" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v16H4zM14 4h6v16h-6zM7 8h1M7 12h1M17 8h1M17 12h1"></path></svg>
@@ -316,6 +319,7 @@
               <div class="shelf-more-menu">
                 <button id="btn-check-updates" class="shelf-menu-action shelf-update-check" type="button">Kiểm tra chương mới</button>
                 <button id="btn-library-backup" class="shelf-menu-action" type="button">Sao lưu / Khôi phục</button>
+                <button class="shelf-menu-action" type="button" data-open-sync>Đồng bộ giữa các máy</button>
               </div>
             </details>
           </div>
@@ -795,6 +799,25 @@
       <button id="ebook-save" type="submit" class="btn-primary" disabled>Thêm vào kệ</button>
     </form>
   </dialog>
+  <dialog id="sync-dialog" class="tools-dialog sync-dialog" aria-labelledby="sync-title">
+    <div class="tools-heading"><h2 id="sync-title">Đọc tiếp trên mọi máy</h2><button id="sync-close" class="tools-close" type="button" aria-label="Đóng đồng bộ">×</button></div>
+    <div class="sync-body">
+    <p class="sync-copy">Đồng bộ vị trí đọc, tiến độ chương, yêu thích, nhóm sách và ghi chú. Bạn vẫn đọc được khi mất mạng.</p>
+    <form id="sync-login"><label for="sync-email">Email</label><input id="sync-email" type="email" autocomplete="email" required maxlength="254" placeholder="ban@example.com"><label for="sync-password">Mật khẩu</label><input id="sync-password" type="password" autocomplete="current-password" required maxlength="256"><div class="sync-actions"><button id="sync-send" class="btn-primary" type="submit">Đăng nhập</button><button id="sync-signup" class="btn-secondary" type="button">Tạo tài khoản</button></div><button id="sync-forgot" class="btn-link" type="button">Quên mật khẩu?</button></form>
+    <form id="sync-reset" hidden><input id="sync-reset-email" type="email" autocomplete="username" hidden><label for="sync-new-password">Mật khẩu mới</label><input id="sync-new-password" type="password" autocomplete="new-password" required minlength="8" maxlength="72"><label for="sync-confirm-password">Nhập lại mật khẩu mới</label><input id="sync-confirm-password" type="password" autocomplete="new-password" required minlength="8" maxlength="72"><button id="sync-reset-save" class="btn-primary" type="submit">Lưu mật khẩu mới</button></form>
+    <div id="sync-account" class="sync-account" hidden><strong id="sync-email-label"></strong><p id="sync-account-hint" class="sync-copy">Bật đồng bộ để kết hợp thư viện trên máy này với tài khoản. Ebook nhập riêng cần có trên cả hai máy.</p><div class="sync-actions"><button id="sync-connect" class="btn-primary" type="button">Bật đồng bộ cho máy này</button><button id="sync-now" class="btn-primary" type="button" hidden>Kiểm tra đồng bộ</button><button id="sync-signout" class="btn-secondary" type="button">Đăng xuất</button></div></div>
+    <details id="ebook-transfer-panel" class="ebook-transfer-panel" hidden>
+      <summary>Chuyển ebook sang máy khác</summary>
+      <p class="sync-copy">Chuyển sách riêng tư qua đám mây. Bản tạm tự xóa khi nhận thành công; phiên nhận hết hạn sau 30 phút.</p>
+      <label id="ebook-transfer-book-label" for="ebook-transfer-book" hidden>Sách trên máy này</label>
+      <select id="ebook-transfer-book" hidden></select><p id="ebook-transfer-empty" class="sync-copy" hidden>Máy này chưa có ebook. Sách chờ nhận sẽ hiện bên dưới.</p>
+      <div class="sync-actions"><button id="ebook-transfer-send" type="button" class="btn-primary" disabled hidden>Gửi sách</button><button id="ebook-transfer-refresh" type="button" class="btn-secondary">Kiểm tra sách chờ nhận</button></div>
+      <progress id="ebook-transfer-progress" aria-label="Đang chuyển sách" hidden></progress><p id="ebook-transfer-status" class="sync-copy" role="status" aria-live="polite"></p><a id="ebook-transfer-open" class="btn-secondary" hidden>Mở sách vừa nhận</a>
+      <div id="ebook-transfer-list"></div>
+    </details>
+    <div id="sync-feedback" class="sync-feedback" data-sync-state="idle" role="status" aria-live="polite" aria-atomic="true"><span class="sync-indicator" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><g class="sync-glyph-progress"><path d="M20 7v5h-5M4 17v-5h5"></path><path d="M6 7a7 7 0 0 1 12-1l2 2M18 17A7 7 0 0 1 6 18l-2-2"></path></g><path class="sync-glyph-done" d="m6 12 4 4 8-8"></path><path class="sync-glyph-alert" d="M12 6v7m0 4h.01"></path><g class="sync-glyph-offline"><path d="M7 17H6a4 4 0 0 1-1-7.9M10 5a7 7 0 0 1 9 4a4 4 0 0 1 1 7M3 3l18 18"></path></g></svg></span><div class="sync-feedback-copy"><strong id="sync-state-label">Chưa đăng nhập</strong><p id="sync-status"></p><p id="sync-transfer" hidden></p><p id="sync-pending" hidden></p><p id="sync-last-success" hidden></p></div></div><h3 id="sync-conflict-heading" hidden></h3><div id="sync-conflicts"></div>
+    </div>
+  </dialog>
   <script src="app-dialog.js"></script>
   <script src="pdf-reader.js"></script>
   <script src="ebook-import.js"></script>
@@ -812,6 +835,11 @@
   <script src="book-format.js"></script>
   <script src="app-routes.js"></script>
   <script src="page-turn.js"></script>
+  <script src="sync-config.js"></script>
+  <script src="reader-sync.js"></script>
+  <script src="ebook-transfer.js"></script>
+  <script src="ebook-transfer-ui.js"></script>
+  <script src="sync-ui.js"></script>
   <script src="app.js"></script>
   <script src="ui-controls.js"></script>
 </body>

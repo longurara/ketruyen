@@ -1,5 +1,7 @@
 # Kệ sách cá nhân và tiện ích đọc
 
+Đồng bộ vị trí đọc, kệ và ghi chú qua Supabase: xem [hướng dẫn đồng bộ](supabase-sync.md).
+
 ## Trên kệ sách
 
 - Tìm tên sách, tác giả, nhóm và thẻ không phân biệt dấu tiếng Việt.

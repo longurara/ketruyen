@@ -61,7 +61,7 @@
     let stored; try { stored = JSON.parse(localStorage.getItem(KEY)); } catch (_) {}
     const state = normalizeState(stored);
     function persist() {
-      try { localStorage.setItem(KEY, JSON.stringify(state)); return true; }
+      try { localStorage.setItem(KEY, JSON.stringify(state)); window.dispatchEvent(new Event("ketruyen-library-change")); return true; }
       catch (_) {
         const message = "Không lưu được thay đổi. Kiểm tra dung lượng hoặc quyền lưu dữ liệu.";
         if (document.querySelector("#library-dialog")?.open || document.querySelector("#workbench-dialog")?.open) feedback(message); else options.message(message);
@@ -597,6 +597,7 @@
     });
     applyLayout();
     return { filterSeries, setSection, shelfItem, decorate, quickBookmark, openMarks: () => { markScope = ctx().view === "reader" ? ctx().series.slug : ""; showMarks(); }, openLayout: showLayout, openToc: showToc,
+      reload: () => { const next = normalizeState(JSON.parse(localStorage.getItem(KEY) || "null")); Object.assign(state, next); updateGroups(); },
       attachHost: (host) => { embeddedHost = host; }, canClose: () => !busy,
       getMarks: () => state.marks.filter((m) => m.slug === ctx().series.slug), getLayout: () => ({ ...state.layout }),
       setLayout: (layout) => { state.layout = normalizeState({ ...state, layout }).layout; persist(); options.preservePosition(applyLayout); },

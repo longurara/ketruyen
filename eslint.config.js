@@ -5,6 +5,7 @@ const globals = require("globals");
 // globals the others define. The same files export to Node for the tests.
 const PAGE_MODULES = {
   AppDialog: "readonly",
+  CloudSync: "readonly",
   AppRoutes: "readonly",
   BookFormat: "readonly",
   PageTurn: "readonly",

@@ -81,7 +81,7 @@
       let size = 0; const chunks = [], stream = zip.file(path).internalStream("uint8array");
       stream.on("data", (chunk) => {
         size += chunk.length; budget.bytes += chunk.length;
-        if (size > limit || budget.bytes > MAX_EXPANDED) { stream.pause(); reject(new Error("Bản sao lưu vượt quá dung lượng cho phép.")); }
+        if (size > limit || budget.bytes > (budget.limit || MAX_EXPANDED)) { stream.pause(); reject(new Error("Bản sao lưu vượt quá dung lượng cho phép.")); }
         else chunks.push(chunk);
       }).on("error", reject).on("end", () => {
         const data = new Uint8Array(size); let offset = 0;
@@ -90,9 +90,9 @@
       }).resume();
     });
   }
-  async function exportData(report = () => {}) {
-    const JSZip = await EbookImport.loadZip(), zip = new JSZip(), books = await EbookImport.all(), settings = {};
-    for (let i = 0; i < localStorage.length; i++) {
+  async function exportData(report = () => {}, selectedBooks) {
+    const JSZip = await EbookImport.loadZip(), zip = new JSZip(), books = selectedBooks || await EbookImport.all(), settings = {};
+    for (let i = 0; !selectedBooks && i < localStorage.length; i++) {
       const key = localStorage.key(i); if (key.startsWith("tenshi-")) settings[key] = localStorage.getItem(key);
     }
     let expanded = 0, entries = 1;
@@ -116,13 +116,13 @@
     if (result.size > MAX_BACKUP) throw new Error("Tệp sao lưu vượt quá 512 MB.");
     return result;
   }
-  async function readBackup(file, report = () => {}) {
-    if (!file.size || file.size > MAX_BACKUP) throw new Error("Bản sao lưu tối đa 512 MB.");
-    const bytes = new Uint8Array(await file.arrayBuffer()); EbookImport.inspectArchive(bytes, MAX_EXPANDED, 20000);
-    const JSZip = await EbookImport.loadZip(), zip = await JSZip.loadAsync(bytes), budget = { bytes: 0 };
+  async function readBackup(file, report = () => {}, limits = {}) {
+    if (!file.size || file.size > (limits.maxFile || MAX_BACKUP)) throw new Error("Bản sao lưu vượt quá dung lượng cho phép.");
+    const bytes = new Uint8Array(await file.arrayBuffer()); EbookImport.inspectArchive(bytes, limits.maxExpanded || MAX_EXPANDED, 20000);
+    const JSZip = await EbookImport.loadZip(), zip = await JSZip.loadAsync(bytes), budget = { bytes: 0, limit: limits.maxExpanded || MAX_EXPANDED };
     const json = async (path, cap) => { try { return JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(await readEntry(zip, path, cap, budget))); } catch (_) { fail(); } };
     const manifest = await json("library.json", 10 * 1024 * 1024);
-    if (manifest.format !== "tenshi-library" || manifest.version !== 1 || !Array.isArray(manifest.books) || manifest.books.length > 1000 || new Set(manifest.books).size !== manifest.books.length) fail();
+    if (manifest.format !== "tenshi-library" || manifest.version !== 1 || !Array.isArray(manifest.books) || manifest.books.length > (limits.maxBooks || 1000) || new Set(manifest.books).size !== manifest.books.length) fail();
     const settings = validateSettings(manifest.settings), books = [];
     for (const slug of manifest.books) {
       if (!/^ebook-[a-f\d]{24}$/.test(slug)) fail();
