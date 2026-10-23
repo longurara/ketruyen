@@ -367,6 +367,7 @@
         <span class="shelf-card-title${series.titleVi.length > 32 ? " is-long" : ""}">${escapeHtml(series.titleVi)}</span>
         <span class="shelf-card-author">${escapeHtml(series.author || "")}</span>
         <span class="shelf-card-meta">${series.personal ? `${escapeHtml(series.sourceFormat)} · Ebook cá nhân` : `${series.volumes} tập`} · ${series.chapters} chương</span>
+        ${shelfOnDevice && shelfDeviceBooks.has(series.slug) ? `<span class="shelf-device-badge">${series.personal ? "Đã lưu trên máy" : `${shelfDeviceBooks.get(series.slug).volumes}/${series.volumes} tập có nội dung trên máy`}</span>` : ""}
         ${updates ? `<span class="chapter-update-badge">${updates} chương mới</span>` : ""}
         ${series.description ? `<span class="shelf-card-description">${escapeHtml(series.description)}</span>` : ""}
         <span class="shelf-card-action">${resume ? `Đang đọc dở · ${escapeHtml(resume)}` : series.personal ? "Mở sách" : "Xem bộ truyện"} <span aria-hidden="true">→</span></span>
@@ -396,15 +397,21 @@
       shelfObserver = null;
     }
     shelfGrid.innerHTML = "";
-    const ordered = libraryTools ? libraryTools.filterSeries(SERIES) : SERIES;
+    paintShelfConnection();
+    const books = shelfOnDevice ? SERIES.filter((book) => shelfDeviceBooks.has(book.slug)) : SERIES;
+    const ordered = libraryTools ? libraryTools.filterSeries(books, { onDevice: shelfOnDevice }) : books;
     if (!ordered.length) {
       const query = $("#shelf-search").value.trim();
       const filtered = $("#shelf-status").value !== "all" || $("#shelf-group").value;
-      shelfGrid.innerHTML = `<div class="shelf-empty" role="status"><p class="shelf-empty-title">${query ? `Không có sách nào khớp “${escapeHtml(query)}”` : "Không có sách phù hợp"}</p><p class="tools-empty">${filtered ? "Thử bỏ bớt bộ lọc trạng thái hoặc nhóm, hoặc tìm ở một kệ khác." : "Thử từ khóa ngắn hơn, tên tác giả, hoặc tìm ở một kệ khác."}</p><button type="button" class="btn-secondary">Xóa tìm kiếm và bộ lọc</button></div>`;
+      const noLocal = shelfOnDevice && !shelfDeviceBooks.size;
+      const title = noLocal ? !shelfDeviceReady ? "Đang kiểm tra sách trên máy…" : shelfDeviceError ? "Chưa kiểm tra được sách trên máy" : "Chưa có sách đọc offline trên máy này" : query ? `Không có sách nào khớp “${escapeHtml(query)}”` : "Không có sách phù hợp";
+      const hint = noLocal ? shelfDeviceError ? "Chưa truy cập được bộ nhớ trình duyệt. Thử tải lại app hoặc kiểm tra quyền lưu trữ." : "Nhập ebook hoặc tải truyện khi có mạng để đọc tại đây. Sách trên thiết bị khác cần được nhận về máy này trước." : filtered ? "Thử bỏ bớt bộ lọc trạng thái hoặc nhóm, hoặc tìm ở một kệ khác." : "Thử từ khóa ngắn hơn, tên tác giả, hoặc tìm ở một kệ khác.";
+      shelfGrid.innerHTML = `<div class="shelf-empty" role="status"><p class="shelf-empty-title">${title}</p><p class="tools-empty">${hint}</p><button type="button" class="btn-secondary">${noLocal ? "Xem toàn bộ thư viện" : "Xóa tìm kiếm và bộ lọc"}</button></div>`;
       shelfGrid.querySelector(".shelf-empty button").addEventListener("click", () => {
         $("#shelf-search").value = "";
         $("#shelf-status").value = "all";
         $("#shelf-group").value = "";
+        if (noLocal) shelfOnDevice = false;
         renderShelf();
         $("#shelf-search").focus();
       });
@@ -562,7 +569,59 @@
   // ------------------------------------------------------------
 
   const TEXT_CACHE = "tenshi-text-v1";
-  const IMAGE_CACHE = "tenshi-img-v1";
+  const IMAGE_CACHE = "tenshi-img-v2";
+  let shelfOnDevice = navigator.onLine === false;
+  let shelfDeviceBooks = new Map(), shelfDeviceReady = false, shelfDeviceError = false;
+  let shelfDeviceScan = null, shelfDeviceRescan = false;
+
+  function paintShelfConnection() {
+    const offline = navigator.onLine === false, status = $("#shelf-offline-status");
+    status.hidden = !offline;
+    const text = shelfOnDevice ? "Đang offline · Đang hiện sách có trên máy." : "Đang offline · Chỉ sách đã lưu trên máy mới mở được.";
+    if (status.textContent !== text) status.textContent = text;
+    $("#shelf-on-device").setAttribute("aria-pressed", String(shelfOnDevice));
+    $("#shelf-on-device-count").textContent = shelfDeviceReady ? shelfDeviceBooks.size.toLocaleString("vi-VN") : "";
+    $("#shelf-device-hint").hidden = !shelfOnDevice || ![...shelfDeviceBooks.values()].some((book) => !book.personal);
+  }
+
+  // Inspect actual local storage only: no network fetch and no claim that a
+  // remote device's inventory means its ebook is present here.
+  function refreshShelfDeviceBooks() {
+    if (shelfDeviceScan) { shelfDeviceRescan = true; return shelfDeviceScan; }
+    shelfDeviceScan = (async () => {
+      const books = new Map(); let failed = false;
+      try { for (const book of await EbookImport.list()) books.set(book.slug, { personal: true }); }
+      catch (_) { failed = true; }
+      if (canSaveOffline()) {
+        try {
+          const names = await caches.keys(), indexes = new Map();
+          for (const name of names.filter((n) => n.startsWith("tenshi-shell-")).reverse()) {
+            const cache = await caches.open(name);
+            for (const request of await cache.keys()) {
+              const url = new URL(request.url);
+              if (/^\/data\/(?:[^/]+\/)?index\.json$/.test(url.pathname) && !indexes.has(url.pathname)) indexes.set(url.pathname, { cache, request });
+            }
+          }
+          const textCache = await caches.open(TEXT_CACHE);
+          const textUrls = new Set((await textCache.keys()).map((request) => request.url));
+          await Promise.all(SERIES.filter((book) => !book.personal && indexes.has(book.index)).map(async (book) => {
+            const { cache, request } = indexes.get(book.index), response = await cache.match(request);
+            if (!response) return;
+            const volumes = await response.json();
+            if (!Array.isArray(volumes)) return;
+            const count = volumes.filter((v) => v.text && textUrls.has(new URL(v.text, location.origin).href)).length;
+            if (count) books.set(book.slug, { volumes: count });
+          }));
+        } catch (_) { failed = true; }
+      }
+      shelfDeviceBooks = books; shelfDeviceReady = true; shelfDeviceError = failed;
+      if (currentView === "shelf" && libraryTools) renderShelf(); else paintShelfConnection();
+    })().finally(() => {
+      shelfDeviceScan = null;
+      if (shelfDeviceRescan) { shelfDeviceRescan = false; refreshShelfDeviceBooks(); }
+    });
+    return shelfDeviceScan;
+  }
   // What is being saved for offline reading: a volume's index, "all", or null.
   let offlineSaving = null;
   let offlineSavingSeriesIdx = -1;
@@ -754,6 +813,7 @@
   }
 
   function refreshOfflineViews() {
+    refreshShelfDeviceBooks();
     updateSaveAllButton();
     if (currentVolIdx >= 0) updateOfflineButton(currentVolIdx);
     if (libraryTab === "saved") renderDownloads();
@@ -1173,6 +1233,7 @@
     });
     isReadyForRefresh = true;
     registerServiceWorker();
+    await refreshShelfDeviceBooks();
     updateSaveAllButton();
     // Opened without a connection: lead with what can be read.
     if (navigator.onLine === false && canSaveOffline() && !SERIES_META.personal) setLibraryTab("saved");
@@ -1187,6 +1248,19 @@
 
   function attachEvents() {
     setupSettingsUI();
+    $("#shelf-on-device").addEventListener("click", () => {
+      shelfOnDevice = !shelfOnDevice;
+      renderShelf(); refreshShelfDeviceBooks();
+    });
+    addEventListener("offline", () => {
+      shelfOnDevice = true;
+      renderShelf(); refreshShelfDeviceBooks();
+    });
+    addEventListener("online", () => { paintShelfConnection(); refreshShelfDeviceBooks(); });
+    addEventListener("ketruyen-ebooks-change", refreshShelfDeviceBooks);
+    addEventListener("storage", (event) => { if (event.key === "ketruyen-ebooks-change-v1") refreshShelfDeviceBooks(); });
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshShelfDeviceBooks(); });
+    if ("serviceWorker" in navigator) navigator.serviceWorker.addEventListener("controllerchange", refreshShelfDeviceBooks);
     btnBack.addEventListener("click", goBack);
     btnLogo.addEventListener("click", goShelf);
     btnFontUp.addEventListener("click", () => changeFontSize(1));
@@ -2158,6 +2232,7 @@
       progressBar.style.display = "none";
       document.title = "Kệ truyện";
       renderShelf();
+      refreshShelfDeviceBooks();
     } else if (name === "home") {
       viewHome.classList.add("active");
       headerTitle.textContent = SERIES_META.titleVi;
@@ -2168,6 +2243,7 @@
       renderVolumeGrid();
       updateContinueUI();
       renderRecentChapters();
+      if (navigator.onLine === false && canSaveOffline() && !SERIES_META.personal) setLibraryTab("saved");
     } else if (name === "volume") {
       viewVolume.classList.add("active");
       btnBack.style.display = "inline-flex";

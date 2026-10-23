@@ -352,13 +352,14 @@
         if (el) el.textContent = val ? val.toLocaleString("vi-VN") : "";
       }
     }
-    function filterSeries(series) {
+    function filterSeries(series, { onDevice = false } = {}) {
       if ($("#shelf-status").value === "all") personalShelf = false;
       updateFilterSummary(); updateShelfResume(series); updateSectionCounts(series); updateShortcuts(series);
+      if (onDevice) { sectionTabs.hidden = true; if (!personalShelf) $("#shelf-library-title").textContent = "Sách có trên máy"; }
       const query = fold($("#shelf-search").value), filter = $("#shelf-status").value, group = $("#shelf-group").value, sort = $("#shelf-sort").value;
       const result = series.filter((book) => {
         const bookSec = normalizeBookSection(book.section);
-        if (!personalShelf) {
+        if (!personalShelf && !onDevice) {
           if (activeSection === "main" && bookSec !== "main") return false;
           if (activeSection === "hlc-all" && !bookSec.startsWith("hlc-")) return false;
           if (activeSection === "b1k-all" && !bookSec.startsWith("b1k-")) return false;

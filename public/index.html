@@ -328,6 +328,7 @@
           </div>
         </div>
         <p class="shelf-intro">Trở lại câu chuyện đang dở, hoặc tìm một cuốn để bắt đầu.</p>
+        <p id="shelf-offline-status" class="shelf-offline-status" role="status" aria-live="polite" hidden></p>
         <div id="shelf-resume" class="shelf-resume" hidden></div>
         <section id="shelf-device-reading" class="shelf-device-reading" aria-label="Đọc tiếp từ thiết bị khác" hidden></section>
         <section id="shelf-journal" class="shelf-journal" aria-label="Nhật ký và kỷ niệm đọc" hidden></section>
@@ -335,6 +336,10 @@
         <div class="shelf-library-heading">
           <h2 id="shelf-library-title">Khám phá thư viện</h2>
           <span id="shelf-result-count" role="status" aria-live="polite" aria-atomic="true"></span>
+        </div>
+        <div class="shelf-device-controls">
+          <button id="shelf-on-device" type="button" aria-pressed="false"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"></path></svg><span>Sách trên máy</span><span id="shelf-on-device-count"></span></button>
+          <span id="shelf-device-hint" class="shelf-device-hint" hidden>Nội dung đã lưu; một số ảnh có thể chưa tải đủ.</span>
         </div>
         <div id="shelf-section-tabs" class="shelf-section-tabs" aria-label="Danh mục kệ truyện">
           <div class="toolbar-group shelf-primary-tabs" role="tablist" aria-label="Nguồn kệ truyện">

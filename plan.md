@@ -1,5 +1,16 @@
 # Kế hoạch tính năng
 
+## Trạng thái offline trên kệ sách
+
+Trạng thái: đã triển khai. Không cần migration Supabase mới.
+
+- [x] Dòng báo offline gọn trên màn hình chính; không chèn vào trang đọc.
+- [x] Nút **Sách trên máy** có số lượng, mặc định bật khi mất mạng; người dùng có thể tắt và giữ lựa chọn khi có mạng lại.
+- [x] Kiểm tra ebook trong IndexedDB và nội dung truyện thực sự có trong cache, gồm mọi nguồn sách. Tìm kiếm/trạng thái/nhóm vẫn dùng được cùng bộ lọc.
+- [x] Hiện số tập có nội dung trên máy, lưu ý ảnh có thể chưa đủ; mở truyện online khi offline ưu tiên mục Đã tải về. Có hướng dẫn khi chưa lưu sách nào.
+- [x] Giữ mục lục đã cache qua cập nhật app; thống nhất cache ảnh tải offline và chuyển ảnh đã tải từ cache cũ sang cache trình đọc.
+- [x] Kiểm tra bằng service worker thật: cập nhật cache, mất mạng, tải lại ebook/truyện đã lưu, xóa dữ liệu và kết nối lại.
+
 ## Tình trạng thư viện
 
 Trạng thái: đã triển khai ngày 24/10/2026, kiểm thử trình duyệt với hai thiết bị và gói chuyển bị hỏng.

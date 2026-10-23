@@ -9,6 +9,14 @@ body[data-theme="dark"] .shelf-shell { --shelf-accent: #abc6ad; --shelf-accent-r
 .shelf-heading .shelf-actions { margin-top: 0; gap: 10px; flex-wrap: nowrap; }
 .shelf-heading :is(.btn-primary, .btn-secondary) { min-height: 46px; padding: 12px 20px; font-size: var(--text-sm); white-space: nowrap; }
 .shelf-intro { margin-top: 10px; font-size: var(--text-base); }
+.shelf-offline-status { display: flex; align-items: baseline; gap: 10px; margin: 18px 0 0; color: var(--text-soft); font: 400 var(--text-xs)/1.65 var(--font-ui); }
+.shelf-offline-status::before { content: ""; flex: 0 0 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--shelf-accent); }
+.shelf-device-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; margin-top: 14px; }
+#shelf-on-device { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 9px 13px; border: 1px solid var(--line-strong); border-radius: 12px; background: transparent; color: var(--text-soft); font: 500 var(--text-xs)/1.5 var(--font-ui); cursor: pointer; }
+#shelf-on-device[aria-pressed="true"] { color: var(--shelf-accent); background: rgba(var(--shelf-accent-rgb), .09); border-color: rgba(var(--shelf-accent-rgb), .3); }
+#shelf-on-device:focus-visible { outline: 2px solid var(--shelf-accent); outline-offset: 3px; }
+#shelf-on-device-count, .shelf-device-hint { color: var(--text-muted); font: 400 var(--text-2xs)/1.6 var(--font-ui); }
+.shelf-device-badge { color: var(--shelf-accent); font: 500 var(--text-2xs)/1.6 var(--font-ui); }
 .shelf-shell .ebook-storage-note { margin-top: 8px; font-size: var(--text-2xs); }
 .shelf-more { position: relative; flex: 0 0 auto; }
 .shelf-more summary { display: grid; place-items: center; width: 46px; height: 46px; list-style: none; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--surface); color: var(--text); cursor: pointer; }

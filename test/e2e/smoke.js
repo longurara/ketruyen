@@ -342,6 +342,8 @@ async function checkLinkPreviews() {
     catch (error) { failed = true; console.error(`✖ journal and library health: ${error.stack}`); }
     try { await require("./remove-reading").runRemoveReadingChecks(browser, BASE); }
     catch (error) { failed = true; console.error(`✖ remove reading: ${error.stack}`); }
+    try { await require("./offline-shelf").runOfflineShelfChecks(browser, BASE); }
+    catch (error) { failed = true; console.error(`✖ offline shelf: ${error.stack}`); }
   } finally {
     await browser.close();
     server.kill();

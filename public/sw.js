@@ -7,7 +7,7 @@
 // and picture seen stays readable offline. app.js uses the same cache names
 // for "Tải về đọc offline".
 
-const SHELL_CACHE = "tenshi-shell-v39";
+const SHELL_CACHE = "tenshi-shell-v40";
 const INDEX_PATTERN = /^\/data\/(?:[^/]+\/)?index\.json$/;
 const TEXT_CACHE = "tenshi-text-v1";
 const IMAGE_CACHE = "tenshi-img-v2";
@@ -83,15 +83,37 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(
-        keys
-          .filter((key) => key.startsWith("tenshi-") && !OWN_CACHES.includes(key))
-          .map((key) => caches.delete(key))
-      ))
+    upgradeCaches()
       .then(() => self.clients.claim())
   );
 });
+
+async function upgradeCaches() {
+  const keys = await caches.keys(), shell = await caches.open(SHELL_CACHE);
+  // Keep cached book indexes across deploys, otherwise the chapter text can
+  // survive while its book becomes impossible to open without a connection.
+  for (const key of keys.filter((name) => name.startsWith("tenshi-shell-") && name !== SHELL_CACHE).reverse()) {
+    const previous = await caches.open(key);
+    for (const request of await previous.keys()) {
+      if (INDEX_PATTERN.test(new URL(request.url).pathname) && !await shell.match(request)) {
+        const response = await previous.match(request);
+        if (response) await shell.put(request, response);
+      }
+    }
+  }
+  // Earlier download buttons used v1 while the reader used v2. Retain those
+  // explicitly downloaded pictures and use the same cache from now on.
+  if (keys.includes("tenshi-img-v1")) {
+    const previous = await caches.open("tenshi-img-v1"), images = await caches.open(IMAGE_CACHE);
+    for (const request of await previous.keys()) {
+      if (!await images.match(request)) {
+        const response = await previous.match(request);
+        if (response) await images.put(request, response);
+      }
+    }
+  }
+  await Promise.all(keys.filter((key) => key.startsWith("tenshi-") && !OWN_CACHES.includes(key)).map((key) => caches.delete(key)));
+}
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
