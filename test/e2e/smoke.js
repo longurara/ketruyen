@@ -118,6 +118,33 @@ async function run(name, context) {
 
   await step("new reader sees suggestions", async () => {
     check(/Bắt đầu với/.test(await page.textContent("#shelf-resume")), "no suggestions for a first visit");
+    const title = await page.textContent(".shelf-feature h2");
+    await page.click(".shelf-change-pick");
+    check(await page.textContent(".shelf-feature h2") !== title, "changing the recommendation kept the same book");
+    check(/Gọn trong một tập/.test(await page.textContent(".shelf-feature-reason")), "recommendation has no reason");
+    await noSidewaysScroll(page, "featured book");
+  });
+
+  await step("personal shortcuts find books across collections", async () => {
+    await page.click("#tab-shelf-b1k");
+    const slug = await page.locator(".ebook-shelf-item").first().getAttribute("data-book");
+    await page.locator(".shelf-card-more summary").first().click();
+    await page.click(".shelf-card-more[open] [data-favorite]");
+    await page.click('[data-shelf-quick="all"]');
+    await page.click("#tab-shelf-main");
+    await page.click('[data-shelf-quick="favorite"]');
+    check(await page.locator(".ebook-shelf-item").count() === 1, "favorites includes unselected books");
+    check(await page.locator(".ebook-shelf-item").first().getAttribute("data-book") === slug, "favorite from another collection was hidden");
+    check(await page.locator('[data-shelf-quick="favorite"]').getAttribute("aria-pressed") === "true", "favorite shortcut is not selected");
+    await page.locator(".shelf-card-more summary").first().click();
+    await page.click(".shelf-card-more[open] [data-favorite]");
+    await page.waitForSelector(".shelf-empty");
+    await noSidewaysScroll(page, "empty personal shelf");
+    await page.click('[data-shelf-quick="all"]');
+    await page.click('#shelf-shortcuts [data-library-action="marks"]');
+    await page.waitForSelector("#workbench-dialog[open]");
+    check(/Đánh dấu & Ghi chú/.test(await page.textContent("#workbench-dialog")), "notes shortcut did not open annotations");
+    await page.keyboard.press("Escape");
   });
 
   if (name === "desktop") {
@@ -151,6 +178,17 @@ async function run(name, context) {
     await page.waitForSelector("#view-reader.active .reader-content p", { timeout: 20000 });
     check(await page.locator(".reader-content p").count() > 5, "chapter has almost no paragraphs");
     await noSidewaysScroll(page, "reader");
+  });
+
+  await step("featured resume returns to the saved chapter", async () => {
+    await open(page, "/");
+    await page.waitForSelector(".shelf-feature.is-reading");
+    check(/Thiên Sứ Nhà Bên/.test(await page.textContent(".is-reading h2")), "featured resume shows another book");
+    check(await page.locator('.is-reading [role="progressbar"]').count() === 1, "resume is missing its progress");
+    await noSidewaysScroll(page, "featured resume");
+    await page.click('.is-reading .shelf-feature-button');
+    await page.waitForSelector("#view-reader.active .reader-content p");
+    check(await page.evaluate(() => location.pathname) === "/truyen/thien-su-nha-ben/tap-1/1", "resume did not return to the saved chapter");
   });
 
   await step("text alignment setting", async () => {

@@ -142,6 +142,7 @@
       const next = items[(items.indexOf(document.activeElement) + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length];
       next?.focus(); event.preventDefault();
     });
+    let suggestionOffset = 0, personalShelf = false;
     function updateShelfResume(series) {
       const host = $("#shelf-resume");
       const recent = series
@@ -150,8 +151,6 @@
         .filter(({ book, saved }) => Number.isInteger(saved.volIdx) && Number.isInteger(saved.chapIdx) && Number(saved.timestamp) > 0 && book.volumesData?.[saved.volIdx]?.chapters[saved.chapIdx])
         .sort((a, b) => Number(b.saved.timestamp) - Number(a.saved.timestamp))
         .slice(0, 8);
-      if (!recent.length) { showSuggestions(series, host); return; }
-      host.hidden = false;
       // Story chapters finished out of the whole book, as on the series page.
       const bookShare = (book) => {
         let done = 0, total = 0, read = {};
@@ -163,26 +162,67 @@
         }));
         return { done, total, percent: total ? Math.round((done / total) * 100) : 0 };
       };
-      host.innerHTML = `<div class="shelf-resume-head"><h2 class="shelf-resume-title">Đọc tiếp</h2>${recent.length > 1 ? `<span class="shelf-resume-count">${recent.length} cuốn đang đọc</span>` : ""}</div><div class="shelf-resume-row${recent.length === 1 ? " is-single" : ""}">${recent.map(({ book, saved }, index) => {
+      const picks = series.filter((book) => !book.personal && normalizeBookSection(book.section) === "main" && book.volumes === 1 && !progress(book).timestamp && status(book) !== "done");
+      // A single-volume recommendation has an explicit reason; it does not
+      // repeat the first row of the catalogue or require loading chapter text.
+      const suggested = picks.length ? picks[suggestionOffset % picks.length] : series.find((book) => !progress(book).timestamp && status(book) !== "done");
+      const cover = (book, className) => book.cover ? `<img class="${className}" src="${escape(book.cover)}" alt="Bìa ${escape(book.titleVi)}" width="150" height="210" decoding="async">` : `<span class="${className} shelf-cover-fallback" aria-hidden="true">${escape(book.titleVi)}</span>`;
+      const arrow = '<span aria-hidden="true">↗</span>';
+      function recommendation(compact = false) {
+        if (!suggested) return "";
+        const reason = suggested.volumes === 1 ? "Gọn trong một tập" : "Một lựa chọn từ thư viện";
+        const change = picks.length > 1 ? '<button type="button" class="shelf-change-pick" aria-label="Đổi sách gợi ý" title="Đổi gợi ý">↻</button>' : "";
+        const art = `<button type="button" class="shelf-feature-art" data-suggest aria-label="Xem ${escape(suggested.titleVi)}">${cover(suggested, "shelf-feature-cover")}</button>`;
+        if (compact) return `<article class="shelf-feature is-discovery"><div class="shelf-feature-copy"><p class="shelf-feature-kicker">${reason}</p><h2><button type="button" class="shelf-discovery-title" data-suggest>${escape(suggested.titleVi)} ${arrow}</button></h2><p class="shelf-feature-author">${escape(suggested.author || "")}</p></div>${art}${change}</article>`;
+        return `<article class="shelf-feature is-welcome"><div class="shelf-feature-copy"><p class="shelf-feature-kicker">Bắt đầu với một câu chuyện</p><h2>${escape(suggested.titleVi)}</h2><p class="shelf-feature-author">${escape(suggested.author || "")}</p><p class="shelf-feature-reason">${reason}${suggested.tags?.[0] ? ` · ${escape(suggested.tags[0])}` : ""}</p>${suggested.description ? `<p class="shelf-feature-description">${escape(suggested.description)}</p>` : ""}</div>${art}<div class="shelf-feature-actions"><button type="button" class="shelf-suggest-button" data-suggest>Xem sách <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"></path></svg></button>${change}</div></article>`;
+      }
+      host.hidden = !recent.length && !suggested;
+      host.classList.toggle("has-reading", recent.length > 0);
+      let featured = recommendation();
+      if (recent.length) {
+        const { book, saved } = recent[0], volume = book.volumesData[saved.volIdx], chapter = volume.chapters[saved.chapIdx], share = bookShare(book);
+        featured = `<article class="shelf-feature is-reading"><div class="shelf-feature-copy"><p class="shelf-feature-kicker"><span class="shelf-reading-dot" aria-hidden="true"></span>Câu chuyện đang dở</p><h2>${escape(book.titleVi)}</h2><p class="shelf-feature-author">${escape(book.author || "")}</p><p class="shelf-feature-place">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</p><div class="shelf-feature-progress"><span class="shelf-resume-meter" role="progressbar" aria-label="Tiến độ cả sách" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${share.percent}"><span style="width:${share.percent}%"></span></span><span>${share.percent}% · ${share.done}/${share.total} chương</span></div><button type="button" class="shelf-feature-button" data-resume="0">Đọc tiếp <span aria-hidden="true">→</span></button></div><button type="button" class="shelf-feature-art" data-resume="0" aria-label="Đọc tiếp ${escape(book.titleVi)}">${cover(book, "shelf-feature-cover")}</button></article>${recommendation(true)}`;
+      }
+      host.innerHTML = `<div class="shelf-feature-layout${recent.length && suggested ? " has-discovery" : ""}">${featured}</div>${recent.length > 1 ? `<div class="shelf-other-reading"><p>Cũng đang đọc</p><div class="shelf-resume-row">${recent.slice(1).map(({ book, saved }, offset) => {
+        const index = offset + 1;
         const volume = book.volumesData[saved.volIdx], chapter = volume.chapters[saved.chapIdx], share = bookShare(book);
         return `<button type="button" class="shelf-resume-card" data-resume="${index}" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}, đã đọc ${share.done} trên ${share.total} chương">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="" width="104" height="148" loading="lazy" decoding="async">` : '<span class="shelf-resume-cover" aria-hidden="true"></span>'}<span class="shelf-resume-copy"><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span><span class="shelf-resume-meter" aria-hidden="true"><span style="width:${Math.max(share.percent, share.done ? 2 : 0)}%"></span></span><span class="shelf-resume-share">${share.done}/${share.total}</span></span></button>`;
-      }).join("")}</div>`;
+      }).join("")}</div></div>` : ""}`;
       host.querySelectorAll("[data-resume]").forEach((button) => {
         const { book, saved } = recent[Number(button.dataset.resume)];
         button.onclick = () => options.openMark(options.series.indexOf(book), { type: "bookmark", volIdx: saved.volIdx, chapIdx: saved.chapIdx });
       });
-    }
-    // Nothing in progress yet (a first visit): offer a few books from the main
-    // shelf to start with, in the catalogue's own order.
-    function showSuggestions(series, host) {
-      const picks = series.filter((book) => !book.personal && normalizeBookSection(book.section) === "main").slice(0, 8);
-      host.hidden = !picks.length;
-      if (!picks.length) { host.replaceChildren(); return; }
-      host.innerHTML = `<div class="shelf-resume-head"><h2 class="shelf-resume-title">Bắt đầu với</h2><span class="shelf-resume-count">Gợi ý từ kệ truyện chính</span></div><div class="shelf-resume-row is-suggestions">${picks.map((book, index) => `<button type="button" class="shelf-resume-card" data-suggest="${index}" aria-label="Xem ${escape(book.titleVi)}">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="" width="104" height="148" loading="lazy" decoding="async">` : '<span class="shelf-resume-cover" aria-hidden="true"></span>'}<span class="shelf-resume-copy"><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape([book.author, book.volumes ? `${book.volumes} tập` : ""].filter(Boolean).join(" · "))}</span></span></button>`).join("")}</div>`;
       host.querySelectorAll("[data-suggest]").forEach((button) => {
-        const book = picks[Number(button.dataset.suggest)];
-        button.onclick = () => options.openSeries(options.series.indexOf(book), button.querySelector(".shelf-resume-cover"));
+        button.onclick = () => options.openSeries(options.series.indexOf(suggested), host.querySelector("[data-suggest] .shelf-feature-cover"));
       });
+      host.querySelector(".shelf-change-pick")?.addEventListener("click", () => { suggestionOffset++; updateShelfResume(series); host.querySelector(".shelf-change-pick")?.focus({ preventScroll: true }); });
+    }
+    function updateShortcuts(series) {
+      const filter = $("#shelf-status").value;
+      const counts = { all: series.length, reading: 0, want: 0, favorite: 0, personal: 0 };
+      for (const book of series) {
+        const current = status(book);
+        if (current === "reading" || current === "want") counts[current]++;
+        if (row(book).favorite) counts.favorite++;
+        if (book.personal) counts.personal++;
+      }
+      const icons = {
+        all: svg('<path d="M4 5h6v15H4zM14 5h6v15h-6zM7 8v2M17 8v2"></path>'),
+        reading: svg('<path d="M12 6c-3-2-6-2-9-1v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1Zm0 0v14"></path>'),
+        want: svg('<path d="M6 4h12v17l-6-4-6 4z"></path>'),
+        favorite: ICONS.star, personal: svg('<path d="M4 4h13v16H4zM8 8h5M8 12h5M20 7v13"></path>')
+      };
+      $("#shelf-shortcuts").innerHTML = [["all", "Thư viện"], ["reading", "Đang đọc"], ["want", "Muốn đọc"], ["favorite", "Yêu thích"], ["personal", "Ebook cá nhân"]].map(([value, label]) => `<button type="button" data-shelf-quick="${value}" aria-pressed="${value === "all" ? !personalShelf && filter === "all" : personalShelf && filter === value}">${icons[value]}<span>${label}</span><span class="shelf-shortcut-count">${counts[value].toLocaleString("vi-VN")}</span></button>`).join("") + `<button type="button" data-library-action="marks">${ICONS.edit}<span>Ghi chú</span><span class="shelf-shortcut-count">${state.marks.length.toLocaleString("vi-VN")}</span></button>`;
+      $("#shelf-shortcuts").querySelectorAll("[data-shelf-quick]").forEach((button) => button.addEventListener("click", () => {
+        const value = button.dataset.shelfQuick;
+        personalShelf = value !== "all";
+        $("#shelf-status").value = value;
+        $("#shelf-search").value = ""; $("#shelf-group").value = "";
+        options.renderShelf();
+        $("#shelf-shortcuts").querySelector(`[data-shelf-quick="${value}"]`)?.focus({ preventScroll: true });
+      }));
+      sectionTabs.hidden = personalShelf;
+      $("#shelf-library-title").textContent = personalShelf ? ({ reading: "Sách đang đọc", want: "Dành cho lần đọc tới", favorite: "Những cuốn yêu thích", personal: "Ebook của bạn" }[filter] || "Kệ sách của bạn") : "Khám phá thư viện";
     }
     const VALID_SECTIONS = new Set([
       "main",
@@ -208,6 +248,7 @@
       return VALID_SECTIONS.has(sec) ? sec : "main";
     }
     function setSection(nextSection, shouldRender = false) {
+      personalShelf = false;
       const normalized = normalizeSection(nextSection);
       if (normalized.startsWith("hlc-")) lastHlcSection = normalized;
       if (normalized.startsWith("b1k-")) lastB1kSection = normalized;
@@ -292,14 +333,17 @@
       }
     }
     function filterSeries(series) {
-      updateFilterSummary(); updateShelfResume(series); updateSectionCounts(series);
+      if ($("#shelf-status").value === "all") personalShelf = false;
+      updateFilterSummary(); updateShelfResume(series); updateSectionCounts(series); updateShortcuts(series);
       const query = fold($("#shelf-search").value), filter = $("#shelf-status").value, group = $("#shelf-group").value, sort = $("#shelf-sort").value;
       const result = series.filter((book) => {
         const bookSec = normalizeBookSection(book.section);
-        if (activeSection === "main" && bookSec !== "main") return false;
-        if (activeSection === "hlc-all" && !bookSec.startsWith("hlc-")) return false;
-        if (activeSection === "b1k-all" && !bookSec.startsWith("b1k-")) return false;
-        if (activeSection !== "main" && activeSection !== "hlc-all" && activeSection !== "b1k-all" && bookSec !== activeSection) return false;
+        if (!personalShelf) {
+          if (activeSection === "main" && bookSec !== "main") return false;
+          if (activeSection === "hlc-all" && !bookSec.startsWith("hlc-")) return false;
+          if (activeSection === "b1k-all" && !bookSec.startsWith("b1k-")) return false;
+          if (activeSection !== "main" && activeSection !== "hlc-all" && activeSection !== "b1k-all" && bookSec !== activeSection) return false;
+        }
         if (query) {
           if (!book._searchFold) book._searchFold = fold([book.titleVi, book.titleJp, book.author, ...(book.tags || [])].join(" "));
           const groupsFold = row(book).groups.length ? " " + fold(row(book).groups.join(" ")) : "";
@@ -313,6 +357,7 @@
         }
         return true;
       });
+      $("#shelf-result-count").textContent = `${result.length.toLocaleString("vi-VN")} cuốn sách`;
       if (sort === "title") return result.sort((a, b) => a.titleVi.localeCompare(b.titleVi, "vi"));
       if (sort === "author") return result.sort((a, b) => (a.author || "").localeCompare(b.author || "", "vi"));
       if (sort === "newest") return result.sort((a, b) => (b.importedAt || 0) - (a.importedAt || 0));

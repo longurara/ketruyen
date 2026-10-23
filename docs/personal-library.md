@@ -6,7 +6,10 @@
 - Lọc yêu thích, muốn đọc, đang đọc, đã đọc và ebook cá nhân.
 - Sắp xếp theo lần đọc gần nhất, tên sách, tác giả hoặc ngày nhập.
 - Trên điện thoại, tìm kiếm luôn hiện; bấm **Lọc** để mở trạng thái, nhóm và sắp xếp. Nút cho biết số tùy chọn đang áp dụng.
-- Thẻ **Đọc tiếp** ở đầu kệ mở sách/chương đọc gần nhất. **Nhập ebook** luôn hiện; kiểm tra chương mới và sao lưu nằm trong menu **⋯**.
+- Thẻ **Câu chuyện đang dở** ở đầu kệ làm nổi bật sách đọc gần nhất, chương và tiến độ hoàn thành; bấm **Đọc tiếp** để trở lại vị trí đã lưu. Các sách đọc dở khác nằm ở hàng **Cũng đang đọc**.
+- Khi chưa đọc sách nào, đầu kệ giới thiệu một cuốn cùng lý do lựa chọn; ưu tiên sách gói gọn trong một tập. Nút **Đổi sách gợi ý** chọn cuốn khác, không cần tải nội dung truyện. Khi đã có sách đang đọc, gợi ý xuất hiện bên cạnh hoặc bên dưới thẻ đọc tiếp.
+- Các nút **Đang đọc / Muốn đọc / Yêu thích / Ebook cá nhân** mở kệ riêng trên tất cả nguồn sách, có số lượng tương ứng. **Ghi chú** mở toàn bộ đánh dấu và ghi chú; **Thư viện** trở về duyệt theo nguồn. Trên điện thoại có thể cuộn ngang hàng nút này.
+- **Nhập ebook** luôn hiện; kiểm tra chương mới và sao lưu nằm trong menu **⋯**. Kệ dùng điểm nhấn xanh rêu trong cả giao diện sáng, giấy và tối; thẻ danh sách trên điện thoại được thu gọn để dễ lướt.
 - Bấm **Quản lý** để đặt nhóm và trạng thái. Để trống trạng thái để ứng dụng nhận diện theo tiến độ; trạng thái đặt thủ công không thay đổi đánh dấu từng chương.
 - Ebook cá nhân cho phép sửa tên/tác giả, đổi bìa bằng PNG/JPG/WebP/GIF tối đa 8 MB hoặc dùng bìa chữ. Xóa ebook giữ ghi chú và tiến độ để nhập lại sau.
 
