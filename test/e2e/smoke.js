@@ -46,6 +46,26 @@ async function open(page, pathname) {
   await page.goto(`${BASE}${pathname}`, { waitUntil: "domcontentloaded" });
 }
 
+// Font metrics can put a character link under any fixed tap coordinate.
+// Use the reading column's right padding and verify the actual hit target.
+async function tapNextReaderPage(page) {
+  const point = await page.evaluate(() => {
+    const content = document.querySelector("#reader-chapters .reader-content");
+    if (!content) return null;
+    const box = content.getBoundingClientRect();
+    const x = Math.min(innerWidth - 12, box.right - 8);
+    if (x <= innerWidth * 0.7) return null;
+    const bottom = Math.min(innerHeight * 0.75, box.bottom - 8);
+    for (let y = Math.max(80, box.top + 8); y < bottom; y += 16) {
+      const target = document.elementFromPoint(x, y);
+      if (target?.closest(".reader-content") && !target.closest("a, button, [role=button], input, select, textarea, .pdf-viewport")) return { x, y };
+    }
+    return null;
+  });
+  check(point, "no unobstructed reading area for a page-turn tap");
+  await page.touchscreen.tap(point.x, point.y);
+}
+
 async function run(name, context) {
   const page = await context.newPage();
   const errors = [];
@@ -216,7 +236,7 @@ async function run(name, context) {
     check(await page.evaluate(() => getComputedStyle(document.documentElement).overflow) === "hidden", "page still scrolls freely");
     const before = await page.evaluate(() => scrollY);
     if (name === "desktop") await page.keyboard.press("ArrowRight");
-    else await page.touchscreen.tap(Math.round(page.viewportSize().width * 0.9), 420);
+    else await tapNextReaderPage(page);
     await page.waitForFunction((start) => scrollY > start + 200, before, { timeout: 5000 });
     check(/Trang 2 \//.test(await page.textContent("#page-indicator")), "page number did not advance");
     await page.evaluate(() => document.querySelector('#page-mode-switch [data-page-value="off"]').click());
