@@ -22,7 +22,7 @@
     securityPanel.innerHTML = '<h3>Bảo mật tài khoản</h3><p id="workspace-email-current" class="sync-copy"></p><form id="workspace-password" class="workspace-form"><label>Mật khẩu mới<input name="password" type="password" autocomplete="new-password" required minlength="8" maxlength="256"></label><label>Nhập lại mật khẩu<input name="confirm" type="password" autocomplete="new-password" required minlength="8" maxlength="256"></label><label id="workspace-nonce-label" hidden>Mã xác minh trong email<input name="nonce" inputmode="numeric" autocomplete="one-time-code" maxlength="16"></label><button class="btn-secondary" type="submit">Đổi mật khẩu</button><button class="btn-link" type="button" id="workspace-reauth">Gửi mã xác minh</button></form><form id="workspace-email" class="workspace-form"><label>Email mới<input name="email" type="email" autocomplete="email" required maxlength="254"></label><button class="btn-secondary" type="submit">Đổi email</button></form><p id="workspace-security-status" role="status"></p>';
     devicePanel.after(securityPanel);
     const feedback = document.createElement("p"); feedback.id = "workspace-status"; feedback.className = "sync-copy"; feedback.setAttribute("role", "status"); securityPanel.after(feedback);
-    const banner = document.createElement("aside"); banner.className = "reader-handoff"; banner.hidden = true; banner.setAttribute("aria-label", "Đọc tiếp từ máy khác"); document.body.append(banner);
+    const handoff = $("shelf-device-reading");
     const panels = [syncPanel, devicePanel, securityPanel]; let selected = "sync";
     tabs.onclick = (event) => { const button = event.target.closest("[data-panel]"); if (button) { selected = button.dataset.panel; paintTabs(); } };
     function paintTabs() {
@@ -34,7 +34,7 @@
       const key = next ? next.owner + ":" + sid(next.session) : "";
       if ((context?.key || "") !== key) {
         epoch++; if (channel) context.client.removeChannel(channel); channel = null; registered = available = false; devices = []; presence.clear(); lastTouch = 0; lastPosition = "";
-        context = next ? { ...next, key, sid: sid(next.session) } : null; core.setOwner(next?.owner || null); banner.hidden = true; options.transfers.setDevices(null);
+        context = next ? { ...next, key, sid: sid(next.session) } : null; core.setOwner(next?.owner || null); handoff.hidden = true; options.transfers.setDevices(null);
       } else if (next) context = { ...context, ...next };
       paintTabs();
     }
@@ -133,15 +133,21 @@
         list.querySelectorAll("[data-revoke]").forEach((b) => b.onclick = async () => { if (await root.AppDialog.confirm({ title: "Thu hồi quyền truy cập đám mây của thiết bị này? Dữ liệu đã lưu offline vẫn được giữ.", danger: true })) manage(b.dataset.revoke, "revoke"); });
       }
       const reading = devices.find((d) => d.device_id !== device && online(d) && Date.now() + offset - Date.parse(d.last_seen) < 90000 && d.reading);
-      if (banner.contains(document.activeElement)) return;
-      banner.replaceChildren(); banner.hidden = !reading;
+      if (handoff.contains(document.activeElement)) return;
+      handoff.replaceChildren(); handoff.hidden = !reading;
       if (!reading) return;
-      const copy = document.createElement("span"); copy.textContent = `${reading.name} đang đọc ${options.bookName(reading.reading.slug) || "một ebook"}`;
-      const button = document.createElement("button"); button.type = "button"; button.className = "btn-secondary"; button.textContent = "Đọc tiếp tại đây";
+      const icon = document.createElement("span"); icon.className = "device-reading-icon"; icon.setAttribute("aria-hidden", "true");
+      icon.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="13" height="11" rx="2"/><path d="M6 18h7M9 14v4"/><rect x="16" y="9" width="5" height="12" rx="1.5"/></svg>';
+      const copy = document.createElement("div"); copy.className = "device-reading-copy";
+      const label = document.createElement("p"); label.className = "device-reading-label"; label.textContent = `Đang đọc trên ${reading.name}`;
+      const title = document.createElement("p"); title.className = "device-reading-title"; title.textContent = options.bookName(reading.reading.slug) || "Ebook cá nhân";
+      copy.append(label, title);
+      const button = document.createElement("button"); button.type = "button"; button.className = "device-reading-action"; button.textContent = "Đọc tiếp ở đây";
+      const arrow = document.createElement("span"); arrow.setAttribute("aria-hidden", "true"); arrow.textContent = " →"; button.append(arrow);
       button.onclick = async () => {
         try { if (await options.resume(reading.reading)) return; if (await root.AppDialog.confirm({ title: "Máy này chưa có ebook. Gửi yêu cầu nhận sách đến máy nguồn?", danger: true })) { const a = api(); await a.request(a.client.rpc("reader_book_request", { source: reading.session_id, book: reading.reading.slug })); $("workspace-status").textContent = "Đã gửi yêu cầu. Máy nguồn cần xác nhận gửi sách."; options.open(); } }
         catch (error) { report(error); }
-      }; banner.append(copy, button);
+      }; handoff.append(icon, copy, button);
     }
     function paintRequests(requests) {
       const list = $("workspace-requests"); list.replaceChildren();

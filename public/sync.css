@@ -66,14 +66,23 @@ body[data-theme="dark"] .sync-feedback[data-sync-state="error"] { --sync-accent:
 .workspace-rename { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
 .workspace-rename input { flex: 1 1 150px; }
 #ebook-transfer-recipient { margin: 12px 0; }
-.reader-handoff { position: fixed; bottom: max(80px, calc(env(safe-area-inset-bottom) + 72px)); left: 50%; transform: translateX(-50%); z-index: var(--z-floating); width: min(560px, calc(100% - 32px)); box-sizing: border-box; padding: 12px 16px; border-radius: 14px; border: 1px solid var(--line-strong); background: var(--raised); color: var(--text); display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 30px #0004; font-size: 14px; }
-.reader-handoff[hidden], .sync-tabs[hidden], [data-account-panel][hidden] { display: none; }
-.reader-handoff span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
-.reader-handoff button { flex-shrink: 0; padding: 9px 12px; font-size: 13px; }
+.shelf-device-reading { display: flex; align-items: center; gap: 16px; padding: 18px 20px; margin: 18px 0 0; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--text); }
+.device-reading-icon { display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; background: var(--surface-2); color: var(--text-soft); }
+.device-reading-copy { flex: 1; min-width: 0; }
+.device-reading-label { color: var(--text-muted); font: 400 var(--text-xs)/1.7 var(--font-ui); margin: 0 0 3px; overflow-wrap: anywhere; }
+.device-reading-title { color: var(--text); font: 600 var(--text-base)/1.6 var(--font-ui); margin: 0; overflow-wrap: anywhere; }
+.device-reading-action { flex-shrink: 0; display: inline-flex; gap: 10px; align-items: center; min-height: 44px; border: 0; border-radius: 8px; background: transparent; color: var(--text-soft); padding: 8px 4px 8px 12px; font: 500 var(--text-sm)/1.5 var(--font-ui); cursor: pointer; }
+.device-reading-action:hover { color: var(--text); background: var(--surface-2); }
+.device-reading-action:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.shelf-device-reading[hidden], body:not([data-view="shelf"]) .shelf-device-reading, .sync-tabs[hidden], [data-account-panel][hidden] { display: none; }
 .reading-calendar { display: grid; grid-template-rows: repeat(7, 12px); grid-auto-columns: 12px; grid-auto-flow: column; gap: 3px; overflow-x: auto; padding: 6px 2px 12px; }
 .reading-calendar button { padding: 0; border: 1px solid #8883; border-radius: 3px; background: #8882; }
 .reading-calendar button[data-level="1"] { background: #749b7255; }
 .reading-calendar button[data-level="2"] { background: #749b72aa; }
 .reading-calendar button[data-level="3"] { background: #749b72; }
 .reading-calendar button:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
-@media (max-width: 480px) { .reader-handoff { align-items: stretch; flex-direction: column; gap: 8px; } }
+@media (max-width: 600px) {
+  .shelf-device-reading { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 6px 12px; padding: 14px 16px; }
+  .device-reading-icon { width: 36px; height: 36px; }
+  .device-reading-action { grid-column: 2; justify-self: start; padding: 6px 0; }
+}

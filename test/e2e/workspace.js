@@ -84,8 +84,17 @@ async function runWorkspaceChecks(browser, base) {
     await flush(b.page); assert.equal(activity.size, 40, "retry duplicates activity");
     // Handoff never navigates until the button is pressed; mobile restores a text anchor.
     const remote = devices.get(a.sessionId); remote.reading = { slug: "thien-su-nha-ben", volIdx: 0, chapIdx: 1, anchor: { block: 4, offset: 0, textOffset: 7 } };
-    await flush(b.page); assert.match(b.page.url(), /\/$/); await b.page.click("#sync-close"); await b.page.locator(".reader-handoff button").click(); await b.page.waitForSelector("#view-reader.active .reader-content p[data-p]"); assert.match(b.page.url(), /tap-1\/1$/);
-    remote.reading = { ...remote.reading, slug: "ebook-" + "a".repeat(24) }; await b.page.click("#btn-sync"); await flush(b.page); await b.page.click("#sync-close"); await b.page.locator(".reader-handoff button").click(); await confirm(b.page); await b.page.waitForFunction(() => document.getElementById("workspace-status").textContent.includes("Đã gửi yêu cầu")); assert.equal(requests[0].source, a.sessionId);
+    await flush(b.page); assert.match(b.page.url(), /\/$/); await b.page.click("#sync-close");
+    assert.equal(await b.page.locator("#shelf-device-reading").evaluate((el) => el.closest("#view-shelf") !== null && getComputedStyle(el).position === "static"), true);
+    assert.ok(await b.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), "handoff card overflows mobile");
+    await snapshot(b.page, "handoff-shelf-mobile");
+    await b.page.locator("#shelf-device-reading button").click(); await b.page.waitForSelector("#view-reader.active .reader-content p[data-p]"); assert.match(b.page.url(), /tap-1\/1$/);
+    assert.equal(await b.page.locator("#shelf-device-reading").isVisible(), false, "handoff card interrupts reader");
+    remote.reading = { ...remote.reading, slug: "ebook-" + "a".repeat(24) }; await b.page.click("#btn-sync"); await flush(b.page); await b.page.click("#sync-close");
+    assert.equal(await b.page.locator("#shelf-device-reading").isVisible(), false, "another book on a shared account interrupts reading");
+    assert.match(b.page.url(), /tap-1\/1$/);
+    await b.page.goBack(); await b.page.waitForSelector("#view-shelf.active");
+    await b.page.locator("#shelf-device-reading button").click(); await confirm(b.page); await b.page.waitForFunction(() => document.getElementById("workspace-status").textContent.includes("Đã gửi yêu cầu")); assert.equal(requests[0].source, a.sessionId);
     // Actual local edit / deletion / restore UI preserves identity and position.
     await a.page.click("#sync-close"); await a.page.click('#shelf-shortcuts [data-library-action="marks"]'); await a.page.click('[data-edit-mark="workspace-note"]'); await a.page.fill('#mark-form [name="note"]', "Bản mới đã lưu"); await a.page.click('#mark-form [type="submit"]');
     await a.page.click("#btn-sync"); await flush(a.page); assert.ok(versions.size >= 1); await a.page.click("#sync-close");
