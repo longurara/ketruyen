@@ -36,10 +36,11 @@ async function runOfflineShelfChecks(browser, base) {
       const names = await caches.keys();
       return !names.includes("tenshi-shell-offline-fixture") && !names.includes("tenshi-img-v1");
     }, null, { timeout: 45000 });
-    assert.equal(await page.evaluate(async (index) => {
+    const upgraded = await page.evaluate(async (index) => {
       const names = await caches.keys(), shell = await caches.open(names.find((n) => /^tenshi-shell-v\d+$/.test(n)));
-      return !names.includes("tenshi-shell-offline-fixture") && !names.includes("tenshi-img-v1") && Boolean(await shell.match(index)) && Boolean(await (await caches.open("tenshi-img-v2")).match("/img/offline-fixture.png"));
-    }, books[1].index), true, "upgrade discarded cached book indexes or downloaded pictures");
+      return { oldShellRemoved: !names.includes("tenshi-shell-offline-fixture"), oldImagesRemoved: !names.includes("tenshi-img-v1"), indexKept: Boolean(await shell.match(index)), imageKept: Boolean(await (await caches.open("tenshi-img-v2")).match("/img/offline-fixture.png")) };
+    }, books[1].index);
+    assert.deepEqual(upgraded, { oldShellRemoved: true, oldImagesRemoved: true, indexKept: true, imageKept: true }, "upgrade discarded cached book indexes or downloaded pictures");
     const ebook = await page.evaluate(async () => {
       const book = await globalThis.EbookImport.parseFile(new File(["Chương 1\n\nNội dung ebook đọc khi mất mạng."], "Sách offline riêng.txt", { type: "text/plain" }));
       await globalThis.EbookImport.save(book); return { slug: book.slug, volume: globalThis.AppRoutes.volumeSlug(book.volumesData[0].dirName) };

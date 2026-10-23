@@ -594,18 +594,15 @@
       catch (_) { failed = true; }
       if (canSaveOffline()) {
         try {
-          const names = await caches.keys(), indexes = new Map();
-          for (const name of names.filter((n) => n.startsWith("tenshi-shell-")).reverse()) {
-            const cache = await caches.open(name);
-            for (const request of await cache.keys()) {
-              const url = new URL(request.url);
-              if (/^\/data\/(?:[^/]+\/)?index\.json$/.test(url.pathname) && !indexes.has(url.pathname)) indexes.set(url.pathname, { cache, request });
-            }
-          }
+          const shells = (await caches.keys()).filter((n) => n.startsWith("tenshi-shell-")).reverse();
           const textCache = await caches.open(TEXT_CACHE);
           const textUrls = new Set((await textCache.keys()).map((request) => request.url));
-          await Promise.all(SERIES.filter((book) => !book.personal && indexes.has(book.index)).map(async (book) => {
-            const { cache, request } = indexes.get(book.index), response = await cache.match(request);
+          const indexPaths = new Set([...textUrls].map((url) => { const pathname = new URL(url).pathname; return pathname.slice(0, pathname.lastIndexOf("/") + 1) + "index.json"; }));
+          await Promise.all(SERIES.filter((book) => !book.personal && indexPaths.has(book.index)).map(async (book) => {
+            // CacheStorage.match never recreates an old shell cache that the
+            // service worker may be removing concurrently during activation.
+            let response;
+            for (const name of shells) { response = await caches.match(book.index, { cacheName: name }); if (response) break; }
             if (!response) return;
             const volumes = await response.json();
             if (!Array.isArray(volumes)) return;
