@@ -1,5 +1,9 @@
 # Đồng bộ giữa các máy
 
+## Nhật ký và tình trạng thư viện (0006)
+
+Sau 0005, chạy `supabase/migrations/202610230006_reading_journal.sql` và tải lại app. Migration bổ sung bảng nhật ký riêng với RLS/CAS, thời điểm xác nhận inventory và nhãn tên/tác giả ebook. Không cần thêm bucket hoặc cron; nhật ký không bị dọn theo hạn thống kê. Khi chưa có 0006, nhật ký lưu cục bộ và dữ liệu đọc/chuyển ebook cũ vẫn hoạt động. Xem [hướng dẫn nhật ký và tình trạng thư viện](reading-journal.md).
+
 ## Nâng cấp đa thiết bị (0003 → frontend → 0004)
 
 Không chạy hai migration mới cùng lúc trước khi cập nhật frontend. Bản cũ chưa đăng ký `session_id` sẽ bị chặn sau bước 3.

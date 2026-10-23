@@ -338,6 +338,8 @@ async function checkLinkPreviews() {
     catch (error) { failed = true; console.error(`✖ ebook handoff: ${error.stack}`); }
     try { await require("./ebook-transfer").runAutoEbookSyncChecks(browser, BASE); }
     catch (error) { failed = true; console.error(`✖ automatic ebooks: ${error.stack}`); }
+    try { await require("./journal").runJournalChecks(browser, BASE); }
+    catch (error) { failed = true; console.error(`✖ journal and library health: ${error.stack}`); }
     try { await require("./remove-reading").runRemoveReadingChecks(browser, BASE); }
     catch (error) { failed = true; console.error(`✖ remove reading: ${error.stack}`); }
   } finally {

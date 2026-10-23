@@ -8,6 +8,8 @@
     let recovery = sessionStorage.getItem("ketruyen-password-recovery") === "1";
     let phase = "idle", syncing = false, dirty = false;
     const transfers = root.EbookTransferUI.create({ onReceived: options.onEbookReceived });
+    root.LibraryHealth.create({ surfaces: options.surfaces, snapshot: transfers.snapshot, check: transfers.check, receive: transfers.receive, closeSettings: options.closeSettings,
+      backup: () => document.getElementById("btn-library-backup").click(), openBook: (slug) => options.resume({ slug, volIdx: 0, chapIdx: 0, anchor: { block: 0, offset: 0 } }) });
     const workspace = root.CloudWorkspace.create({ transfers, session: () => recovery ? null : session, client: () => client, request,
       state: () => state, saveState: saveJournal, schedule, exclusive, bookName: options.bookName, capture: options.capture, resume: options.resume, open,
       reloadNotes: options.reloadNotes,
@@ -46,6 +48,7 @@
       const enabled = Boolean(session && linked === session.user.id);
       workspace.setContext(enabled && !recovery ? { owner: session.user.id, client, session } : null);
       transfers.setContext(enabled && !recovery ? { owner: session.user.id, client, sessionKey: workspace.sessionKey(session) } : null);
+      options.journal?.setContext(enabled && !recovery ? session.user.id : "", session ? workspace.sessionKey(session) : "");
       $("sync-account-hint").textContent = enabled ? "Thiết bị này đã bật đồng bộ. Tiến độ tự giữ vị trí đọc xa hơn; ebook tự chuyển khi các máy đang mở." : "Bật đồng bộ để kết hợp thư viện trên máy này với tài khoản và chuyển ebook giữa các máy.";
       $("sync-connect").hidden = enabled; $("sync-now").hidden = !enabled;
       for (const id of ["sync-send", "sync-signup", "sync-forgot", "sync-reset-save", "sync-connect", "sync-now", "sync-signout"]) $(id).disabled = busy;
@@ -126,6 +129,7 @@
     }
     async function sync(resolution) {
       if (busy || recovery || !session || linked !== session.user.id) return;
+      if (!navigator.onLine) { message("Đang offline · Thay đổi đã lưu trên máy và sẽ gửi khi có mạng.", "offline"); return; }
       const owner = session.user.id, token = generation;
       const guard = () => { if (token !== generation || session?.user?.id !== owner || linked !== owner) throw new Error("sync-cancelled"); };
       busy = true; syncing = true; render(); message("Đang đồng bộ…", "syncing");
@@ -158,6 +162,7 @@
           });
           guard();
           await workspace.flush(); guard();
+          await options.journal?.flush({ owner, client, guard, request: async (query) => { guard(); const result = await request(query); guard(); if (result.error) throw result.error; return result.data; } }); guard();
           dirty = result.pending > 0;
           message(result.conflicts ? "Có thay đổi trên cả hai máy. Chọn bản cần giữ bên dưới; các mục khác vẫn đồng bộ."
             : result.pending ? "Còn thay đổi chờ gửi · Sẽ thử lại tự động." : `Đã đồng bộ lúc ${new Date(state.lastCheckedAt).toLocaleTimeString("vi", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}.`, result.conflicts ? "conflict" : result.pending ? "pending" : "synced");
@@ -242,6 +247,7 @@
       catch (error) { failure(error); } finally { render(); }
     };
     addEventListener("ketruyen-library-change", changed);
+    addEventListener("ketruyen-journal-change", changed);
     addEventListener("ketruyen-workspace-change", () => schedule());
     addEventListener("storage", (event) => { if (event.key?.startsWith("tenshi-")) { options.onApplied(); changed(); } });
     addEventListener("online", () => { if (session && linked === session.user.id) message("Đã có mạng · Đang chờ kiểm tra lại dữ liệu.", "pending"); else paintStatus(); schedule(0); });
@@ -250,6 +256,7 @@
     setInterval(() => { if (document.visibilityState === "visible") sync(); }, 20000);
     if (localStorage.getItem(core.AUTH_KEY) || showAfterLogin) setup().catch(failure);
     paintStatus();
+    options.journal?.connect({ schedule, exclusive });
     return { open, sync };
   }
   root.CloudSync = { create };

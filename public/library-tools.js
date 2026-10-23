@@ -415,6 +415,7 @@
         options.message(row(series).favorite ? "Đã thêm vào yêu thích." : "Đã bỏ khỏi yêu thích.");
       };
       const dismiss = actions.querySelector("[data-dismiss]"); if (dismiss) dismiss.onclick = () => { closeMenu(); removeReading(series); };
+      const journal = document.createElement("button"); journal.type = "button"; journal.className = "shelf-menu-action"; journal.setAttribute("role", "menuitem"); journal.textContent = "Nhật ký đọc"; journal.onclick = () => { closeMenu(); options.openJournal(series); }; actions.querySelector("[data-manage]").after(journal);
       actions.querySelector("[data-manage]").onclick = () => { closeMenu(); manageBook(series); };
       if (series.personal) actions.querySelector("[data-delete]").onclick = () => { closeMenu(); options.deleteBook(series); };
       if (favorite) {

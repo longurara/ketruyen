@@ -16,6 +16,7 @@ async function runWorkspaceChecks(browser, base) {
       const d = devices.get(sessionId), rpc = url.pathname.split("/rpc/")[1];
       if (url.pathname.endsWith("/logout")) return route.fulfill({ status: 204 });
       if (url.pathname.endsWith("/reauthenticate")) { reauth++; return ok({}); }
+      if (url.pathname.endsWith("/reader_journal_records") || url.pathname.endsWith("/rpc/reader_ebook_inventory_labels")) return route.fulfill({ status: 404, json: { code: "PGRST205", message: "Additive journal migration not installed in legacy fixture" } });
       if (url.pathname.endsWith("/user")) {
         if (method === "PUT") {
           updates++;

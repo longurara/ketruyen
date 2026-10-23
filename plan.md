@@ -1,5 +1,47 @@
 # Kế hoạch tính năng
 
+## Tình trạng thư viện
+
+Trạng thái: đã triển khai ngày 24/10/2026, kiểm thử trình duyệt với hai thiết bị và gói chuyển bị hỏng.
+
+- [x] Xác nhận ebook có trên máy hiện tại bằng IndexedDB thực tế.
+- [x] Hiển thị tên máy khác và thời điểm gần nhất xác nhận có sách; không coi dữ liệu từ máy offline là trạng thái hiện tại.
+- [x] Hiển thị chờ chuyển/nhận, lỗi và hết hạn; kiểm tra lại hoặc thử nhận lại gói lỗi.
+- [x] Lối tắt mở sách và tạo bản sao lưu ZIP; thông tin dung lượng website trên máy.
+
+## Nhật ký hành trình đọc
+
+Trạng thái: đã triển khai P1–P3 trong mã nguồn ngày 24/10/2026. Đồng bộ cần migration `202610230006_reading_journal.sql` trên Supabase và tải lại frontend mới. Mục tiêu là lưu trải nghiệm theo hành trình **Bắt đầu → Cảm nhận khi đọc → Hoàn thành → Đọc lại → Nhìn lại**.
+
+### P1 — Nền tảng
+
+- [x] Nhật ký cho cả bộ, từng tập và từng lượt đọc lại; giữ các lượt cũ để so sánh cảm nhận và điểm đánh giá theo thời gian.
+- [x] Cho ghi điểm 1–5 sao, cảm nhận ngắn hoặc dài, nhãn cảm xúc và ngày hoàn thành có thể sửa; các trường đều tùy chọn.
+- [x] Đính kèm trích dẫn, đoạn tô màu, ghi chú và nhân vật yêu thích đã lưu; có thể mở lại nguồn khi sách còn trên thiết bị.
+- [x] Dòng thời gian nhật ký, xem theo sách hoặc theo tháng; lưu các mốc bắt đầu, hoàn thành và đọc lại.
+- [x] Đồng bộ nhật ký giữa các máy cùng tài khoản, hỗ trợ ghi offline và đưa vào sao lưu/khôi phục.
+
+### P2 — Theo suốt quá trình đọc
+
+- [x] Ghi kỳ vọng khi bắt đầu, cảm nhận ở một chương bất kỳ và đánh giá khi kết thúc; liên kết bài viết với vị trí đã đọc.
+- [x] Ghi lý do tạm dừng, bỏ dở hoặc quay lại một cuốn sách.
+- [x] Lọc nhật ký theo điểm, cảm xúc, sách và thời gian; xem lại các thay đổi qua từng lượt đọc.
+
+### P3 — Nhìn lại và mang theo
+
+- [x] Kỷ niệm đọc như “Một năm trước bạn đọc xong cuốn này”, hiển thị nhẹ nhàng ở trang chính.
+- [x] Tổng kết tháng/năm: các cuốn đáng nhớ, cảm xúc nổi bật và tuyển tập trích dẫn yêu thích.
+- [x] Xuất nhật ký thành Markdown/PDF và tạo thẻ cảm nhận để chia sẻ; người dùng chủ động chọn từng bài hoặc nội dung muốn chia sẻ.
+
+### Nguyên tắc trải nghiệm và dữ liệu
+
+- Các mốc đọc có thể tự ghi; cảm nhận luôn do người dùng chủ động viết. Khi kết thúc chỉ gợi ý “Ghi lại cảm nhận?”, cho phép bỏ qua và viết sau.
+- Nhật ký mặc định chỉ tài khoản xem; không tự công khai bài viết hoặc trích dẫn.
+- Giữ nhật ký lâu dài, độc lập với thời hạn lưu thống kê hoạt động và việc xóa tệp ebook khỏi máy. Không yêu cầu giữ ebook lâu dài trên bucket.
+- Ưu tiên triển khai nhật ký theo tập/lượt đọc, đính kèm trích dẫn và dòng thời gian trước; bổ sung tổng kết, kỷ niệm và chia sẻ sau.
+
+Chi tiết sử dụng, giới hạn và kiểm thử: [docs/reading-journal.md](docs/reading-journal.md).
+
 ## Ưu tiên: trải nghiệm đọc trên điện thoại
 
 Trạng thái: đã triển khai năm mục. Đã kiểm tra trên trình duyệt giả lập điện thoại; cần kiểm tra thêm bàn phím và vùng an toàn trên Android/iPhone thật.

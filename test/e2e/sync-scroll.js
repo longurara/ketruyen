@@ -12,6 +12,7 @@ async function runSyncScrollChecks(browser, base) {
   try {
     await context.route("https://*.supabase.co/**", (route) => {
       const url = new URL(route.request().url());
+      if (url.pathname.endsWith("/reader_journal_records") || url.pathname.endsWith("/rpc/reader_ebook_inventory_labels")) return route.fulfill({ status: 404, json: { code: "PGRST205", message: "Additive journal migration not installed in legacy fixture" } });
       if (url.pathname.endsWith("/user")) return route.fulfill({ json: session.user });
       if (url.pathname.endsWith("/rpc/reader_device_register")) return route.fulfill({ status: 404, json: { code: "PGRST202" } });
       if (url.pathname.endsWith("/reader_sync_records")) return route.fulfill({ json: rows });

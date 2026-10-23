@@ -21,6 +21,8 @@ const PAGE_MODULES = {
   ReaderFeatures: "readonly",
   ReaderSurfaces: "readonly",
   ReaderWorkbench: "readonly",
+  ReaderJournal: "readonly",
+  JournalUI: "readonly",
   ReadingComfort: "readonly",
   UiControls: "readonly",
   JSZip: "readonly",

@@ -30,6 +30,7 @@
   let chapterState = {};
   let readerFeatures = null;
   let readerWorkbench = null;
+  let readingJournal = null;
   let readerSurfaces = null;
   let readingComfort = null;
   let settingsOpener = null;
@@ -1048,9 +1049,15 @@
       openMark: async (seriesIdx, mark) => { if (seriesIdx < 0 || !SERIES[seriesIdx]) return; try { await ensureSeriesIndex(SERIES[seriesIdx]); } catch (_) { showMessage("Không tải được mục lục truyện."); return; } if (mark.type !== "bookmark") returnReaderPosition ||= captureReaderPosition(); activateSeries(seriesIdx); openChapter(mark.volIdx, mark.chapIdx, mark.type === "bookmark" ? { anchor: mark.anchor } : { hit: { p: mark.parts[0]?.p || 0 } }); },
       capturePosition: () => { recordReadingPosition(); return captureReaderPosition()?.anchor || null; },
       deleteBook: (book, settings) => ebookUI?.deleteBook(book, settings),
+      openJournal: (book) => readingJournal?.open(book.slug),
       preservePosition: preserveReaderPosition
     });
     readerSurfaces = ReaderSurfaces.create({ capture: captureReaderPosition, restore: restoreReaderSnapshot });
+    readingJournal = JournalUI.create({ series: SERIES, surfaces: readerSurfaces, message: showMessage, closeSettings,
+      context: () => ({ series: SERIES_META, view: currentView, volIdx: currentVolIdx, chapIdx: currentChapIdx }),
+      ensureBook: async (book) => { const actual = SERIES.find((b) => b.slug === book.slug); if (actual) { await ensureSeriesIndex(actual); Object.assign(book, actual); } },
+      openSource: async (source) => { const index = SERIES.findIndex((b) => b.slug === source.slug); if (index < 0) { showMessage("Ebook gốc không còn trên máy. Nội dung đính kèm trong nhật ký vẫn được giữ."); return; } try { await ensureSeriesIndex(SERIES[index]); if (!SERIES[index].volumesData?.[source.volIdx]?.chapters[source.chapIdx]) throw new Error("Chương gốc không còn trong mục lục."); activateSeries(index); openChapter(source.volIdx, source.chapIdx, { hit: { p: source.p || 0 } }); } catch (error) { showMessage(error.message); } }
+    });
     readingComfort = ReadingComfort.create({
       isReader: () => currentView === "reader",
       linePixels: () => fontSize * lineHeight,
@@ -1068,6 +1075,7 @@
       message: showMessage
     });
     readerWorkbench = ReaderWorkbench.create({
+      journal: readingJournal,
       features: readerFeatures, library: libraryTools, surfaces: readerSurfaces,
       context: () => ({ series: SERIES_META, view: currentView, volIdx: currentVolIdx, chapIdx: currentChapIdx, percent: sectionFor(currentVolIdx, currentChapIdx) ? chapterPercent(sectionFor(currentVolIdx, currentChapIdx)) : 0 }),
       message: showMessage, loadVolume: loadVolumeText, openChapter, closeSettings, openSettings,
@@ -1141,7 +1149,7 @@
     renderRecentChapters();
     attachEvents();
     await restoreRoute();
-    CloudSync.create({ surfaces: readerSurfaces, closeSettings,
+    CloudSync.create({ surfaces: readerSurfaces, closeSettings, journal: readingJournal,
       capture: () => { if (currentView !== "reader") return null; const p = captureReaderPosition(); return p ? { slug: p.slug, volIdx: p.volIdx, chapIdx: p.chapIdx, anchor: p.anchor } : null; },
       resume: async (position) => { const index = SERIES.findIndex((s) => s.slug === position.slug); if (index < 0) return false; await ensureSeriesIndex(SERIES[index]); if (!SERIES[index].volumesData?.[position.volIdx]?.chapters[position.chapIdx]) throw new Error("Chương nguồn không còn trong mục lục."); activateSeries(index); openChapter(position.volIdx, position.chapIdx, { anchor: position.anchor }); return true; },
       reloadNotes: () => libraryTools.reload(),
@@ -2875,6 +2883,7 @@
     }
     chapterState[key] = next;
     saveChapterState();
+    if (pct >= 97) readingJournal?.observe(SERIES_META, currentVolIdx, chapterState, { volIdx: currentVolIdx, chapIdx: currentChapIdx });
   }
 
   function populateReaderSelect(volIdx, activeIndex) {
@@ -4325,6 +4334,7 @@
     saveChapterState();
 
     readerFeatures?.completeChapter(listen.volIdx, listen.chapIdx);
+    readingJournal?.observe(SERIES_META, listen.volIdx, chapterState, { volIdx: listen.volIdx, chapIdx: listen.chapIdx });
 
     if (listen.sleep === "chapter") {
       setListenSleep(0);
@@ -4890,6 +4900,7 @@
 
     localStorage.setItem(seriesStorageKey("progress"), JSON.stringify(readingProgress));
     libraryTools?.resumeReading(SERIES_META);
+    readingJournal?.observe(SERIES_META, volIdx, chapterState);
     recordReadingHistory(volIdx, chapIdx);
     window.dispatchEvent(new Event("ketruyen-library-change"));
     updateContinueUI();

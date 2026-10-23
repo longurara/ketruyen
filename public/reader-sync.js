@@ -1,8 +1,8 @@
 (function (root, factory) {
-  const api = factory();
+  const api = factory(typeof module === "object" && module.exports ? require("./reader-journal") : root.ReaderJournal);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.ReaderSync = api;
-})(globalThis, function () {
+})(globalThis, function (journalCore) {
   "use strict";
   const AUTH_KEY = "ketruyen-auth-v1", LINK_KEY = "ketruyen-sync-link-v1";
   const object = (value) => value && typeof value === "object" && !Array.isArray(value);
@@ -13,6 +13,7 @@
     return JSON.stringify(value);
   }
   function validRecord(key, value) {
+    if (typeof key === "string" && key.startsWith("journal/")) return Boolean(journalCore?.valid(key.slice(8), value));
     if (key === "goal/current") return value === null || object(value) && Object.keys(value).every((k) => ["id", "kind", "target", "startedAt"].includes(k)) && /^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(value.id) && ["minutes", "chapters"].includes(value.kind) && Number.isInteger(value.target) && value.target >= 1 && value.target <= (value.kind === "minutes" ? 240 : 50) && Number.isFinite(value.startedAt);
     if (typeof key !== "string" || key.length > 300 || !/^(progress|chapter|history|favorite|status|groups|mark)\/[a-z\d_:/-]+$/i.test(key)) return false;
     if (value === undefined) return false;
@@ -131,6 +132,7 @@
     return { ...winner, timestamp: Math.max(local.timestamp, remote.timestamp) };
   }
   async function synchronize(state, io) {
+    const merge = io.merge || mergeReading;
     const capture = () => stage(state, io.read());
     capture(); await io.save(state); // Durable outbox before attempting the network.
     const rows = await io.pull();
@@ -140,7 +142,7 @@
       if (!validRecord(row.record_key, row.value) || !Number.isSafeInteger(row.revision) || row.revision < 1) throw new Error("Dữ liệu đồng bộ không đúng định dạng.");
       const pending = state.pending[row.record_key];
       if (pending || Object.hasOwn(local, row.record_key)) {
-        const merged = mergeReading(row.record_key, local[row.record_key] ?? null, row.value, state.baseline[row.record_key]?.value, Object.hasOwn(state.baseline, row.record_key));
+        const merged = merge(row.record_key, local[row.record_key] ?? null, row.value, state.baseline[row.record_key]?.value, Object.hasOwn(state.baseline, row.record_key));
         if (merged !== undefined) {
           if (!equal(local[row.record_key], merged)) updates[row.record_key] = merged;
           accepted.push(row); continue;
@@ -170,7 +172,7 @@
             state.baseline[row.record_key] = row; delete state.pending[row.record_key]; delete state.conflicts[row.record_key];
           } else {
             const current = io.read()[row.record_key] ?? null;
-            const merged = row.revision > 0 ? mergeReading(row.record_key, current, row.value, state.baseline[row.record_key]?.value, Object.hasOwn(state.baseline, row.record_key)) : undefined;
+            const merged = row.revision > 0 ? merge(row.record_key, current, row.value, state.baseline[row.record_key]?.value, Object.hasOwn(state.baseline, row.record_key)) : undefined;
             if (merged === undefined) state.conflicts[row.record_key] = row;
             else {
               if (!equal(current, merged)) { io.apply({ [row.record_key]: merged }); updates[row.record_key] = merged; }

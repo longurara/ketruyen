@@ -27,6 +27,7 @@ async function runSyncChecks(browser, base) {
         if (body.password === "wrong-password") return route.fulfill({ status: 400, headers: { "X-Supabase-Api-Version": "2024-01-01" }, json: { code: "invalid_credentials", error: "invalid_grant", error_description: "Invalid login credentials" } });
         return route.fulfill({ json: account });
       }
+      if (url.pathname.endsWith("/reader_journal_records") || url.pathname.endsWith("/rpc/reader_ebook_inventory_labels")) return route.fulfill({ status: 404, json: { code: "PGRST205", message: "Additive journal migration not installed in legacy fixture" } });
       if (url.pathname.endsWith("/user")) { if (route.request().method() === "PUT") requests.update++; return route.fulfill({ json: account.user }); }
       const rows = records.get(account.user.id) || new Map(); records.set(account.user.id, rows);
       if (url.pathname.endsWith("/reader_sync_records")) {

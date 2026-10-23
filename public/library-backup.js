@@ -1,8 +1,8 @@
 (function (root, factory) {
-  const api = factory();
+  const api = factory(typeof module === "object" && module.exports ? require("./reader-journal") : root.ReaderJournal);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.LibraryBackup = api;
-})(globalThis, function () {
+})(globalThis, function (journalCore) {
   "use strict";
   const MAX_BACKUP = 512 * 1024 * 1024, MAX_EXPANDED = 1024 * 1024 * 1024;
   const text = (value, max = 1000) => typeof value === "string" ? value.slice(0, max) : "";
@@ -14,6 +14,7 @@
     const settings = {};
     for (const [key, item] of Object.entries(value)) {
       if (!/^tenshi-[a-z\d_-]{1,100}$/i.test(key) || typeof item !== "string" || item.length > 5 * 1024 * 1024) fail();
+      if (key.startsWith("tenshi-journal-")) { let record; try { record = JSON.parse(item); } catch (_) { fail(); } if (!journalCore?.valid(key.slice(journalCore.PREFIX.length), record)) fail(); }
       if (key === "tenshi-reader-tools-v1") {
         let state; try { state = JSON.parse(item); } catch (_) { fail(); }
         if (!object(state) || state.version !== 1) fail();

@@ -5,6 +5,8 @@
     const panel = $("ebook-transfer-panel"), status = $("ebook-transfer-status"), list = $("ebook-transfer-list");
     let context = null, generation = 0, busy = false, refreshing = false, rows = [];
     let devices = null, offered = null, autoTimer, autoAvailable = null;
+    let inventorySnapshot = [], transferSnapshot = [], historyDevices = [], checkedAt = 0, labelsSent = "", labelsAvailable = true;
+    const healthErrors = new Map(), healthChanged = () => dispatchEvent(new Event("ketruyen-library-health"));
     const autoPanel = $("ebook-auto-panel"), autoEnabled = $("ebook-auto-enabled"), autoStatus = $("ebook-auto-status"), retryAfter = new Map();
     try { autoEnabled.checked = localStorage.getItem("ketruyen-auto-ebook-v1") !== "off"; } catch (_) {}
     const receiver = document.createElement("select"); receiver.id = "ebook-transfer-recipient"; receiver.setAttribute("aria-label", "Thiết bị nhận ebook"); receiver.hidden = true; $("ebook-transfer-book").after(receiver);
@@ -16,7 +18,7 @@
     }
     const report = (text) => { status.textContent = text; };
     function setContext(next) {
-      if (context?.owner !== next?.owner || context?.sessionKey !== next?.sessionKey) { generation++; context = next; rows = []; autoAvailable = null; retryAfter.clear(); clearTimeout(autoTimer); list.replaceChildren(); report(""); autoStatus.textContent = ""; $("ebook-transfer-open").hidden = true; }
+      if (context?.owner !== next?.owner || context?.sessionKey !== next?.sessionKey) { generation++; context = next; rows = []; inventorySnapshot = []; transferSnapshot = []; checkedAt = 0; labelsSent = ""; labelsAvailable = true; healthErrors.clear(); autoAvailable = null; retryAfter.clear(); clearTimeout(autoTimer); list.replaceChildren(); report(""); autoStatus.textContent = ""; $("ebook-transfer-open").hidden = true; healthChanged(); }
       else context = next;
       panel.hidden = !context;
       autoPanel.hidden = !context;
@@ -43,13 +45,13 @@
           await options.onReceived(slug); guard();
           $("ebook-transfer-open").href = `/truyen/${slug}`; $("ebook-transfer-open").hidden = false;
         },
-        confirm: (id) => request(own.client.rpc("reader_ebook_received", { transfer_id: id })),
+        confirm: async (id) => { await request(own.client.rpc("reader_ebook_received", { transfer_id: id })); const row = transferSnapshot.find((r) => r.id === id); if (row) row.received_at = new Date().toISOString(); },
         remove: async (path) => {
           await request(storage.remove([path]));
           // RPC forget verifies actual absence, including when Storage returns
           // an empty success after RLS has filtered an inaccessible object.
         },
-        forget: (id) => request(own.client.rpc("reader_ebook_forget", { transfer_id: id }))
+        forget: async (id) => { await request(own.client.rpc("reader_ebook_forget", { transfer_id: id })); transferSnapshot = transferSnapshot.filter((r) => r.id !== id); healthErrors.delete(id); healthChanged(); }
       };
     }
     function paint() {
@@ -89,8 +91,9 @@
       if (!context || busy || refreshing || !panel.open || !$("sync-dialog").open || !navigator.onLine) return;
       refreshing = true; const api = io(); paint();
       try {
-        const data = await api.request(api.client.from("reader_ebook_transfers").select("id,user_id,sender_device,recipient_device,slug,title,bytes,sha256,ready,expires_at,received_at").eq("user_id", api.owner).order("created_at", { ascending: false }).limit(100));
+        const data = await api.request(api.client.from("reader_ebook_transfers").select("*").eq("user_id", api.owner).order("created_at", { ascending: false }).limit(100));
         api.guard(); rows = data.filter((r) => !r.recipient_device || r.sender_device === device || r.recipient_device === device);
+        transferSnapshot = rows; checkedAt = Date.now(); healthChanged();
         const books = await root.EbookImport.list(); api.guard();
         const select = $("ebook-transfer-book"), chosen = select.value; select.replaceChildren();
         for (const book of books) { const option = document.createElement("option"); option.value = book.slug; option.textContent = book.titleVi; select.append(option); }
@@ -102,11 +105,11 @@
       } catch (error) { if (context?.owner === api.owner) failure(error); }
       finally { refreshing = false; paint(); }
     }
-    async function run(action) {
+    async function run(action, propagate = false) {
       if (busy || !context) return;
       busy = true; const api = io(); paint();
-      try { await action(api); } catch (error) { if (context?.owner === api.owner) failure(error); }
-      finally { busy = false; paint(); if (context?.owner === api.owner) await refresh(); }
+      try { await action(api); } catch (error) { if (context?.owner === api.owner) failure(error); if (propagate) throw error; }
+      finally { busy = false; paint(); healthChanged(); if (context?.owner === api.owner) await refresh(); }
     }
     async function send(api, slug, target, automatic = false) {
       if (devices !== null && !target) throw new Error("Chọn thiết bị nhận trước khi gửi."); api.report("Đang đóng gói sách…");
@@ -136,6 +139,7 @@
         throw error;
       }
       if (offered && offered.slug === slug && offered.target === target) { await api.request(api.client.from("reader_book_requests").update({ resolved: true }).eq("id", offered.id)); offered = null; }
+      healthErrors.delete(target + "/" + slug);
       api.report(automatic ? "Đã tải lên · Đang chờ máy nhận tự lưu ebook…" : "Đã tải lên. Mở Đồng bộ → Chuyển ebook trên máy khác để nhận trong 30 phút.");
       return true;
     }
@@ -154,19 +158,30 @@
         try {
           let books = await root.EbookImport.list(); api.guard();
           await api.request(api.client.rpc("reader_ebook_inventory_set", { books: books.map((b) => b.slug), excluded_books: ignoredBooks(), active: autoEnabled.checked }));
+          if (labelsAvailable) {
+            const labels = Object.fromEntries(books.map((b) => [b.slug, { title: b.titleVi.slice(0, 250), author: String(b.author || "").slice(0, 150) }])), serial = JSON.stringify(labels);
+            if (serial !== labelsSent) try { await api.request(api.client.rpc("reader_ebook_inventory_labels", { titles: labels })); labelsSent = serial; }
+            catch (error) { api.guard(); if (["PGRST202", "PGRST205", "42P01"].includes(error.code)) labelsAvailable = false; else throw error; }
+          }
           autoAvailable = true;
-          if (!autoEnabled.checked) { api.report("Đã tạm dừng tự đồng bộ trên máy này. Bạn vẫn có thể gửi và nhận thủ công."); return; }
+          if (!autoEnabled.checked) {
+            inventorySnapshot = await api.request(api.client.from("reader_ebook_inventory").select("*").eq("user_id", api.owner).limit(500));
+            transferSnapshot = await api.request(api.client.from("reader_ebook_transfers").select("*").eq("user_id", api.owner).order("created_at", { ascending: false }).limit(100)); checkedAt = Date.now();
+            api.report("Đã tạm dừng tự đồng bộ trên máy này. Bạn vẫn có thể gửi và nhận thủ công."); return;
+          }
           const incoming = await api.request(api.client.from("reader_ebook_transfers").select("*").eq("user_id", api.owner).order("created_at", { ascending: false }).limit(100));
+          transferSnapshot = incoming; checkedAt = Date.now();
           let received = 0, sent = 0, failed = false;
           for (const row of incoming) {
             if (row.recipient_device !== device || !row.automatic || !row.ready || Date.parse(row.expires_at) <= Date.now() || (retryAfter.get(row.id) || 0) > Date.now()) continue;
             try {
               if (row.received_at || ignoredBooks().includes(row.slug)) await core.cleanup(row, api);
               else { await core.receive(row, { ...api, guard: () => { api.guard(); if (ignoredBooks().includes(row.slug)) throw new Error("Sách vừa được xóa khỏi máy này."); } }); received++; }
-            } catch (error) { api.guard(); retryAfter.set(row.id, Date.now() + 60000); failed = true; api.report(`Chưa tự nhận được ebook: ${error.message || "Kiểm tra kết nối hoặc dung lượng máy."} Sẽ thử lại sau.`); }
+            } catch (error) { api.guard(); retryAfter.set(row.id, Date.now() + 60000); healthErrors.set(row.id, { slug: row.slug, message: error.message || "Chưa nhận được ebook.", at: Date.now() }); failed = true; api.report(`Chưa tự nhận được ebook: ${error.message || "Kiểm tra kết nối hoặc dung lượng máy."} Sẽ thử lại sau.`); }
           }
           books = await root.EbookImport.list(); api.guard();
           const inventory = await api.request(api.client.from("reader_ebook_inventory").select("*").eq("user_id", api.owner).limit(500));
+          inventorySnapshot = inventory;
           const online = new Set(devices.filter((d) => !d.revoked_at && d.online).map((d) => d.device_id));
           books.sort((a, b) => (b.importedAt || 0) - (a.importedAt || 0));
           for (const target of inventory) {
@@ -176,7 +191,7 @@
               const key = target.device_id + "/" + book.slug;
               if (sent >= 4 || target.slugs.includes(book.slug) || target.ignored.includes(book.slug) || incoming.some((r) => r.recipient_device === target.device_id && r.slug === book.slug && !r.received_at) || (retryAfter.get(key) || 0) > Date.now()) continue;
               try { if (await send(api, book.slug, target.device_id, true)) sent++; }
-              catch (error) { api.guard(); retryAfter.set(key, Date.now() + 60000); failed = true; api.report(`Chưa tự gửi được ebook: ${error.message || "Kiểm tra kết nối."} Sẽ thử lại sau.`); }
+              catch (error) { api.guard(); retryAfter.set(key, Date.now() + 60000); healthErrors.set(key, { slug: book.slug, message: error.message || "Chưa gửi được ebook.", at: Date.now() }); failed = true; api.report(`Chưa tự gửi được ebook: ${error.message || "Kiểm tra kết nối."} Sẽ thử lại sau.`); }
             }
           }
           const waiting = incoming.filter((r) => r.automatic && r.sender_device === device && !r.received_at && Date.parse(r.expires_at) > Date.now()).length;
@@ -186,7 +201,7 @@
             if (["PGRST202", "PGRST205", "42P01"].includes(error.code)) { autoAvailable = false; autoStatus.textContent = "Cần chạy migration 0005 để bật tự đồng bộ ebook. Chuyển thủ công vẫn dùng được."; }
             else autoStatus.textContent = `Chưa kiểm tra được ebook: ${error.message || "Kiểm tra kết nối."}`;
           }
-        } finally { busy = false; paint(); scheduleAuto(20000); }
+        } finally { busy = false; paint(); healthChanged(); scheduleAuto(20000); }
       };
       try {
         if (navigator.locks) await navigator.locks.request("ketruyen-ebook-auto", { ifAvailable: true }, (lock) => lock ? perform() : scheduleAuto(20000));
@@ -206,7 +221,8 @@
     addEventListener("online", refresh);
     setInterval(refresh, 10000);
     receiver.onchange = paint;
-    function setDevices(rows) {
+    function setDevices(rows, allRows = rows) {
+      historyDevices = allRows || [];
       devices = rows === null ? null : [...new Map(rows.map((d) => [d.device_id, d])).values()];
       const chosen = receiver.value; receiver.replaceChildren(); receiver.hidden = devices === null;
       if (devices) {
@@ -217,7 +233,11 @@
       paint();
       scheduleAuto();
     }
-    return { setContext, refresh, setDevices, async offer(slug, target, id) { panel.open = true; await refresh(); $("ebook-transfer-book").value = slug; receiver.value = target; offered = { slug, target, id }; paint(); $("ebook-transfer-send").focus(); report("Kiểm tra sách và máy nhận, rồi bấm Gửi sách để xác nhận."); } };
+    return { setContext, refresh, setDevices,
+      snapshot: () => ({ connected: Boolean(context), device, devices: historyDevices, inventory: inventorySnapshot, transfers: transferSnapshot, checkedAt, errors: [...healthErrors.values()], checking: busy || refreshing, message: autoStatus.textContent }),
+      async check() { autoAvailable = null; labelsAvailable = true; retryAfter.clear(); await autoSync(); await refresh(); },
+      async receive(id) { const row = transferSnapshot.find((r) => r.id === id); if (!row || busy) throw new Error("Đợi lượt chuyển hiện tại hoàn tất rồi kiểm tra lại."); try { await run((api) => core.receive(row, api), true); } catch (error) { healthErrors.set(id, { slug: row.slug, message: error.message, at: Date.now() }); healthChanged(); throw error; } },
+      async offer(slug, target, id) { panel.open = true; await refresh(); $("ebook-transfer-book").value = slug; receiver.value = target; offered = { slug, target, id }; paint(); $("ebook-transfer-send").focus(); report("Kiểm tra sách và máy nhận, rồi bấm Gửi sách để xác nhận."); } };
   }
   root.EbookTransferUI = { create };
 })(globalThis);

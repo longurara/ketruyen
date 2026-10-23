@@ -13,6 +13,7 @@ async function runEbookTransferChecks(browser, base, automatic = false) {
     await context.route("https://*.supabase.co/**", async (route) => {
       const request = route.request(), url = new URL(request.url()), method = request.method();
       const body = request.headers()["content-type"]?.includes("application/json") ? request.postDataJSON() : null;
+      if (url.pathname.endsWith("/reader_journal_records") || url.pathname.endsWith("/rpc/reader_ebook_inventory_labels")) return route.fulfill({ status: 404, json: { code: "PGRST205", message: "Additive journal migration not installed in legacy fixture" } });
       if (url.pathname.endsWith("/user")) return route.fulfill({ json: session.user });
       if (url.pathname.endsWith("/rpc/reader_device_register")) { const d = registry.get(sid) || { user_id: session.user.id, session_id: sid, device_id: body.installation, name: mobile ? "Điện thoại nhận" : "Máy gửi", last_seen: new Date().toISOString() }; registry.set(sid, d); return route.fulfill({ json: { ...d, server_time: new Date().toISOString() } }); }
       if (url.pathname.endsWith("/rpc/reader_require_device")) return route.fulfill({ json: null });

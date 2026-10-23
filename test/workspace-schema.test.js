@@ -17,7 +17,7 @@ test("workspace migrations: real session binding, account RLS, revoked JWT denia
       create function realtime.topic() returns text language sql stable as $$ select current_setting('realtime.topic',true) $$; grant usage on schema realtime to authenticated;`);
     await db.query("insert into auth.users values($1),($2)", [a, b]);
     await db.query("insert into auth.sessions values($1,$4),($2,$4),($3,$4),($5,$6)", [sa, sb, sc, a, other, b]);
-    for (const name of ["202610230001_reader_sync.sql", "202610230002_ebook_transfers.sql", "202610230003_reader_workspace.sql", "202610230003_reader_workspace.sql", "202610230004_enforce_reader_devices.sql", "202610230004_enforce_reader_devices.sql", "202610230005_auto_ebook_sync.sql", "202610230005_auto_ebook_sync.sql"]) await db.exec(fs.readFileSync(path.join(__dirname, "../supabase/migrations", name), "utf8"));
+    for (const name of ["202610230001_reader_sync.sql", "202610230002_ebook_transfers.sql", "202610230003_reader_workspace.sql", "202610230003_reader_workspace.sql", "202610230004_enforce_reader_devices.sql", "202610230004_enforce_reader_devices.sql", "202610230005_auto_ebook_sync.sql", "202610230005_auto_ebook_sync.sql", "202610230006_reading_journal.sql", "202610230006_reading_journal.sql"]) await db.exec(fs.readFileSync(path.join(__dirname, "../supabase/migrations", name), "utf8"));
     const user = async (id, sid) => { await db.exec("reset role; set role authenticated"); await db.query("select set_config('request.jwt.claim.sub',$1,false),set_config('request.jwt.claim.sid',$2,false)", [id, sid]); };
     const rpc = async (sql, args = []) => (await db.query(sql, args)).rows;
     const register = (id) => rpc("select reader_device_register($1,'Test device')", [id]);
@@ -46,6 +46,21 @@ test("workspace migrations: real session binding, account RLS, revoked JWT denia
     await db.exec("reset role"); await db.query("update reader_devices set last_seen=now()-interval '91 seconds' where session_id=$1", [sb]);
     await user(a, sb); await inventory([]); await user(a, sa); assert.equal((await reserve())[0].id, null, "offline recipient got automatic ebook");
     await user(a, sb); await rpc("select reader_device_touch()"); await user(a, sa);
+    const diary = require("../public/reader-journal"), journalRun = diary.newRun({ slug: "book", titleVi: "Private diary", author: "", volumesData: [] }, "book", null, randomUUID());
+    const writeJournal = (value, revision = 0) => rpc("select * from reader_journal_apply($1)", [JSON.stringify([{ key: "journal/" + journalRun.id, value, expected_revision: revision }])]);
+    assert.equal((await writeJournal(journalRun))[0].applied, true);
+    await user(a, sb); assert.equal((await writeJournal({ ...journalRun, reason: "Another device" }))[0].applied, false);
+    await assert.rejects(rpc("update reader_journal_records set value=null"), /permission denied/);
+    await user(b, other); assert.equal((await rpc("select * from reader_journal_records")).length, 0);
+    await user(a, sa); assert.equal((await writeJournal(null, 1))[0].revision, 2); assert.equal((await writeJournal(journalRun, 1))[0].applied, false);
+    const oldDiary = { ...journalRun, id: randomUUID(), startedOn: "2000-01-01", createdAt: 946684800000, updatedAt: 946684800000 };
+    await rpc("select * from reader_journal_apply($1)", [JSON.stringify([{ key: "journal/" + oldDiary.id, value: oldDiary, expected_revision: 0 }])]);
+    await rpc("select reader_ebook_inventory_labels($1)", [JSON.stringify({ [autoSlug]: { title: "Tên riêng", author: "Tác giả" } })]);
+    await assert.rejects(rpc("select reader_ebook_inventory_labels($1)", [JSON.stringify({ invalid: { title: "No", author: "" } })]), /Invalid ebook titles/);
+    const beforeSignal = (await rpc("select version from reader_signals"))[0].version;
+    await inventory([autoSlug]); await inventory([autoSlug]);
+    assert.equal((await rpc("select version from reader_signals"))[0].version, beforeSignal, "inventory confirmation triggered a Realtime loop");
+    assert.ok((await rpc("select confirmed_at from reader_ebook_inventory where device_id=$1", [da]))[0].confirmed_at);
     const e = { id: randomUUID(), kind: "read", slug: "book", start: Date.now() - 10000, end: Date.now(), interaction: Date.now() };
     await rpc("select reader_activity_upload($1)", [JSON.stringify([e])]); await rpc("select reader_activity_upload($1)", [JSON.stringify([e])]); assert.equal((await rpc("select * from reader_activity")).length, 1);
     await assert.rejects(rpc("select reader_activity_upload($1)", [JSON.stringify([{ ...e, id: randomUUID(), kind: null }])]), /Invalid activity/);
@@ -73,7 +88,7 @@ test("workspace migrations: real session binding, account RLS, revoked JWT denia
     await rpc("select set_config('storage.operation','object.upload',false)");
     await assert.rejects(rpc("insert into storage.objects(bucket_id,name) values('ebook-transfers',$1)", [file]), /row-level security/);
     assert.equal((await rpc("delete from storage.objects where name=$1 returning *", [file])).length, 0);
-    assert.equal((await rpc("select * from reader_ebook_inventory")).length, 0); await assert.rejects(inventory([autoSlug]), /device-revoked/); await assert.rejects(reserve(), /device-revoked/);
+    assert.equal((await rpc("select * from reader_ebook_inventory")).length, 0); await assert.rejects(inventory([autoSlug]), /device-revoked/); assert.equal((await rpc("select * from reader_journal_records")).length, 0); await assert.rejects(writeJournal(journalRun, 2), /device-revoked/); await assert.rejects(reserve(), /device-revoked/);
     await assert.rejects(register(da), /device-revoked/); await assert.rejects(register(randomUUID()), /device-revoked/);
     await assert.rejects(write("favorite/new", true), /row-level security/); await assert.rejects(rpc("select reader_activity_upload('[]')"), /device-revoked/); await assert.rejects(rpc("select reader_ebook_received($1)", [tid]), /device-revoked/);
     await db.exec("reset role"); await db.query("delete from auth.sessions where id=$1", [sb]); await user(a, sb); await assert.rejects(register(dbid), /device-revoked/);
@@ -81,6 +96,6 @@ test("workspace migrations: real session binding, account RLS, revoked JWT denia
     await db.exec("reset role; update reader_note_versions set expires_at=now()-interval '1 second'; update reader_activity set value=jsonb_set(value,'{end}',to_jsonb((extract(epoch from now()-interval '367 days')*1000)::bigint))");
     await user(a, sc); assert.equal((await rpc("select * from reader_note_versions")).length, 0, "expired versions exposed by RLS");
     await assert.rejects(rpc("select reader_workspace_housekeeping()"), /permission denied/);
-    await db.exec("reset role; set role service_role"); await rpc("select reader_workspace_housekeeping()"); assert.equal((await rpc("select * from reader_activity")).length, 0); assert.equal((await rpc("select * from reader_note_versions")).length, 0);
+    await db.exec("reset role; set role service_role"); await rpc("select reader_workspace_housekeeping()"); assert.equal((await rpc("select * from reader_activity")).length, 0); assert.equal((await rpc("select * from reader_note_versions")).length, 0); assert.equal((await rpc("select * from reader_journal_records")).length, 2, "housekeeping deleted permanent journal data/tombstones");
   } finally { await db.close(); }
 });

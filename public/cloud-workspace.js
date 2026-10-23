@@ -102,7 +102,8 @@
       const purges = await all(a, "reader_note_purges", "mark_id,purged_at", (q) => q.order("mark_id"));
       mergeVersions(versions, purges); await processPurges(a);
       devices = await all(a, "reader_devices", "*", (q) => q.order("last_seen", { ascending: false })); paintDevices();
-      options.transfers.setDevices(devices.filter((d) => !d.revoked_at && d.device_id !== device).map((d) => ({ ...d, online: Date.now() + offset - Date.parse(d.last_seen) < 90000 })));
+      const transferDevices = devices.filter((d) => d.device_id !== device).map((d) => ({ ...d, online: !d.revoked_at && Date.now() + offset - Date.parse(d.last_seen) < 90000 }));
+      options.transfers.setDevices(transferDevices.filter((d) => !d.revoked_at), transferDevices);
       const requests = await all(a, "reader_book_requests", "*", (q) => q.eq("source_session", a.sid).eq("resolved", false).order("id")); paintRequests(requests);
       $("workspace-baseline").hidden = false; $("workspace-import").hidden = Boolean(meta?.legacy);
       $("workspace-import-status").textContent = meta?.legacy ? "Đã nhập thống kê gốc một lần · Phần trước đồng bộ được giữ riêng trong tổng số." : "Chưa chọn máy gốc. Thống kê đồng bộ mới vẫn được ghi nhận.";

@@ -5,8 +5,8 @@
 })(globalThis, function () {
   "use strict";
   const KEY = "tenshi-workbench-v1";
-  const ACTIONS = { map: "Bản đồ sách", preview: "Lật xem trước", xray: "Lần xuất hiện", words: "Chú giải từ", vocabulary: "Sổ từ vựng", profiles: "Hồ sơ đọc", bookmark: "Đánh dấu", marks: "Ghi chú", settings: "Cài đặt" };
-  const GROUPS = { read: { label: "Đọc", tabs: ["contents", "map", "preview", "stats", "goal", "profiles", "layout", "options"] }, lookup: { label: "Tra cứu", tabs: ["characters", "xray", "toc"] }, notes: { label: "Ghi chú", tabs: ["marks", "quotes"] }, learn: { label: "Học từ", tabs: ["words", "vocabulary", "pronunciation"] } };
+  const ACTIONS = { map: "Bản đồ sách", preview: "Lật xem trước", xray: "Lần xuất hiện", words: "Chú giải từ", vocabulary: "Sổ từ vựng", profiles: "Hồ sơ đọc", bookmark: "Đánh dấu", marks: "Ghi chú", settings: "Cài đặt", journal: "Nhật ký đọc" };
+  const GROUPS = { read: { label: "Đọc", tabs: ["contents", "map", "preview", "stats", "goal", "journal", "profiles", "layout", "options"] }, lookup: { label: "Tra cứu", tabs: ["characters", "xray", "toc"] }, notes: { label: "Ghi chú", tabs: ["marks", "quotes"] }, learn: { label: "Học từ", tabs: ["words", "vocabulary", "pronunciation"] } };
   const LABELS = { ...ACTIONS, contents: "Mục lục", characters: "Nhân vật", stats: "Thống kê", goal: "Mục tiêu", pronunciation: "Phát âm", quotes: "Trích dẫn", layout: "Vùng đọc", toc: "Mục lục EPUB", options: "Tùy chỉnh" };
   const FEATURE_TABS = ["characters", "stats", "goal", "pronunciation", "quotes"];
   const clean = (v, n = 200) => typeof v === "string" ? v.trim().slice(0, n) : "";
@@ -117,6 +117,7 @@
       panel.hidden = FEATURE_TABS.includes(tab); featureSlot.hidden = !panel.hidden; librarySlot.hidden = true; updateNavigation();
       if (FEATURE_TABS.includes(tab)) { options.features.renderEmbedded(tab, featureArgument); featureArgument = null; return; }
       if (tab === "marks") { options.library.openMarks(); return; }
+      if (tab === "journal") { options.journal.open(ctx().series.slug); return; }
       if (tab === "layout") { options.library.openLayout(); return; }
       if (tab === "toc") { options.library.openToc(); return; }
       if (tab === "contents") renderContents();

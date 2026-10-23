@@ -1,0 +1,48 @@
+.journal-dialog { width: min(820px, calc(100vw - 32px)); max-height: min(90dvh, 1000px); overflow: hidden; }
+.journal-dialog[open] { display: flex; flex-direction: column; }
+.journal-dialog .tools-heading { flex: 0 0 auto; }
+.journal-body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; padding: 4px 2px 20px; scrollbar-width: thin; }
+.journal-body label { display: grid; gap: 7px; margin: 12px 0; font: 500 var(--text-sm)/1.65 var(--font-ui); }
+.journal-body :is(input:not([type="checkbox"]),select,textarea) { box-sizing: border-box; width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); color: var(--text); font: inherit; }
+.journal-body textarea { resize: vertical; line-height: 1.85; }
+.journal-body :is(input,select,textarea,button):focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.journal-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 14px 0; }
+.journal-toolbar :is(.btn-primary,.btn-secondary) { min-height: 44px; }
+.journal-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+.journal-tabs button { min-height: 44px; padding: 8px 14px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--text-soft); font: 600 var(--text-sm)/1.5 var(--font-ui); cursor: pointer; }
+.journal-tabs button[aria-pressed="true"] { border-color: var(--line-strong); color: var(--text); background: var(--surface-2); }
+.journal-filters, .journal-form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0 16px; }
+.journal-card { padding: 20px; margin: 16px 0; border: 1px solid var(--line-strong); border-radius: 16px; overflow-wrap: anywhere; }
+.journal-card :is(h3,h4) { margin: 8px 0; line-height: 1.6; }
+.journal-card h3 { font-family: var(--font-serif); font-size: 1.3rem; }
+.journal-card h4 { margin-top: 22px; }
+.journal-date { font-size: var(--text-xs); color: var(--text-soft); }
+.journal-prose { white-space: pre-wrap; line-height: 1.85; overflow-wrap: anywhere; margin: 12px 0; }
+.journal-prose footer { display: block; font: 500 var(--text-xs)/1.7 var(--font-ui); margin-top: 10px; }
+.journal-moods { color: var(--text-soft); font-size: var(--text-sm); margin-top: 8px; }
+.journal-milestone { padding: 14px 16px; margin: 16px 0; border-left: 2px solid var(--line-strong); background: var(--surface-2); border-radius: 0 12px 12px 0; }
+.journal-milestone p { line-height: 1.75; }
+.journal-attachment { border-top: 1px solid var(--line); padding: 12px 0; }
+.journal-attachment summary { cursor: pointer; line-height: 1.7; }
+.journal-attachment-picker { min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: 12px; max-height: 280px; overflow-y: auto; }
+.journal-body .journal-check { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+.journal-check input { flex: 0 0 20px; width: 20px; height: 20px; margin: 4px 0; accent-color: var(--ink); }
+.journal-check span { min-width: 0; overflow-wrap: anywhere; }
+.journal-check strong, .journal-check span span { display: block; }
+.journal-check span span { color: var(--text-soft); font-size: var(--text-xs); }
+.journal-export-picker { max-height: 280px; overflow-y: auto; }
+#journal-card-preview canvas { display: block; max-width: 100%; height: auto; border-radius: 12px; margin-top: 16px; }
+.shelf-journal { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 20px 24px; margin-top: 20px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+.shelf-journal > div { flex: 1 1 300px; min-width: 0; }
+.shelf-journal h2 { margin: 6px 0; font: 600 1.1rem/1.6 var(--font-serif); }
+.shelf-journal p:not(.shelf-feature-kicker) { color: var(--text-soft); font-size: var(--text-sm); line-height: 1.8; overflow-wrap: anywhere; }
+.library-health-local { font-weight: 600; margin: 10px 0; }
+@media (max-width:600px) {
+  .journal-dialog { width: calc(100vw - 16px); max-height: calc(var(--reader-viewport-height, 100dvh) - 20px); }
+  .journal-dialog .tools-heading h2 { font-size: 1.3rem; line-height: 1.6; }
+  .journal-body { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+  .journal-card { padding: 16px; }
+  .journal-filters { gap: 0 10px; }
+  .shelf-journal { padding: 18px; }
+}
+@media print { .journal-toolbar,.journal-filters,.journal-tabs { display:none; } .journal-card { break-inside:avoid; } }
