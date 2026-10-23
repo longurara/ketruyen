@@ -106,19 +106,19 @@
       if (book) for (const c of root.ReaderFeatures.unlockedCharacters(tools?.characters?.[slug] || [], root.ReaderFeatures.chapterEntries(book), tools?.reached?.[slug] || [])) list.push({ type: "character", label: String(c.name).slice(0, 160), text: String(c.note || "Nhân vật yêu thích").slice(0, 2000), volIdx: null, chapIdx: null });
       return list;
     }
-    async function ensureRun(book, scope, volIdx) {
+    async function ensureRun(book, scope, volIdx, manual = false) {
       const active = all().filter((v) => v.kind === "run" && v.slug === book.slug && v.scope === scope && v.volIdx === (scope === "book" ? null : volIdx)).sort((a, b) => b.round - a.round || b.createdAt - a.createdAt || a.id.localeCompare(b.id));
       if (active.length) return active[0];
-      const id = await core.defaultId(book.slug, scope, volIdx), stored = localStorage.getItem(core.PREFIX + id);
-      if (stored) return JSON.parse(stored);
+      let id = await core.defaultId(book.slug, scope, volIdx); const stored = localStorage.getItem(core.PREFIX + id);
+      if (stored) { const value = JSON.parse(stored); if (value?.kind === "run") return value; if (!manual) return null; id = crypto.randomUUID(); }
       const run = core.newRun(book, scope, volIdx, id); save(run); return run;
     }
     async function edit(entryId, runId) {
       try {
         feedback(""); const items = all(), existing = items.find((v) => v.id === entryId), current = options.context(); let run = items.find((v) => v.id === (runId || existing?.runId));
-        const chosen = run?.slug || selectedBook || suggested?.slug || current.series?.slug || options.series[0]?.slug;
+        const chosen = run?.slug || existing?.slug || selectedBook || suggested?.slug || current.series?.slug || options.series[0]?.slug;
         let book = bookList().find((b) => b.slug === chosen); if (!book) throw new Error("Chọn một cuốn sách để ghi nhật ký.");
-        if (!run) { await options.ensureBook(book).catch(() => {}); run = await ensureRun(book, "book", null); }
+        if (!run) { await options.ensureBook(book).catch(() => {}); run = await ensureRun(book, "book", null, true); }
         editing = true; dirty = false; const available = attachments(run.slug), chosenAttachments = [...(existing?.attachments || [])];
         for (const a of chosenAttachments) if (!available.some((v) => JSON.stringify(v) === JSON.stringify(a))) available.push(a);
         const initialLocation = existing?.location || (current.view === "reader" && current.series.slug === run.slug ? { volIdx: current.volIdx, chapIdx: current.chapIdx, p: 0 } : null);
@@ -199,6 +199,7 @@
           pendingObservations.delete(slug); const { book: b, vi: v, chapters: read, finished: done } = pending;
           for (const scope of ["volume", "book"]) {
             const run = await ensureRun(b, scope, scope === "book" ? null : v);
+            if (!run) continue;
             const fresh = all().find((r) => r.id === run.id); if (!fresh) continue;
             const next = core.advanceRun(fresh, b, read, [...done]);
             if (next !== fresh) save(next);

@@ -108,6 +108,11 @@ async function runJournalChecks(browser, base) {
     await health.locator("[data-health-receive]").click(); await until(async () => /bị hỏng/.test(await a.page.textContent("#library-health-status")), "failed receive was not surfaced in health center");
     assert.ok(downloads > 0); assert.ok(transfers.has(transferId)); await a.page.screenshot({ path: path.join(output, "library-health.png") });
     await a.page.click("#library-health-close");
+    const deletedRun = await a.page.evaluate(async (slug) => { const id = await globalThis.ReaderJournal.defaultId(slug, "book", null); globalThis.ReaderJournal.apply(localStorage, { ["journal/" + id]: null }); dispatchEvent(new Event("ketruyen-journal-change")); return id; }, ebook.slug);
+    await a.page.click("#shelf-journal-open"); await a.page.click("#journal-write"); await a.page.locator('#journal-form [name="book"]').selectOption(ebook.slug);
+    await a.page.locator('#journal-form [name="text"]').fill("Bài mới vẫn giữ tombstone của lượt đã xóa."); await a.page.locator('#journal-form button[type="submit"]').click();
+    assert.equal(await a.page.evaluate((id) => globalThis.ReaderJournal.records(localStorage)["journal/" + id], deletedRun), null);
+    assert.ok((await entries(a.page)).some((v) => v.text.startsWith("Bài mới vẫn giữ") && v.runId !== deletedRun));
     assert.deepEqual(a.errors, []); assert.deepEqual(b.errors, []);
     console.log("journal and library health:\n  ✔ private diary, optional fields/attachments, offline CAS conflict preservation, reading rounds, filters, summaries, selected Markdown/PDF/PNG, deleted ebook retention, historical inventory and failed receipt");
   } finally { await Promise.all(contexts.map((c) => c.close())); }
