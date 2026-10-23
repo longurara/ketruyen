@@ -1,5 +1,7 @@
 .sync-dialog { width: min(520px, calc(100vw - 32px)); }
-.sync-body { padding: 0 28px 24px; }
+/* The dialog clips its frame; this flex child must shrink and scroll inside it. */
+.sync-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y pinch-zoom; padding: 0 28px 24px; }
+.sync-dialog > .tools-heading { flex-shrink: 0; }
 .sync-body > .sync-copy { margin-top: 0; }
 .sync-dialog .sync-copy { color: var(--text-soft); font: var(--text-sm)/1.8 var(--font-ui); }
 .sync-dialog form, .sync-account { display: grid; gap: 12px; }
