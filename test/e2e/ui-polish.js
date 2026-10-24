@@ -12,11 +12,16 @@ async function runUIPolishChecks(browser, base) {
   const fits = async (label) => assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true, label + " overflows");
   try {
     await page.goto(base); await page.waitForSelector("#shelf-grid .shelf-card");
+    // The saved book's index loads after the catalogue cards. Measure the
+    // requested one-book state, rather than the temporary discovery hero.
+    await page.waitForSelector("#shelf-resume .shelf-resume-inline");
+    await page.waitForSelector("#shelf-journal.is-compact");
     await page.evaluate(async () => { await document.fonts.ready; });
     for (const [name, width, height, limit] of [["mobile",390,844,480],["small",320,568,480],["desktop",1440,900,560]]) {
       await page.setViewportSize({ width, height });
       await page.evaluate(() => window.scrollTo(0,0));
-      assert.ok(await page.locator("#shelf-grid .shelf-card").first().evaluate((e) => e.getBoundingClientRect().top) < limit, name + " books are below the agreed fold");
+      const top = await page.locator("#shelf-grid .shelf-card").first().evaluate((e) => e.getBoundingClientRect().top);
+      assert.ok(top < limit, `${name} books are below the agreed fold: ${top}px (limit ${limit}px)`);
       await fits(name); await capture("shelf-" + name);
     }
     assert.match(await page.locator("#shelf-grid").innerText(), /182 chương · 12 phần minh họa/);
@@ -87,6 +92,11 @@ async function runUIPolishChecks(browser, base) {
     }
     assert.deepEqual(errors, []);
     console.log("  ✔ UI polish: fold budgets, story/image counts, source controls, draft-safe group chips, journal filters/forms, utility search, stable header actions, independent backed-up UI size and responsive large type");
+  } catch (error) {
+    const folder = path.join(__dirname, "..", "..", "e2e-screenshots");
+    fs.mkdirSync(folder, { recursive: true });
+    await page.screenshot({ path: path.join(folder, "ui-polish-failure.png"), fullPage: true }).catch(() => {});
+    throw error;
   } finally { await context.close(); }
 }
 module.exports = { runUIPolishChecks };
