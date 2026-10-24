@@ -19,7 +19,6 @@
 .reader-aa-theme { display: flex; gap: 8px; }
 .reader-aa-theme button { flex: 1; min-height: 44px; }
 .reader-aa-theme button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
-#reader-aa-all { width: 100%; margin-top: 6px; }
 .reader-return-location { margin-top: 18px; }
 body.is-chrome-hidden .reader-status-footer, body.is-chrome-hidden .reader-quick-menu,
 body.is-chrome-hidden .reader-top, body.is-chrome-hidden .reader-toast, body.is-chrome-hidden .motion-active { visibility: hidden; pointer-events: none; }
@@ -56,6 +55,8 @@ body.has-reader-surface #eink-ghost { display: none; }
   /* A message pushes the "back to top" button up instead of sliding under it. */
   body.has-toast[data-view="reader"]:not(.is-chrome-hidden):not(.is-listening) .reader-top { bottom: calc(var(--reader-dock-height, 96px) + 72px); }
   body.is-listening[data-view="reader"] .reader-bottom-nav { display: none; }
+  /* One way into settings while reading: "Chữ" opens the quick sheet, which links to all settings. */
+  body[data-view="reader"]:not(.is-listening) #btn-settings { display: none; }
   .reader-bottom-nav button { min-width: 44px; touch-action: manipulation; }
   body.is-chrome-hidden .reader-bottom-nav { pointer-events: none; visibility: hidden; }
 }

@@ -52,7 +52,7 @@ textarea { font: inherit; color: inherit; }
   box-shadow: 0 0 0 1px var(--line-strong);
 }
 
-:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .shelf-filters, #ebook-txt-tools, .workbench-section-select, .motion-field) select:not([multiple]):not([size]),
+:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .shelf-filters, #ebook-txt-tools, .ebook-pdf-option, #ebook-pdf-tools, .workbench-section-select, .motion-field) select:not([multiple]):not([size]),
 select.reader-select:not([multiple]):not([size]) {
   appearance: none;
   width: 100%;
@@ -136,7 +136,7 @@ input[type="checkbox"]:not([role="switch"]):indeterminate { background: var(--in
 input[type="checkbox"]:not([role="switch"]):indeterminate::after { display: block; width: 10px; height: 0; border-width: 0 0 2px; transform: translate(-50%, -50%); }
 
 :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]:focus-visible,
-:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .shelf-filters, #ebook-txt-tools, .workbench-section-select, .motion-field) select:focus-visible,
+:is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .shelf-filters, #ebook-txt-tools, .ebook-pdf-option, #ebook-pdf-tools, .workbench-section-select, .motion-field) select:focus-visible,
 select.reader-select:focus-visible,
 input[type="checkbox"]:not([role="switch"]):focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
 :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]:disabled,
@@ -238,7 +238,7 @@ button.ui-danger:focus-visible { outline: 2px solid currentColor; outline-offset
   .shelf-card-more summary { width: 44px; height: 44px; }
   :is(.workbench-check, .library-check, .character-show-all, .hand-camera-check) { min-height: 44px; }
   :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"] { height: 44px; }
-  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .shelf-filters, #ebook-txt-tools, .workbench-section-select, .motion-field) select:not([multiple]):not([size]),
+  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .shelf-filters, #ebook-txt-tools, .ebook-pdf-option, #ebook-pdf-tools, .workbench-section-select, .motion-field) select:not([multiple]):not([size]),
   select.reader-select:not([multiple]):not([size]),
   :is(.tools-panel, .workbench-panel, .shelf-filters, .ebook-dialog) :is(input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), textarea) { font-size: 16px; }
 }
@@ -253,7 +253,7 @@ button.ui-danger:focus-visible { outline: 2px solid currentColor; outline-offset
   input[type="checkbox"]:not([role="switch"])::after,
   input[type="checkbox"]:not([role="switch"]):checked::after,
   input[type="checkbox"]:not([role="switch"]):indeterminate::after { display: none; }
-  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .shelf-filters, #ebook-txt-tools, .workbench-section-select, .motion-field) select:not([multiple]):not([size]),
+  :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .shelf-filters, #ebook-txt-tools, .ebook-pdf-option, #ebook-pdf-tools, .workbench-section-select, .motion-field) select:not([multiple]):not([size]),
   select.reader-select:not([multiple]):not([size]) { appearance: auto; background-image: none; }
   :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"] { appearance: auto; }
   :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-webkit-slider-runnable-track,
@@ -272,3 +272,13 @@ details > summary:not(:has(svg)):not(.settings-disclosure > summary)::-webkit-de
 details > summary:not(:has(svg)):not(.settings-disclosure > summary)::before { content: ""; flex: none; width: 12px; height: 12px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 5 7 7-7 7'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 5 7 7-7 7'/%3E%3C/svg%3E") center / contain no-repeat; opacity: 0.7; transition: transform 0.2s var(--steps-3); }
 details[open] > summary:not(:has(svg)):not(.settings-disclosure > summary)::before { transform: rotate(90deg); }
 @media (prefers-reduced-motion: reduce) { details > summary::before, .settings-disclosure summary::after { transition: none !important; } }
+
+/* Touch targets: at least 44px tall on anything a thumb reaches. Desktop-only
+   controls (reader sidebar, hand camera, card menus) get 40px. */
+.shelf-density button { width: 44px; min-height: 44px; }
+#btn-save-all.offline-btn { min-height: 44px; }
+#library-tabs .filter-btn { min-height: 44px; }
+.side-settings-btn { min-height: 40px; }
+.hand-camera-panel button, .hand-camera-panel summary { min-height: 40px; }
+.shelf-card-more summary { width: 40px; height: 40px; }
+@media (pointer: coarse) { .shelf-card-more summary { width: 44px; height: 44px; } }

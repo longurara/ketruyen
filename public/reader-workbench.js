@@ -55,7 +55,7 @@
   function create(options) {
     const $ = (s) => document.querySelector(s), ctx = options.context;
     let state; try { state = normalizeState(JSON.parse(localStorage.getItem(KEY))); } catch (_) { state = normalizeState(); }
-    let committed = JSON.stringify(state), generation = 0, activeTab = "home", opener = null, selection = null, target = null;
+    let committed = JSON.stringify(state), generation = 0, activeTab = "home", directTab = null, opener = null, selection = null, target = null;
     const entries = () => ReaderFeatures.chapterEntries(ctx().series);
     const currentIndex = (items = entries()) => Math.max(0, items.findIndex((e) => e.volIdx === ctx().volIdx && e.chapIdx === ctx().chapIdx));
     const persist = () => {
@@ -91,19 +91,21 @@
     function open(tab = activeTab, argument) {
       options.closeSettings(); quickActions.hidden = true; $("#reader-quick-toggle").setAttribute("aria-expanded", "false");
       if (!dialog.open) opener = document.activeElement?.closest("#reader-quick-actions") ? $("#reader-quick-toggle") : document.activeElement;
+      // Opened straight into a tool (the "Mục lục" button, say): there is no hub to go back to.
+      if (!dialog.open) directTab = tab === "home" ? null : tab;
       $("#workbench-book").textContent = ctx().series.titleVi; target = null; featureArgument = argument;
       if (!dialog.open) options.surfaces.open(dialog); updateStatus(); render(tab);
     }
     function updateNavigation() {
       $("#workbench-home-panel").hidden = activeTab !== "home" || libraryActive;
-      $("#workbench-library-return").hidden = activeTab === "home" && !libraryActive;
+      $("#workbench-library-return").hidden = !libraryActive && (activeTab === "home" || activeTab === directTab);
       $("#workbench-library-return").disabled = libraryActive && !options.library.canClose();
     }
     function renderHome() {
       const fold = (v) => v.normalize("NFD").replace(/\p{M}/gu, "").replace(/đ/g, "d").toLowerCase();
       const registry = Object.entries(GROUPS).flatMap(([group, data]) => data.tabs.map((id) => ({ id, group, name: LABELS[id] }))).concat([{id:"bookmark",group:"read",name:LABELS.bookmark},{id:"settings",group:"read",name:LABELS.settings}]);
       const search = $("#workbench-search"), host = $("#workbench-home-results");
-      const button = (id) => `<button type="button" class="workbench-home-action" data-home-action="${id}">${escape(LABELS[id])}<span aria-hidden="true">→</span></button>`;
+      const button = (id) => `<button type="button" class="workbench-home-action" data-home-action="${id}">${escape(LABELS[id])}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>`;
       const list = () => {
         const query = fold(search.value.trim()), matches = registry.filter((r) => fold(r.name + " " + GROUPS[r.group].label + " " + ({ words: "chu giai word wise", xray: "x ray", settings: "co chu font", profiles: "cai dat" }[r.id] || "")).includes(query));
         host.innerHTML = query ? matches.map((r) => button(r.id)).join("") || '<p class="tools-empty">Không tìm thấy chức năng phù hợp.</p>' : '<h3>Hay dùng</h3><div class="workbench-home-quick">' + state.quick.map(button).join("") + '</div><details id="workbench-all"><summary>Tất cả tiện ích (' + registry.length + ')</summary>' + Object.entries(GROUPS).map(([id, group]) => '<section><h3>' + group.label + '</h3>' + registry.filter((r) => r.group === id).map((r) => button(r.id)).join("") + '</section>').join("") + '</details>';
@@ -146,7 +148,7 @@
       }
       const list = () => {
         const query = $("#workbench-chapter-search").value.trim().toLocaleLowerCase();
-        $("#workbench-chapters").innerHTML = items.map((entry, i) => ({ entry, i })).filter(({ entry }) => `${entry.volume.name} ${entry.chapter.title}`.toLocaleLowerCase().includes(query)).map(({ entry, i }) => `<button type="button" data-contents-chapter="${i}"${i === current && ctx().view === "reader" ? ' aria-current="location"' : ""}><span>${escape(entry.volume.name)} · ${escape(entry.chapter.title)}</span></button>`).join("") || '<p class="tools-empty">Không có chương khớp.</p>';
+        $("#workbench-chapters").innerHTML = items.map((entry, i) => ({ entry, i })).filter(({ entry }) => `${entry.volume.name} ${entry.chapter.title}`.toLocaleLowerCase().includes(query)).map(({ entry, i }) => `<button type="button" data-contents-chapter="${i}"${i === current && ctx().view === "reader" ? ' aria-current="location"' : ""}><span>${escape(entry.volume.name)} · ${escape(entry.chapter.isIllustration ? "Tranh minh họa" : entry.chapter.title)}</span></button>`).join("") || '<p class="tools-empty">Không có chương khớp.</p>';
         panel.querySelectorAll("[data-contents-chapter]").forEach((b) => b.onclick = () => jump(Number(b.dataset.contentsChapter)));
       };
       const jump = (index) => { const entry = items[index]; if (!entry) return; close(); if (index !== current || ctx().view !== "reader") options.openChapter(entry.volIdx, entry.chapIdx); };

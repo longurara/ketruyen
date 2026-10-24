@@ -99,6 +99,15 @@ function spaceAfterCommas(text) {
   return text.replace(/([,;])(?=\p{Ll})/gu, "$1 ");
 }
 
+// …and add one before punctuation ("khiêm nhường , việc", "cấp S ."). A spaced
+// ellipsis (". . .") and a colon between numbers ("10 : 30") are left as typed.
+function tightenBeforePunctuation(text) {
+  return text
+    .replace(/(?<=[\p{L}\p{N}”"’)\]…]) +([,;!?])/gu, "$1")
+    .replace(/(?<=\p{L}) +:(?=\s)/gu, ":")
+    .replace(/(?<=[\p{L}\p{N}”"’)\]]) +\.(?=\s|$|[”"’])(?! \.)/gu, ".");
+}
+
 function cleanChapter(title, content) {
   let heading = null;
   // NFC keeps one code unit per letter, so search can map matches in the
@@ -107,7 +116,7 @@ function cleanChapter(title, content) {
     .normalize("NFC")
     .split(/\n{2,}/)
     .map((p) => p.replace(/[ \t\r\f\v]*\n[ \t\r\f\v\n]*/g, " ").replace(/[ \t]{2,}/g, " ").trim())
-    .map(spaceAfterCommas)
+    .map((p) => spaceAfterCommas(tightenBeforePunctuation(p)))
     .filter(Boolean)
     .filter((p) => {
       if (CHROME_PATTERNS.some((re) => re.test(p))) return false;

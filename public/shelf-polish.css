@@ -131,3 +131,13 @@ body[data-ui-size="large"] { --text-2xs: 15px; --text-xs: 15px; --text-sm: 16px;
   /* The journal is also in the "⋯" menu; on the narrowest phones the tabs need the room. */
   .shelf-actions > .shelf-journal.is-compact { display: none; }
 }
+.workbench-home-action svg { flex: none; color: var(--text-muted); }
+
+/* Phones: the header icons carry a word, so "biểu đồ" reads as Thống kê and
+   the sliders as Cài đặt. The reader keeps its compact icon-only header. */
+.header-btn-label { display: none; }
+@media (max-width: 600px) {
+  body:not([data-view="reader"]) .header-actions .header-btn { flex-direction: column; gap: 2px; width: auto; min-width: 52px; height: 52px; padding: 4px 2px; }
+  body:not([data-view="reader"]) .header-btn-label { display: block; font: 500 11px/1.2 var(--font-ui); white-space: nowrap; }
+  body:not([data-view="reader"]) .header-actions .header-btn svg { width: 20px; height: 20px; }
+}

@@ -6,7 +6,8 @@
   "use strict";
   const KEY = "tenshi-library-v1";
   const escape = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const fold = (value) => String(value || "").normalize("NFD").replace(/\p{M}/gu, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
+  // Accents, case and punctuation are ignored, so "rung na uy" finds "Rừng Na-Uy".
+  const fold = (value) => String(value || "").normalize("NFD").replace(/\p{M}/gu, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
   const clamp = (value, min, max, fallback) => Number.isFinite(Number(value)) ? Math.max(min, Math.min(max, Number(value))) : fallback;
   const svg = (body, fill = "none") => `<svg width="18" height="18" viewBox="0 0 24 24" fill="${fill}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${body}</svg>`;
   const STAR = '<path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"></path>';
@@ -415,7 +416,8 @@
       if (onDevice) { sectionTabs.hidden = true; if (!personalShelf) $("#shelf-library-title").textContent = "Sách có trên máy"; }
       const query = fold($("#shelf-search").value), filter = $("#shelf-status").value, group = $("#shelf-group").value, sort = $("#shelf-sort").value;
       const result = shown.filter((book) => {
-        if (!personalShelf && !onDevice && effectiveView === "discover" && !inActiveSection(book)) return false;
+        // A search looks through every source, not just the one picked below.
+        if (!personalShelf && !onDevice && effectiveView === "discover" && !query && !inActiveSection(book)) return false;
         if (query) {
           if (!book._searchFold) book._searchFold = fold([book.titleVi, book.titleJp, book.author, ...(book.tags || [])].join(" "));
           const groupsFold = row(book).groups.length ? " " + fold(row(book).groups.join(" ")) : "";
@@ -429,14 +431,23 @@
         }
         return true;
       });
+      if (query && effectiveView === "discover" && !personalShelf && !onDevice) $("#shelf-library-title").textContent = "Kết quả trên mọi nguồn sách";
       $("#shelf-library-title").classList.toggle("shelf-heading-hidden", filter === "all" && !group && !query);
       $("#shelf-result-count").textContent = `${result.length.toLocaleString("vi-VN")} cuốn sách`;
       if (sort === "title") return result.sort((a, b) => a.titleVi.localeCompare(b.titleVi, "vi"));
       if (sort === "author") return result.sort((a, b) => (a.author || "").localeCompare(b.author || "", "vi"));
       if (sort === "newest") return result.sort((a, b) => (b.importedAt || 0) - (a.importedAt || 0));
       const tsMap = new Map(result.map((b) => [b, progress(b).timestamp || 0]));
+      if (query) {
+        // Best matches first: a title that starts with the words, then any title match, then author/tags.
+        const rank = (book) => { const title = fold(book.titleVi); return title === query ? 0 : title.startsWith(query) ? 1 : title.includes(query) ? 2 : 3; };
+        const ranks = new Map(result.map((b) => [b, rank(b)]));
+        return result.sort((a, b) => ranks.get(a) - ranks.get(b) || tsMap.get(b) - tsMap.get(a) || a.titleVi.length - b.titleVi.length);
+      }
       return result.sort((a, b) => tsMap.get(b) - tsMap.get(a));
     }
+    const SOURCE_NAMES = { main: "Kệ truyện chính", hlc: "Hội Lẩu Chay", b1k: "Tủ Sách 1000" };
+    const sourceOf = (book) => { const section = normalizeBookSection(book.section); return section.startsWith("hlc-") ? "hlc" : section.startsWith("b1k-") ? "b1k" : "main"; };
     // List (cover, blurb, actions) or a dense grid of covers for browsing large shelves.
     const DENSITY_KEY = "tenshi-shelf-density", densityButtons = document.querySelectorAll("[data-shelf-density]");
     function setDensity(value) {
@@ -478,9 +489,11 @@
       }
       // A card that already says "Đang đọc dở · Tập N" needs no "Đang đọc" tag.
       const label = { want: "Muốn đọc", reading: card.dataset.resume ? "" : "Đang đọc", done: "" }[status(series)];
-      if (label || row(series).groups.length) {
+      // Search results can come from another source; say which one.
+      const source = !series.personal && $("#shelf-search").value.trim() && sourceOf(series) !== $("#shelf-source").value ? SOURCE_NAMES[sourceOf(series)] : "";
+      if (label || source || row(series).groups.length) {
         const tags = document.createElement("span"); tags.className = "shelf-book-tags";
-        tags.textContent = [label, ...row(series).groups].filter(Boolean).join(" · "); card.querySelector(".shelf-card-action").before(tags);
+        tags.textContent = [source, label, ...row(series).groups].filter(Boolean).join(" · "); card.querySelector(".shelf-card-action").before(tags);
       }
       const saved = progress(series), position = document.createElement("span"); position.className = "shelf-book-position";
       const active = row(series).status !== null && Number.isInteger(saved.volIdx) && Number.isInteger(saved.chapIdx);

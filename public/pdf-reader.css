@@ -24,3 +24,8 @@
 #ebook-pdf-mode, #ebook-pdf-page { display:block; width:100%; min-height:44px; padding:10px 12px; margin-block:8px 12px; background:var(--surface); color:var(--text); border:1px solid var(--line-strong); border-radius:10px; font:400 16px/1.6 var(--font-ui); }
 #ebook-pdf-tools :is(select,input,button):focus-visible, #ebook-pdf-mode:focus-visible, #ebook-pdf-edit:focus-visible { outline:2px solid var(--ink); outline-offset:3px; }
 @media (max-width:600px) { .pdf-import-compare { grid-template-columns:minmax(0,1fr); } }
+.ebook-pdf-option { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 4px 12px; margin-top: 14px; }
+.ebook-pdf-option label { font: 500 var(--text-sm)/1.6 var(--font-ui); }
+.ebook-pdf-option #ebook-pdf-mode { margin: 0; }
+.ebook-pdf-option .ebook-help { grid-column: 1 / -1; margin: 0; }
+@media (max-width: 420px) { .ebook-pdf-option { grid-template-columns: minmax(0, 1fr); } }

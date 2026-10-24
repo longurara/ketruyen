@@ -99,9 +99,10 @@
       </button>
 
       <div class="header-actions">
-        <button id="btn-sync" class="header-btn" type="button" data-open-sync aria-label="Đồng bộ giữa các máy" title="Đồng bộ giữa các máy"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a6 6 0 0 0-6-6h-4a6 6 0 0 0-6 6v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8"></path></svg></button>
+        <button id="btn-sync" class="header-btn" type="button" data-open-sync aria-label="Đồng bộ giữa các máy" title="Đồng bộ giữa các máy"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a6 6 0 0 0-6-6h-4a6 6 0 0 0-6 6v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8"></path></svg><span class="header-btn-label" aria-hidden="true">Tài khoản</span></button>
         <button id="btn-reader-tools" class="header-btn" aria-label="Thống kê đọc" title="Thống kê đọc">
           <svg class="header-icon-stats" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"></path></svg>
+          <span class="header-btn-label" aria-hidden="true">Thống kê</span>
 
         </button>
         <button id="btn-settings" class="header-btn" aria-label="Cài đặt đọc" title="Cài đặt đọc">
@@ -110,6 +111,7 @@
             <circle cx="16" cy="7" r="2"></circle>
             <circle cx="10" cy="17" r="2"></circle>
           </svg>
+          <span class="header-btn-label" aria-hidden="true">Cài đặt</span>
         </button>
       </div>
     </div>
@@ -716,7 +718,7 @@
   </nav>
 
   <dialog id="reader-aa-dialog" class="tools-dialog reader-aa-dialog" aria-labelledby="reader-aa-title">
-    <header class="tools-heading"><h2 id="reader-aa-title">Chữ & giao diện</h2><button id="reader-aa-close" class="tools-close" type="button" aria-label="Đóng chỉnh chữ"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></header>
+    <header class="tools-heading"><h2 id="reader-aa-title">Chữ & giao diện</h2><button id="reader-aa-all" class="btn-link reader-aa-all" type="button">Tất cả cài đặt</button><button id="reader-aa-close" class="tools-close" type="button" aria-label="Đóng chỉnh chữ"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></header>
     <div class="reader-aa-controls">
       <label><span>Cỡ chữ</span><output id="reader-aa-size-value" for="reader-aa-size"></output><input id="reader-aa-size" type="range" min="16" max="28" step="2"></label>
       <label><span>Giãn dòng</span><select id="reader-aa-line"><option value="1.7">Gọn</option><option value="2.02">Vừa</option><option value="2.35">Rộng</option></select></label>
@@ -728,7 +730,6 @@
       <label><span>Căn lề</span><select id="reader-aa-align"><option value="auto">Tự động</option><option value="justify">Căn đều</option><option value="start">Căn trái</option></select></label>
       <div class="reader-aa-theme" aria-label="Màu nền"><button class="btn-secondary" type="button" data-aa-theme="light">Sáng</button><button class="btn-secondary" type="button" data-aa-theme="sepia">Giấy</button><button class="btn-secondary" type="button" data-aa-theme="dark">Tối</button></div>
       <label><span>Lề hai bên</span><output id="reader-aa-margin-value" for="reader-aa-margin"></output><input id="reader-aa-margin" type="range" min="12" max="64" step="2"></label>
-      <button id="reader-aa-all" class="btn-secondary" type="button">Tất cả cài đặt đọc</button>
     </div>
   </dialog>
 
@@ -739,12 +740,14 @@
         <button id="ebook-close" type="button" class="tools-close" aria-label="Đóng nhập ebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
       </div>
       <p class="ebook-help">Chọn EPUB, TXT hoặc PDF (tối đa 50 MB/tệp) từ thiết bị. Tệp được lưu trong trình duyệt để đọc offline, không tải lên máy chủ.</p>
-      <label for="ebook-pdf-mode">Khi chọn PDF</label>
-      <select id="ebook-pdf-mode"><option value="pages">Giữ trang gốc</option><option value="text">Chuyển thành sách chữ</option></select>
-      <p class="ebook-help">Sách chữ dành cho PDF có lớp văn bản, không dùng OCR. Bản chữ được thêm riêng, không thay thế PDF đã có.</p>
       <label class="ebook-file-label" for="ebook-file">Chọn tệp ebook</label>
       <div id="ebook-drop" class="ebook-drop" tabindex="0" role="button" aria-label="Chọn hoặc kéo thả ebook"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"></path></svg><strong>Kéo thả tệp vào đây</strong><span>hoặc bấm để chọn EPUB, TXT, PDF</span></div>
       <input id="ebook-file" class="visually-hidden" type="file" multiple accept=".epub,.txt,.pdf,application/epub+zip,text/plain,application/pdf">
+      <div class="ebook-pdf-option">
+        <label for="ebook-pdf-mode">Nếu là tệp PDF</label>
+        <select id="ebook-pdf-mode" aria-describedby="ebook-pdf-mode-help"><option value="pages">Giữ trang gốc</option><option value="text">Chuyển thành sách chữ</option></select>
+        <p id="ebook-pdf-mode-help" class="ebook-help">Sách chữ chỉ dùng được với PDF có lớp văn bản (không OCR) và được thêm riêng, không thay PDF đã có.</p>
+      </div>
       <div id="ebook-queue" class="ebook-queue"></div>
       <div id="ebook-preview" class="ebook-preview" hidden>
         <label for="ebook-title">Tên sách</label>

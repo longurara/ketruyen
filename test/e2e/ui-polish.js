@@ -80,7 +80,9 @@ async function runUIPolishChecks(browser, base) {
     await page.locator('#workbench-dialog .tools-close').click();
     await page.click("#btn-reader-tools"); assert.match(await page.locator("#workbench-title").innerText(), /Thống kê/);
     await page.locator('#workbench-dialog .tools-close').click();
-    await page.click("#btn-settings"); await page.click("#settings-tab-appearance"); await page.locator('#ui-size-switch [data-ui-size="large"]').click();
+    // While reading on a phone, all settings sit behind "Chữ" → "Tất cả cài đặt".
+    assert.equal(await page.locator("#btn-settings").isVisible(), false, "reader kept a second settings entry");
+    await page.click("#btn-bottom-settings"); await page.click("#reader-aa-all"); await page.click("#settings-tab-appearance"); await page.locator('#ui-size-switch [data-ui-size="large"]').click();
     assert.equal(await page.evaluate(() => localStorage.getItem("tenshi-ui-size-v1")), "large");
     await page.click("#btn-settings-close");
     assert.equal(await page.locator(".reader-content p").first().evaluate((e) => getComputedStyle(e).fontSize), font, "UI size changed reading text");
