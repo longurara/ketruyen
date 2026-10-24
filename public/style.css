@@ -2427,11 +2427,17 @@ mark.search-hit {
   place-items: center;
   border: 1px solid var(--line-strong);
   border-radius: 50%;
-  background: var(--ink);
-  color: var(--on-ink);
+  background: var(--surface);
+  color: var(--text-soft);
   box-shadow: var(--shadow-md);
-  opacity: 0.4;
-  transition: opacity 0.2s, bottom 0.24s var(--steps-4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s var(--steps-3), bottom 0.24s var(--steps-4), color 0.2s;
+}
+
+body.is-past-start .reader-top {
+  opacity: 0.92;
+  pointer-events: auto;
 }
 
 body[data-view="reader"] .reader-top {
@@ -2441,11 +2447,13 @@ body[data-view="reader"] .reader-top {
 .reader-top:focus-visible,
 .reader-top:active {
   opacity: 1;
+  color: var(--text);
 }
 
 @media (hover: hover) {
-  .reader-top:hover {
+  body.is-past-start .reader-top:hover {
     opacity: 1;
+    color: var(--text);
   }
 }
 

@@ -14,7 +14,13 @@
     more: svg('<circle cx="5" cy="12" r="1.3" fill="currentColor"></circle><circle cx="12" cy="12" r="1.3" fill="currentColor"></circle><circle cx="19" cy="12" r="1.3" fill="currentColor"></circle>'),
     star: svg(STAR), starFilled: svg(STAR, "currentColor"),
     edit: svg('<path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="m13.5 6.5 4 4"></path>'),
-    trash: svg('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"></path>')
+    trash: svg('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"></path>'),
+    journal: svg('<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"></path><path d="M5 17a3 3 0 0 1 3-3h11M9 8h6"></path>'),
+    arrow: svg('<path d="M5 12h14M13 6l6 6-6 6"></path>').replace('width="18" height="18"', 'width="16" height="16"'),
+    arrowOut: svg('<path d="M7 17 17 7M8 7h9v9"></path>').replace('width="18" height="18"', 'width="16" height="16"'),
+    chevron: svg('<path d="m6 9 6 6 6-6"></path>').replace('width="18" height="18"', 'width="14" height="14"'),
+    refresh: svg('<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"></path>'),
+    close: svg('<path d="M18 6 6 18M6 6l12 12"></path>').replace('width="18" height="18"', 'width="14" height="14"')
   };
   function locatePart(text, part) {
     if (!part.quote) return null;
@@ -86,7 +92,7 @@
         return false;
       }
     }
-    document.body.insertAdjacentHTML("beforeend", `<dialog id="library-dialog" class="tools-dialog" aria-labelledby="library-title"><div class="tools-heading"><h2 id="library-title"></h2><button type="button" class="tools-close" aria-label="Đóng"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div><div id="library-tools-panel" class="tools-panel"></div><p id="library-feedback" class="tools-feedback" role="status" hidden></p></dialog>`);
+    document.body.insertAdjacentHTML("beforeend", `<dialog id="library-dialog" class="tools-dialog" aria-labelledby="library-title"><div class="tools-heading"><h2 id="library-title"></h2><button type="button" class="tools-close" aria-label="Đóng"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></div><div id="library-tools-panel" class="tools-panel"></div><p id="library-feedback" class="tools-feedback" role="status" hidden></p></dialog>`);
     const dialog = $("#library-dialog"), panel = $("#library-tools-panel");
     let embeddedHost = null;
     const isOpen = () => embeddedHost ? embeddedHost.isOpen() : dialog.open;
@@ -205,11 +211,11 @@
       // repeat the first row of the catalogue or require loading chapter text.
       const suggested = picks.length ? picks[suggestionOffset % picks.length] : series.find((book) => !progress(book).timestamp && status(book) !== "done");
       const cover = (book, className) => book.cover ? `<img class="${className}" src="${escape(book.cover)}" alt="Bìa ${escape(book.titleVi)}" width="150" height="210" decoding="async">` : `<span class="${className} shelf-cover-fallback" aria-hidden="true">${escape(book.titleVi)}</span>`;
-      const arrow = '<span aria-hidden="true">↗</span>';
+      const arrow = ICONS.arrowOut;
       function recommendation(compact = false) {
         if (!suggested) return "";
         const reason = suggested.volumes === 1 ? "Gọn trong một tập" : "Một lựa chọn từ thư viện";
-        const change = picks.length > 1 ? '<button type="button" class="shelf-change-pick" aria-label="Đổi sách gợi ý" title="Đổi gợi ý">↻</button>' : "";
+        const change = picks.length > 1 ? `<button type="button" class="shelf-change-pick" aria-label="Đổi sách gợi ý" title="Đổi gợi ý">${ICONS.refresh}</button>` : "";
         const art = `<button type="button" class="shelf-feature-art" data-suggest aria-label="Xem ${escape(suggested.titleVi)}">${cover(suggested, "shelf-feature-cover")}</button>`;
         if (compact) return `<article class="shelf-feature is-discovery"><div class="shelf-feature-copy"><p class="shelf-feature-kicker">${reason}</p><h2><button type="button" class="shelf-discovery-title" data-suggest>${escape(suggested.titleVi)} ${arrow}</button></h2><p class="shelf-feature-author">${escape(suggested.author || "")}</p></div>${art}${change}</article>`;
         return `<article class="shelf-feature is-welcome"><div class="shelf-feature-copy"><p class="shelf-feature-kicker">Bắt đầu với một câu chuyện</p><h2>${escape(suggested.titleVi)}</h2><p class="shelf-feature-author">${escape(suggested.author || "")}</p><p class="shelf-feature-reason">${reason}${suggested.tags?.[0] ? ` · ${escape(suggested.tags[0])}` : ""}</p>${suggested.description ? `<p class="shelf-feature-description">${escape(suggested.description)}</p>` : ""}</div>${art}<div class="shelf-feature-actions"><button type="button" class="shelf-suggest-button" data-suggest>Xem sách <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"></path></svg></button>${change}</div></article>`;
@@ -222,12 +228,12 @@
       let featured = "";
       if (recent.length) {
         const { book, saved } = recent[0], volume = book.volumesData[saved.volIdx], chapter = volume.chapters[saved.chapIdx], share = bookShare(book);
-        featured = `<article class="shelf-feature is-reading shelf-resume-inline"><button type="button" class="shelf-inline-cover" data-resume="0" aria-label="Đọc tiếp ${escape(book.titleVi)}">${cover(book, "shelf-feature-cover")}</button><div class="shelf-feature-copy"><h2>${escape(book.titleVi)}</h2><p class="shelf-feature-place">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</p></div><button type="button" class="shelf-feature-button" data-resume="0" aria-label="Đọc tiếp ${escape(book.titleVi)}"><span class="shelf-resume-button-text">Đọc tiếp</span><span aria-hidden="true">→</span></button><details class="shelf-resume-details"><summary aria-label="Chi tiết sách đang đọc">⋯</summary><div class="shelf-more-menu"><p>Đã đọc xong ${share.done}/${share.total} ${share.unit}</p><button type="button" class="shelf-menu-action" data-dismiss-reading="${escape(book.slug)}">Bỏ khỏi Đang đọc…</button></div></details></article>`;
+        featured = `<article class="shelf-feature is-reading shelf-resume-inline"><button type="button" class="shelf-inline-cover" data-resume="0" aria-label="Đọc tiếp ${escape(book.titleVi)}">${cover(book, "shelf-feature-cover")}</button><div class="shelf-feature-copy"><h2>${escape(book.titleVi)}</h2><p class="shelf-feature-place">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</p></div><button type="button" class="shelf-feature-button" data-resume="0" aria-label="Đọc tiếp ${escape(book.titleVi)}"><span class="shelf-resume-button-text">Đọc tiếp</span>${ICONS.arrow}</button><details class="shelf-resume-details"><summary aria-label="Chi tiết sách đang đọc">${ICONS.more}</summary><div class="shelf-more-menu"><p>Đã đọc xong ${share.done}/${share.total} ${share.unit}</p><button type="button" class="shelf-menu-action" data-dismiss-reading="${escape(book.slug)}">Bỏ khỏi Đang đọc…</button></div></details></article>`;
       }
       host.innerHTML = `<div class="shelf-feature-layout">${featured}</div>${recent.length > 1 ? `<details class="shelf-other-reading"><summary>Các sách đang đọc khác (${recent.length - 1})</summary><div class="shelf-resume-row">${recent.slice(1).map(({ book, saved }, offset) => {
         const index = offset + 1;
         const volume = book.volumesData[saved.volIdx], chapter = volume.chapters[saved.chapIdx], share = bookShare(book);
-        return `<div class="shelf-resume-entry"><button type="button" class="shelf-resume-card" data-resume="${index}" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}, đã đọc ${share.done} trên ${share.total} chương">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="" width="104" height="148" loading="lazy" decoding="async">` : '<span class="shelf-resume-cover" aria-hidden="true"></span>'}<span class="shelf-resume-copy"><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span><span class="shelf-resume-meter" aria-hidden="true"><span style="width:${Math.max(share.percent, share.done ? 2 : 0)}%"></span></span><span class="shelf-resume-share">${share.done}/${share.total}</span></span></button><button type="button" class="shelf-remove-reading" data-dismiss-reading="${escape(book.slug)}" aria-label="Bỏ ${escape(book.titleVi)} khỏi Đang đọc" title="Bỏ khỏi Đang đọc">×</button></div>`;
+        return `<div class="shelf-resume-entry"><button type="button" class="shelf-resume-card" data-resume="${index}" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}, đã đọc ${share.done} trên ${share.total} chương">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="" width="104" height="148" loading="lazy" decoding="async">` : '<span class="shelf-resume-cover" aria-hidden="true"></span>'}<span class="shelf-resume-copy"><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span><span class="shelf-resume-meter" aria-hidden="true"><span style="width:${Math.max(share.percent, share.done ? 2 : 0)}%"></span></span><span class="shelf-resume-share">${share.done}/${share.total}</span></span></button><button type="button" class="shelf-remove-reading" data-dismiss-reading="${escape(book.slug)}" aria-label="Bỏ ${escape(book.titleVi)} khỏi Đang đọc" title="Bỏ khỏi Đang đọc">${ICONS.close}</button></div>`;
       }).join("")}</div></details>` : ""}`;
       if (resumeOpen) host.querySelector(".shelf-resume-details")?.setAttribute("open", "");
       if (otherOpen) host.querySelector(".shelf-other-reading")?.setAttribute("open", "");
@@ -259,7 +265,7 @@
         favorite: ICONS.star, personal: svg('<path d="M4 4h13v16H4zM8 8h5M8 12h5M20 7v13"></path>')
       };
       const shortcut = ([value, label]) => `<button type="button" data-shelf-quick="${value}" aria-pressed="${value === "all" ? !personalShelf && filter === "all" : personalShelf && filter === value}">${icons[value]}<span>${label}</span><span class="shelf-shortcut-count">${counts[value].toLocaleString("vi-VN")}</span></button>`;
-      $("#shelf-shortcuts").innerHTML = [["all", "Tất cả"], ["reading", "Đang đọc"], ["favorite", "Yêu thích"]].map(shortcut).join("") + `<details class="shelf-quick-more"><summary>Thêm<span aria-hidden="true">⌄</span></summary><div class="shelf-more-menu">${[["want", "Muốn đọc"], ["personal", "Ebook cá nhân"]].map(shortcut).join("")}<button type="button" data-library-action="marks">${ICONS.edit}<span>Ghi chú</span><span class="shelf-shortcut-count">${state.marks.length}</span></button></div></details>`;
+      $("#shelf-shortcuts").innerHTML = [["all", "Tất cả"], ["reading", "Đang đọc"], ["favorite", "Yêu thích"]].map(shortcut).join("") + `<details class="shelf-quick-more"><summary>Thêm${ICONS.chevron}</summary><div class="shelf-more-menu">${[["want", "Muốn đọc"], ["personal", "Ebook cá nhân"]].map(shortcut).join("")}<button type="button" data-library-action="marks">${ICONS.edit}<span>Ghi chú</span><span class="shelf-shortcut-count">${state.marks.length}</span></button></div></details>`;
 
       $("#shelf-shortcuts .shelf-quick-more").open = Boolean(moreOpen);
       $("#shelf-shortcuts").querySelectorAll("[data-shelf-quick]").forEach((button) => button.addEventListener("click", () => {
@@ -449,7 +455,7 @@
     updateGroups();
     function shelfItem(series, card) {
       const item = document.createElement("div"); item.className = "ebook-shelf-item"; item.dataset.book = series.slug;
-      if (row(series).status === null) { delete card.dataset.resume; card.querySelector(".shelf-card-action").textContent = "Mở sách →"; }
+      if (row(series).status === null) { delete card.dataset.resume; card.querySelector(".shelf-card-action").innerHTML = `Mở sách ${ICONS.arrow}`; }
       const favorite = row(series).favorite;
       // Per-book actions live in one overflow menu so the grid reads as books, not toolbars.
       const actions = document.createElement("details"); actions.className = "shelf-card-more";
@@ -462,7 +468,7 @@
         options.message(row(series).favorite ? "Đã thêm vào yêu thích." : "Đã bỏ khỏi yêu thích.");
       };
       const dismiss = actions.querySelector("[data-dismiss]"); if (dismiss) dismiss.onclick = () => { closeMenu(); removeReading(series); };
-      const journal = document.createElement("button"); journal.type = "button"; journal.className = "shelf-menu-action"; journal.setAttribute("role", "menuitem"); journal.textContent = "Nhật ký đọc"; journal.onclick = () => { closeMenu(); options.openJournal(series); }; actions.querySelector("[data-manage]").after(journal);
+      const journal = document.createElement("button"); journal.type = "button"; journal.className = "shelf-menu-action"; journal.setAttribute("role", "menuitem"); journal.innerHTML = `${ICONS.journal}<span>Nhật ký đọc</span>`; journal.onclick = () => { closeMenu(); options.openJournal(series); }; actions.querySelector("[data-manage]").after(journal);
       actions.querySelector("[data-manage]").onclick = () => { closeMenu(); manageBook(series); };
       if (series.personal) actions.querySelector("[data-delete]").onclick = () => { closeMenu(); options.deleteBook(series); };
       if (favorite) {

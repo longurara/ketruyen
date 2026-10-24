@@ -263,3 +263,12 @@ button.ui-danger:focus-visible { outline: 2px solid currentColor; outline-offset
   :is(.reader-aa-controls, .tools-panel, .workbench-panel, .hand-camera-settings, .settings-range) input[type="range"]::-moz-range-thumb { all: revert; }
   button.ui-danger { color: ButtonText; border-color: ButtonText; }
 }
+
+/* Text disclosures ("Thông tin sách", "Cài đặt & hướng dẫn"…) share one
+   drawn chevron instead of the browser's triangle. Icon-only summaries
+   (⋯ menus) and the settings panels keep their own indicators. */
+details > summary:not(:has(svg)):not(.settings-disclosure > summary) { display: flex; align-items: center; gap: 10px; list-style: none; }
+details > summary:not(:has(svg)):not(.settings-disclosure > summary)::-webkit-details-marker { display: none; }
+details > summary:not(:has(svg)):not(.settings-disclosure > summary)::before { content: ""; flex: none; width: 12px; height: 12px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 5 7 7-7 7'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 5 7 7-7 7'/%3E%3C/svg%3E") center / contain no-repeat; opacity: 0.7; transition: transform 0.2s var(--steps-3); }
+details[open] > summary:not(:has(svg)):not(.settings-disclosure > summary)::before { transform: rotate(90deg); }
+@media (prefers-reduced-motion: reduce) { details > summary::before, .settings-disclosure summary::after { transition: none !important; } }

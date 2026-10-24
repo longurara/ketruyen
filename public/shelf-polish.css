@@ -121,3 +121,13 @@ body[data-ui-size="large"] { --text-2xs: 15px; --text-xs: 15px; --text-sm: 16px;
   .shelf-actions #shelf-journal-open { width: 44px; padding: 0; justify-content: center; }
   .shelf-actions #shelf-journal-open span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 }
+.shelf-quick-more > summary svg { transition: transform 0.2s var(--steps-3); }
+.shelf-quick-more[open] > summary svg { transform: rotate(180deg); }
+.shelf-change-pick svg, .shelf-remove-reading svg { display: block; }
+.shelf-card-action svg, .shelf-discovery-title svg { display: inline-block; vertical-align: -3px; margin-left: 2px; }
+.shelf-more-menu .shelf-menu-action > span { flex: 1; }
+@media (max-width: 360px) {
+  .shelf-quick-more > summary { gap: 2px; padding-inline: 2px; }
+  /* The journal is also in the "⋯" menu; on the narrowest phones the tabs need the room. */
+  .shelf-actions > .shelf-journal.is-compact { display: none; }
+}

@@ -351,6 +351,7 @@
   }
 
   const SHELF_BATCH_SIZE = 24;
+  const OPEN_ARROW = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>';
   const shelfBookLoads = new Map();
   let shelfRenderedLimit = SHELF_BATCH_SIZE, shelfFilterSignature = "";
 
@@ -375,7 +376,7 @@
         <span class="shelf-device-badge"></span>
         ${updates ? `<span class="chapter-update-badge">${updates} chương mới</span>` : ""}
         ${series.description ? `<span class="shelf-card-description">${escapeHtml(series.description)}</span>` : ""}
-        <span class="shelf-card-action">Mở sách <span aria-hidden="true">→</span></span>
+        <span class="shelf-card-action">Mở sách ${OPEN_ARROW}</span>
       </span>
     `;
     if (resume) card.dataset.resume = "1";
@@ -578,7 +579,7 @@
     badge.textContent = !shelfDeviceReady ? "Đang kiểm tra…" : saved ? saved.personal ? "Trên máy · Ebook" : `${saved.incomplete ? "Chưa tải đủ" : "Trên máy"} · ${saved.volumes}/${saved.total} tập` : "Chưa tải về";
     badge.title = saved?.incomplete ? "Đã lưu nội dung chữ; một số ảnh chưa tải đủ." : saved ? "Có nội dung đọc trên thiết bị này." : "Cần mạng để mở sách chưa lưu.";
     card.setAttribute("aria-busy", String(load === "loading")); card.disabled = load === "loading";
-    card.querySelector(".shelf-card-action").textContent = load === "loading" ? "Đang tải mục lục…" : "Mở sách →";
+    card.querySelector(".shelf-card-action").innerHTML = load === "loading" ? "Đang tải mục lục…" : `Mở sách ${OPEN_ARROW}`;
     const message = load === "error" ? "Chưa tải được mục lục. Nội dung đang xem vẫn được giữ." : error?.message || (active ? active.direction === "incoming" ? "Đang tải về…" : "Đang gửi ebook…" : pending ? pending.recipient_device === shelfTransfers.device ? "Ebook đang chờ nhận về máy" : "Đang chờ máy nhận ebook" : "");
     const kind = load === "error" ? "load" : error ? "transfer" : "activity";
     let feedback = item.querySelector(".shelf-card-feedback");
@@ -1440,6 +1441,8 @@
       if (readerSurfaces?.isLocked()) return;
       updateScrollProgress();
       updateChromeVisibility();
+      // "Lên đầu chương" only once there is a screen of text above.
+      document.body.classList.toggle("is-past-start", window.scrollY > window.innerHeight * 0.8);
       rememberReaderPosition();
       if (pageModeEnabled) updatePageChrome();
       if (currentView === "reader") noteReaderActivity();
@@ -2625,7 +2628,7 @@
       const label = getChapterLabel(volume, chapIdx);
       const imageCount = chapter.images ? chapter.images.length : 0;
       const num = chapter.isIllustration
-        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="1.6"></circle><path d="m21 16-5-5-9 9"></path></svg>'
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="1.6"></circle><path d="m21 16-5-5-9 9"></path></svg>'
         : label.num;
       const meta = [];
 
@@ -2637,7 +2640,7 @@
       let state = "";
       if (isResume) state = '<span class="state-pill">Đang đọc</span>';
       else if (partial) state = `<span class="state-progress" title="Đã đọc ${partial}%">${partial}%</span>`;
-      else if (isRead) state = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Đã đọc"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>';
+      else if (isRead) state = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Đã đọc"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>';
 
       const item = document.createElement("button");
       item.type = "button";

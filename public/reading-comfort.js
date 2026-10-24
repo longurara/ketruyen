@@ -127,10 +127,10 @@
     // it, so the page never moves under someone who is busy with it.
     document.body.insertAdjacentHTML("beforeend", `<div id="auto-scroll-bar" class="auto-scroll-bar" role="region" aria-label="Tự cuộn" hidden>
       <button type="button" class="auto-scroll-icon" data-auto="toggle" aria-label="Tạm dừng tự cuộn"><svg class="icon-pause" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"></path></svg><svg class="icon-play" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg></button>
-      <button type="button" class="auto-scroll-icon" data-auto="slower" aria-label="Chậm hơn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+      <button type="button" class="auto-scroll-icon" data-auto="slower" aria-label="Chậm hơn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
       <span class="auto-scroll-speed" id="auto-scroll-speed" aria-live="polite"></span>
-      <button type="button" class="auto-scroll-icon" data-auto="faster" aria-label="Nhanh hơn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
-      <button type="button" class="auto-scroll-icon" data-auto="stop" aria-label="Tắt tự cuộn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+      <button type="button" class="auto-scroll-icon" data-auto="faster" aria-label="Nhanh hơn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+      <button type="button" class="auto-scroll-icon" data-auto="stop" aria-label="Tắt tự cuộn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
     </div>`);
     const bar = $("#auto-scroll-bar");
 

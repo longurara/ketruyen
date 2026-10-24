@@ -142,7 +142,7 @@
       handoff.replaceChildren(); handoff.hidden = !reading;
       if (!reading) return;
       const icon = document.createElement("span"); icon.className = "device-reading-icon"; icon.setAttribute("aria-hidden", "true");
-      icon.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="13" height="11" rx="2"/><path d="M6 18h7M9 14v4"/><rect x="16" y="9" width="5" height="12" rx="1.5"/></svg>';
+      icon.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="13" height="11" rx="2"/><path d="M6 18h7M9 14v4"/><rect x="16" y="9" width="5" height="12" rx="1.5"/></svg>';
       const copy = document.createElement("div"); copy.className = "device-reading-copy";
       const label = document.createElement("p"); label.className = "device-reading-label"; label.textContent = `Đang đọc trên ${reading.name}`;
       const title = document.createElement("p"); title.className = "device-reading-title"; title.textContent = options.bookName(reading.reading.slug) || "Ebook cá nhân";
