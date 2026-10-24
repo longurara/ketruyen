@@ -50,6 +50,7 @@ async function runOfflineShelfChecks(browser, base) {
     assert.equal(await page.locator("#shelf-offline-status").isVisible(), false);
     await page.click("#shelf-view-mine");
     assert.equal(await page.locator("#shelf-grid .shelf-card").count(), 3, "personal shelf omitted downloaded books without reading progress");
+    if (await page.locator("#shelf-filter-toggle").getAttribute("aria-expanded") === "false") await page.locator("#shelf-filter-toggle").click();
     await page.locator("#shelf-on-device").click();
     assert.equal(await page.locator("#shelf-grid .shelf-card").count(), 3, "filter omitted cached book from another source");
     assert.equal(await page.locator("#shelf-section-tabs").isVisible(), false);

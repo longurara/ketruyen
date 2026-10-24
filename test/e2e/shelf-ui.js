@@ -28,7 +28,7 @@ async function runShelfUIChecks(browser, base) {
     assert.match(await page.locator(".shelf-empty").innerText(), /Một kệ sách dành riêng/);
     await page.click(".shelf-empty button");
     assert.equal(await page.locator("#shelf-view-discover").getAttribute("aria-selected"), "true");
-    await page.click("#tab-shelf-b1k");
+    await page.selectOption("#shelf-source", "b1k");
     const item = page.locator('[data-book="b1k-1922-nam-ac-bao"]');
     await item.locator(".shelf-card").click();
     await page.waitForFunction(() => document.querySelector('[data-book="b1k-1922-nam-ac-bao"] .shelf-card')?.getAttribute("aria-busy") === "true");
@@ -37,7 +37,7 @@ async function runShelfUIChecks(browser, base) {
     releaseIndex(); await item.locator(".shelf-card-feedback button").waitFor();
     assert.match(await item.locator(".shelf-card-feedback").innerText(), /Chưa tải được mục lục/);
     failIndex = false; await item.locator(".shelf-card-feedback button").click(); await page.waitForSelector("#view-home.active");
-    await page.goto(base); await page.waitForSelector("#shelf-grid .shelf-card"); await page.click("#tab-shelf-b1k");
+    await page.goto(base); await page.waitForSelector("#shelf-grid .shelf-card"); await page.selectOption("#shelf-source", "b1k");
     await item.locator(".shelf-card-more summary").click(); await item.locator("[data-favorite]").click();
     await page.click("#shelf-view-mine");
     assert.equal(await page.locator("#shelf-grid .shelf-card").count(), 1, "personal shelf included unrelated catalog books");

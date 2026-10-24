@@ -7,6 +7,7 @@
 const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");
+const BookFormat = require("../public/book-format");
 const { splitDescriptions } = require("../build-data.js");
 
 const ROOT = path.join(__dirname, "..");
@@ -94,6 +95,8 @@ for (const series of catalog) {
   if (!exists(series.index)) { fail(`${name}: index ${series.index} is not in the repo`); continue; }
   const index = readJson(path.join(PUBLIC, series.index));
   if (!Array.isArray(index)) { fail(`${name}: ${series.index} is not a list of volumes`); continue; }
+  const counts = BookFormat.chapterCounts({ volumesData: index });
+  if (series.storyChapters !== counts.chapters || series.illustrations !== counts.illustrations) fail(`${name}: reading counts differ from its index`);
   const chapterCount = index.reduce((sum, volume) => sum + (volume.chapters?.length || 0), 0);
   if (index.length !== series.volumes) fail(`${name}: series.json says ${series.volumes} volumes, index has ${index.length}`);
   if (chapterCount !== series.chapters) fail(`${name}: series.json says ${series.chapters} chapters, index has ${chapterCount}`);

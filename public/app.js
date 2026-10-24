@@ -21,7 +21,8 @@
   let tapPagingEnabled = true;
   let wakeLockEnabled = true;
   let chapterSort = "asc";
-  let chapterFilter = "all";
+  let chapterFilter = "story";
+  let chapterFilterChosen = false;
   let readingProgress = null;
   let readingHistory = [];
   // Per-chapter reading state, keyed "volIdx:chapIdx":
@@ -370,7 +371,7 @@
       <span class="shelf-copy">
         <span class="shelf-card-title${series.titleVi.length > 32 ? " is-long" : ""}">${escapeHtml(series.titleVi)}</span>
         <span class="shelf-card-author">${escapeHtml(series.author || "")}</span>
-        <span class="shelf-card-meta">${series.personal ? `${escapeHtml(series.sourceFormat)} · Ebook cá nhân` : `${series.volumes} tập`} · ${series.chapters} chương</span>
+        <span class="shelf-card-meta">${series.personal ? `${escapeHtml(series.sourceFormat)} · Ebook cá nhân` : `${series.volumes} tập`} ${BookFormat.countLabel(series) ? ` · ${BookFormat.countLabel(series)}` : ""}</span>
         <span class="shelf-device-badge"></span>
         ${updates ? `<span class="chapter-update-badge">${updates} chương mới</span>` : ""}
         ${series.description ? `<span class="shelf-card-description">${escapeHtml(series.description)}</span>` : ""}
@@ -402,7 +403,7 @@
     paintShelfConnection();
     const books = shelfOnDevice ? SERIES.filter((book) => shelfDeviceBooks.has(book.slug)) : SERIES;
     const ordered = libraryTools ? libraryTools.filterSeries(books, { onDevice: shelfOnDevice, savedSlugs: new Set(shelfDeviceBooks.keys()) }) : books;
-    const signature = JSON.stringify([$("#view-shelf").dataset.shelfView, shelfOnDevice, $("#shelf-search").value, $("#shelf-status").value, $("#shelf-group").value, $("#shelf-sort").value, $("#shelf-section-tabs [data-shelf-section].is-active")?.dataset.shelfSection, $("#shelf-section-tabs [data-shelf-primary].is-active")?.dataset.shelfPrimary]);
+    const signature = JSON.stringify([$("#view-shelf").dataset.shelfView, shelfOnDevice, $("#shelf-search").value, $("#shelf-status").value, $("#shelf-group").value, $("#shelf-sort").value, $("#shelf-source").value, $("#shelf-category").value]);
     if (signature !== shelfFilterSignature) { shelfRenderedLimit = SHELF_BATCH_SIZE; shelfFilterSignature = signature; }
     $("#shelf-source-status").hidden = !catalogLoadError || $("#view-shelf").dataset.shelfView !== "discover";
     if (!ordered.length) {
@@ -600,6 +601,8 @@
     status.hidden = !offline;
     const text = shelfOnDevice ? "Đang offline · Đang hiện sách có trên máy." : "Đang offline · Chỉ sách đã lưu trên máy mới mở được.";
     if (status.textContent !== text) status.textContent = text;
+    $("#shelf-device-chip").hidden = !shelfOnDevice && !offline;
+    $("#shelf-device-chip").textContent = shelfOnDevice ? "Trên máy ×" : "Sách trên máy";
     $("#shelf-on-device").setAttribute("aria-pressed", String(shelfOnDevice));
     $("#shelf-on-device-count").textContent = shelfDeviceReady ? shelfDeviceBooks.size.toLocaleString("vi-VN") : "";
     $("#shelf-device-hint").hidden = !shelfOnDevice || ![...shelfDeviceBooks.values()].some((book) => book.incomplete);
@@ -634,8 +637,9 @@
           }));
         } catch (_) { failed = true; }
       }
+      const changed = !shelfDeviceReady || shelfDeviceError !== failed || JSON.stringify([...shelfDeviceBooks]) !== JSON.stringify([...books]);
       shelfDeviceBooks = books; shelfDeviceReady = true; shelfDeviceError = failed;
-      if (currentView === "shelf" && libraryTools) renderShelf(); else paintShelfConnection();
+      if (currentView === "shelf" && libraryTools && changed) renderShelf(); else { paintShelfConnection(); paintShelfBookStates(); }
     })().finally(() => {
       shelfDeviceScan = null;
       if (shelfDeviceRescan) { shelfDeviceRescan = false; refreshShelfDeviceBooks(); }
@@ -1023,6 +1027,7 @@
   }
 
   async function init() {
+    globalThis.UIAppearance?.setPreserver(preserveReaderPosition);
     const savedSize = parseInt(localStorage.getItem("tenshi-font-size"), 10);
     if (!Number.isNaN(savedSize)) {
       fontSize = clamp(savedSize, 16, 28);
@@ -1111,7 +1116,7 @@
       completed: (series) => {
         if (!Array.isArray(series.volumesData)) return 0;
         const chapters = series === SERIES_META ? chapterState : savedSeriesState(series).chapters;
-        return series.volumesData.reduce((sum, volume, volIdx) => sum + volume.chapters.filter((chapter, chapIdx) => !chapter.isIllustration && chapters[`${volIdx}:${chapIdx}`]?.done).length, 0);
+        return BookFormat.completedProgress(series, chapters).done;
       },
       paragraphs: (volIdx, chapIdx) => chapterParagraphs(DATA[volIdx].chapters[chapIdx]),
       message: showMessage,
@@ -1270,6 +1275,8 @@
 
   function attachEvents() {
     setupSettingsUI();
+    $("#shelf-device-chip").onclick = () => $("#shelf-on-device").click();
+    $("#series-info").addEventListener("toggle", () => { if ($("#series-info").open) clampDescription(); });
     $("#shelf-source-retry").onclick = async () => {
       const button = $("#shelf-source-retry"); button.disabled = true; button.textContent = "Đang tải…";
       try {
@@ -1358,7 +1365,7 @@
     btnContinue.addEventListener("click", continueReading);
     btnStartReading.addEventListener("click", startReading);
 
-    // Mid-volume these read "Đọc tiếp" / "Đọc từ đầu", as on the home page.
+    // Mid-volume these read "Đọc tiếp" / "Đọc lại từ đầu", as on the home page.
     btnOpenFirstChapter.addEventListener("click", () => {
       if (resumesVolume(currentVolIdx)) {
         continueReading();
@@ -1418,7 +1425,7 @@
     btnBackToVolume.addEventListener("click", goBack);
     btnBottomList.addEventListener("click", () => readerWorkbench.open("contents"));
     btnBottomSettings.addEventListener("click", openQuickSettings);
-    btnBottomTools.addEventListener("click", () => readerWorkbench.open());
+    btnBottomTools.addEventListener("click", () => readerWorkbench.openHome());
     setupQuickSettings();
     setupReaderViewport();
 
@@ -1724,6 +1731,7 @@
     $("#settings-progress-book-name").textContent = SERIES_META.titleVi;
     statVolumes.textContent = totals.volumes;
     statChapters.textContent = totals.chapters;
+    statChapters.nextElementSibling.textContent = totals.unit;
     statIllustrations.textContent = totals.illustrations;
     $("#stat-illustrations-card").hidden = !totals.illustrations;
     seriesCover.src = getSeriesCover();
@@ -1739,19 +1747,7 @@
     });
   }
 
-  function getSeriesTotals() {
-    return DATA.reduce(
-      (acc, volume) => {
-        acc.volumes += 1;
-        // Picture sets are counted on their own, so "chương" means story chapters.
-        const pictures = volume.chapters.filter((chapter) => chapter.isIllustration).length;
-        acc.chapters += volume.chapters.length - pictures;
-        acc.illustrations += pictures;
-        return acc;
-      },
-      { volumes: 0, chapters: 0, illustrations: 0 }
-    );
-  }
+  function getSeriesTotals() { return { volumes: DATA.length, ...BookFormat.chapterCounts(SERIES_META) }; }
 
   function getSeriesCover() {
     return getVolumeCover(DATA[0]);
@@ -1835,7 +1831,7 @@
   }
 
   function getVolumeProgress(volIdx) {
-    return countFinishedChapters(volIdx) / DATA[volIdx].chapters.length;
+    const counts = volumeReadingProgress(volIdx); return counts.total ? counts.done / counts.total : 0;
   }
 
   function renderVolumeGrid() {
@@ -1882,10 +1878,9 @@
   }
 
   function buildVolumeExcerpt(volume) {
-    const storyCount = volume.chapters.filter((chapter) => !chapter.isIllustration).length;
     const words = volumeWords(volume);
 
-    return metaLine([`${storyCount} chương`, words ? `${formatReadingTime(words)} đọc` : ""]);
+    return metaLine([BookFormat.countLabel({ sourceFormat: SERIES_META.sourceFormat, volumesData: [volume] }), words ? `${formatReadingTime(words)} đọc` : ""]);
   }
 
   // The data has no publish dates, so the sidebar shows the reader's own
@@ -1991,13 +1986,12 @@
     return Boolean(state && state.done);
   }
 
-  function countFinishedChapters(volIdx) {
-    return DATA[volIdx].chapters.filter((_, chapIdx) => isChapterRead(volIdx, chapIdx)).length;
+  function volumeReadingProgress(volIdx) {
+    const flags = {}; DATA[volIdx].chapters.forEach((_, ci) => { flags['0:' + ci] = getChapterState(volIdx, ci); });
+    return BookFormat.completedProgress({ sourceFormat: SERIES_META.sourceFormat, volumesData: [DATA[volIdx]] }, flags);
   }
-
-  function isVolumeRead(volIdx) {
-    return countFinishedChapters(volIdx) === DATA[volIdx].chapters.length;
-  }
+  function countFinishedChapters(volIdx) { return volumeReadingProgress(volIdx).done; }
+  function isVolumeRead(volIdx) { const p = volumeReadingProgress(volIdx); return p.total > 0 && p.done === p.total; }
 
   // Percent read of a chapter that was started but not finished, else 0.
   function getPartialPercent(volIdx, chapIdx) {
@@ -2253,7 +2247,7 @@
     if (name === "reader" && pageModeEnabled) requestAnimationFrame(() => { alignPageTop(); updatePageChrome(); });
     else updatePageChrome();
     // On the shelf this header button opens reading statistics; elsewhere, the book's tools.
-    const toolsLabel = name === "shelf" ? "Thống kê đọc" : "Tiện ích đọc";
+    const toolsLabel = "Thống kê đọc";
     $("#btn-reader-tools").setAttribute("aria-label", toolsLabel);
     $("#btn-reader-tools").title = toolsLabel;
 
@@ -2524,7 +2518,7 @@
     }
     volumeChapterCount.innerHTML = buildVolumeExcerpt(volume);
     btnOpenFirstChapter.textContent = resuming ? "Đọc tiếp" : "Đọc từ chương đầu";
-    btnOpenLatestChapter.textContent = resuming ? "Đọc từ đầu" : "Chương cuối tập";
+    btnOpenLatestChapter.textContent = resuming ? "Đọc lại từ đầu" : "Chương cuối tập";
     volumeSummary.textContent = createVolumeSummary(volume, volIdx);
     volumeCover.innerHTML = renderCoverMarkup(volume);
     volumeBackdrop.src = getVolumeCover(volume);
@@ -2587,20 +2581,22 @@
 
   function createVolumeSummary(volume, volIdx) {
     const finished = countFinishedChapters(volIdx);
-    if (finished === volume.chapters.length) return "Bạn đã đọc hết tập này.";
+    if (isVolumeRead(volIdx)) return "Bạn đã đọc xong tập này.";
 
     if (readingProgress && readingProgress.volIdx === volIdx) {
       const label = getChapterLabel(volume, readingProgress.chapIdx);
       return `Đang đọc dở: ${(hasDistinctKicker(label) ? [label.kicker, label.title] : [label.title]).filter(Boolean).join(" — ")}`;
     }
 
-    return finished > 0 ? `Đã đọc ${finished}/${volume.chapters.length} mục.` : "";
+    const p = volumeReadingProgress(volIdx); return finished > 0 ? `Đã đọc xong ${finished}/${p.total} ${p.unit}.` : "";
   }
 
   function renderChapterList() {
     if (currentVolIdx < 0) return;
 
     const volume = DATA[currentVolIdx];
+    if (!chapterFilterChosen) chapterFilter = SERIES_META.sourceFormat === "PDF" ? "all" : volume.chapters.some((c) => !c.isIllustration) ? "story" : "illustration";
+    for (const [button, value] of [[btnFilterAll, "all"], [btnFilterStory, "story"], [btnFilterIllustration, "illustration"]]) button.classList.toggle("is-active", chapterFilter === value);
     const entries = volume.chapters.map((chapter, chapIdx) => ({ chapter, chapIdx }));
     const filtered = entries.filter(({ chapter }) => {
       if (chapterFilter === "story") return !chapter.isIllustration;
@@ -3112,7 +3108,7 @@
   }
 
   function setChapterFilter(filter) {
-    chapterFilter = filter;
+    chapterFilter = filter; chapterFilterChosen = true;
     btnFilterAll.classList.toggle("is-active", filter === "all");
     btnFilterStory.classList.toggle("is-active", filter === "story");
     btnFilterIllustration.classList.toggle("is-active", filter === "illustration");
@@ -5055,14 +5051,7 @@
     }
 
     const label = getChapterLabel(volume, readingProgress.chapIdx);
-    // Progress through the whole series, in story chapters.
-    let done = 0, total = 0;
-    DATA.forEach((item, volIdx) => item.chapters.forEach((entry, chapIdx) => {
-      if (entry.isIllustration) return;
-      total += 1;
-      if (isChapterRead(volIdx, chapIdx)) done += 1;
-    }));
-    const share = total ? Math.round((done / total) * 100) : 0;
+    const { done, total, percent: share, unit } = BookFormat.completedProgress(SERIES_META, chapterState);
     continueInfo.innerHTML = `
       <span class="continue-kicker">Đang đọc dở</span>
       <span class="continue-title">${escapeHtml(label.title)}</span>
@@ -5070,7 +5059,7 @@
       ${total ? `
         <span class="continue-progress">
           <span class="continue-track" role="progressbar" aria-label="Tiến độ cả bộ" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${share}"><span style="width:${Math.max(share, done ? 2 : 0)}%"></span></span>
-          <span class="continue-percent">${done}/${total} chương</span>
+          <span class="continue-percent">Đã đọc xong ${done}/${total} ${unit}</span>
         </span>` : ""}
     `;
   }

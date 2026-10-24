@@ -1,3 +1,4 @@
+const BookFormat = require("./public/book-format");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
@@ -196,6 +197,8 @@ async function buildSeries(config) {
       cover: data.find((volume) => volume.cover)?.cover || "",
       volumes: data.length,
       chapters: totalChapters,
+      storyChapters: BookFormat.chapterCounts({ volumesData: data }).chapters,
+      illustrations: BookFormat.chapterCounts({ volumesData: data }).illustrations,
       bytes: data.reduce((s, v) => s + (v.bytes || 0), 0)
     };
   }
@@ -324,6 +327,8 @@ async function buildSeries(config) {
     cover: data.find((volume) => volume.cover)?.cover || "",
     volumes: data.length,
     chapters: totalChapters,
+      storyChapters: BookFormat.chapterCounts({ volumesData: data }).chapters,
+      illustrations: BookFormat.chapterCounts({ volumesData: data }).illustrations,
     bytes: data.reduce((s, v) => s + v.bytes, 0)
   };
 }

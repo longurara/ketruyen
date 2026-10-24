@@ -1,5 +1,18 @@
 # Kế hoạch tính năng
 
+## Hoàn thiện 12 điểm UI còn vướng
+
+Trạng thái: đã triển khai; chi tiết trong [docs/shelf-ui.md](docs/shelf-ui.md). Không có migration Supabase mới.
+
+- [x] Hàng Đọc tiếp gọn, sách khác thu gọn; bỏ tiêu đề lặp, gom điều khiển kệ, lối tắt Thêm và bộ chọn nguồn đầy đủ tên.
+- [x] Helper chung đếm chương/minh họa/trang PDF; metadata bổ sung tương thích cache cũ, không tạo lại ảnh/nội dung.
+- [x] Phân biệt mục đọc xong với vị trí đọc, thu gọn thông tin bộ truyện, ưu tiên chương truyện trong mục lục, làm rõ Đọc lại từ đầu.
+- [x] Tiện ích Hay dùng + tìm kiếm, giữ API mở trực tiếp và các chức năng hiện có.
+- [x] Nhật ký ưu tiên nội dung, bộ lọc thu gọn, thông tin bổ sung có thể mở mà không mất dữ liệu.
+- [x] Chọn/tạo nhóm bằng thẻ, bảo vệ bản nháp và giữ giới hạn/schema hiện tại.
+- [x] Chữ phụ từ 13 px, cỡ chữ giao diện độc lập và có sao lưu; biểu tượng đầu trang nhất quán, bảng Tài khoản & đồng bộ.
+- [ ] Nghiệm thu vùng an toàn và bàn phím trên iPhone/Android thật.
+
 ## Hoàn thiện UI kệ sách — 5 mục
 
 Trạng thái: đã triển khai. Hướng dẫn và giới hạn: [docs/shelf-ui.md](docs/shelf-ui.md). Không cần migration.

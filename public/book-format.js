@@ -37,5 +37,31 @@
     return rest;
   }
 
-  return { READING_PACE, readingMinutes, formatReadingTime, volumeSubtitle };
+  function chapterCounts(book) {
+    const pdf = book.sourceFormat === "PDF", volumes = book.volumesData;
+    if (Array.isArray(volumes)) {
+      const chapters = volumes.flatMap((v) => v.chapters || []);
+      const illustrations = pdf ? 0 : chapters.filter((c) => c.isIllustration).length;
+      return { chapters: chapters.length - illustrations, illustrations, unit: pdf ? "trang" : "chương" };
+    }
+    return { chapters: Number.isInteger(book.storyChapters) ? book.storyChapters : null,
+      illustrations: Number.isInteger(book.illustrations) ? book.illustrations : null, unit: pdf ? "trang" : "chương" };
+  }
+  function countLabel(book) {
+    const count = chapterCounts(book);
+    return [count.chapters !== null && count.chapters > 0 ? `${count.chapters} ${count.unit}` : "",
+      count.illustrations ? `${count.illustrations} phần minh họa` : ""].filter(Boolean).join(" · ");
+  }
+  function readingEntries(book) {
+    const entries = (book.volumesData || []).flatMap((v, vi) => (v.chapters || []).map((chapter, ci) => ({ chapter, vi, ci })));
+    const story = entries.filter((e) => book.sourceFormat === "PDF" || !e.chapter.isIllustration);
+    return story.length ? story : entries;
+  }
+  function completedProgress(book, flags = {}) {
+    const entries = readingEntries(book), total = entries.length;
+    const done = entries.filter((e) => flags[`${e.vi}:${e.ci}`]?.done).length;
+    const counts = chapterCounts(book);
+    return { done, total, percent: total ? Math.round(done / total * 100) : 0, unit: counts.chapters === 0 && counts.illustrations ? "phần minh họa" : counts.unit };
+  }
+  return { READING_PACE, readingMinutes, formatReadingTime, volumeSubtitle, chapterCounts, countLabel, readingEntries, completedProgress };
 });

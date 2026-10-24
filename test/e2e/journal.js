@@ -50,6 +50,7 @@ async function runJournalChecks(browser, base) {
       localStorage.setItem("tenshi-library-v1", JSON.stringify(lib));
     });
     await a.page.click("#shelf-journal-open"); await a.page.click("#journal-write");
+    await a.page.locator(".journal-extra > summary").click();
     await a.page.locator('#journal-form [name="phase"]').selectOption("expectation"); await a.page.locator('#journal-form [name="started"]').fill("2020-01-01");
     await a.page.locator('#journal-form [name="rating"]').selectOption("5"); await a.page.locator('#journal-form [name="moods"]').fill("Ấm áp, Muốn đọc lại");
     await a.page.locator('#journal-form [name="text"]').fill("Cảm nhận tiếng Việt. <script>window.badJournal=true</script>\nDòng thứ hai không bị mất.");
@@ -69,9 +70,10 @@ async function runJournalChecks(browser, base) {
     await until(async () => { const rows = await entries(b.page); return rows.some((v) => v.text === "Sửa riêng trên máy A") && rows.some((v) => v.text === "Sửa riêng trên máy B" && v.id !== first.id); }, "resolving a journal conflict lost a version");
     // A new reading round keeps the old review and has its own dates/status.
     await b.page.click("#journal-new-run"); await b.page.locator('#journal-round-form button[type="submit"]').click();
-    await b.page.locator('#journal-form [name="text"]').fill("Lượt đọc thứ hai đem lại cảm giác khác."); await b.page.locator('#journal-form [name="phase"]').selectOption("expectation");
+    await b.page.locator('#journal-form [name="text"]').fill("Lượt đọc thứ hai đem lại cảm giác khác."); await b.page.locator(".journal-extra > summary").click(); await b.page.locator('#journal-form [name="phase"]').selectOption("expectation");
     await b.page.locator('#journal-form [name="status"]').selectOption("paused"); await b.page.locator('#journal-form [name="reason"]').fill("Đợi tập tiếp theo"); await b.page.locator('#journal-form button[type="submit"]').click();
     assert.match(await b.page.textContent("#journal-results"), /Lượt 2/); assert.match(await b.page.textContent("#journal-results"), /Đợi tập tiếp theo/);
+    await b.page.click("#journal-filter-toggle");
     await b.page.selectOption("#journal-rating", "5"); assert.equal(await b.page.locator('#journal-results [data-journal-edit]').count(), 2); await b.page.selectOption("#journal-rating", "");
     await b.page.fill("#journal-search", "thứ hai"); assert.equal(await b.page.locator('#journal-results [data-journal-edit]').count(), 1); await b.page.fill("#journal-search", "");
     await b.page.click('[data-journal-tab="summary"]'); assert.match(await b.page.textContent("#journal-results"), /Tổng kết/); assert.match(await b.page.textContent("#journal-results"), /Ấm áp/); await b.page.click('[data-journal-tab="timeline"]');

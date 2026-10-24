@@ -98,12 +98,12 @@ async function run(name, context) {
   });
 
   await step("shelf tabs switch collections", async () => {
-    await page.click("#tab-shelf-b1k");
-    await page.waitForSelector("#shelf-b1k-subtabs:not([hidden])");
+    await page.selectOption("#shelf-source", "b1k");
+    await page.waitForSelector("#shelf-category-label:not([hidden])");
     const first = await page.locator(".ebook-shelf-item").first().getAttribute("data-book");
     check(first?.startsWith("b1k-"), `Tủ Sách 1000 tab shows ${first}`);
     await noSidewaysScroll(page, "Tủ Sách 1000 tab");
-    await page.click("#tab-shelf-main");
+    await page.selectOption("#shelf-source", "main");
   });
 
   await step("search with no results offers to clear it", async () => {
@@ -148,13 +148,13 @@ async function run(name, context) {
   });
 
   await step("personal shortcuts find books across collections", async () => {
-    await page.click("#tab-shelf-b1k");
+    await page.selectOption("#shelf-source", "b1k");
     const slug = await page.locator(".ebook-shelf-item").first().getAttribute("data-book");
     await page.locator(".shelf-card-more summary").first().click();
     await page.click(".shelf-card-more[open] [data-favorite]");
     await page.click('[data-shelf-quick="all"]');
     await page.click("#shelf-view-discover");
-    await page.click("#tab-shelf-main");
+    await page.selectOption("#shelf-source", "main");
     await page.click('[data-shelf-quick="favorite"]');
     check(await page.locator(".ebook-shelf-item").count() === 1, "favorites includes unselected books");
     check(await page.locator(".ebook-shelf-item").first().getAttribute("data-book") === slug, "favorite from another collection was hidden");
@@ -164,6 +164,7 @@ async function run(name, context) {
     await page.waitForSelector(".shelf-empty");
     await noSidewaysScroll(page, "empty personal shelf");
     await page.click('[data-shelf-quick="all"]');
+    await page.click(".shelf-quick-more > summary");
     await page.click('#shelf-shortcuts [data-library-action="marks"]');
     await page.waitForSelector("#workbench-dialog[open]");
     check(/Đánh dấu & Ghi chú/.test(await page.textContent("#workbench-dialog")), "notes shortcut did not open annotations");
@@ -207,7 +208,9 @@ async function run(name, context) {
     await open(page, "/");
     await page.waitForSelector(".shelf-feature.is-reading");
     check(/Thiên Sứ Nhà Bên/.test(await page.textContent(".is-reading h2")), "featured resume shows another book");
-    check(await page.locator('.is-reading [role="progressbar"]').count() === 1, "resume is missing its progress");
+    await page.click(".shelf-resume-details > summary");
+    check(/Đã đọc xong/.test(await page.textContent(".shelf-resume-details")), "resume is missing its completion detail");
+    await page.click(".shelf-resume-details > summary");
     await noSidewaysScroll(page, "featured resume");
     await page.click('.is-reading .shelf-feature-button');
     await page.waitForSelector("#view-reader.active .reader-content p");
@@ -348,6 +351,8 @@ async function checkLinkPreviews() {
     catch (error) { failed = true; console.error(`✖ offline shelf: ${error.stack}`); }
     try { await require("./shelf-ui").runShelfUIChecks(browser, BASE); }
     catch (error) { failed = true; console.error(`✖ shelf UI: ${error.stack}`); }
+    try { await require("./ui-polish").runUIPolishChecks(browser, BASE); }
+    catch (error) { failed = true; console.error(`✖ UI polish: ${error.stack}`); }
   } finally {
     await browser.close();
     server.kill();

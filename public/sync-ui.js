@@ -28,7 +28,7 @@
       $("sync-feedback").setAttribute("aria-busy", String(current === "syncing" || current === "working"));
       $("sync-state-label").textContent = title;
       $("btn-sync").dataset.syncState = enabled || current === "offline" ? current : "idle";
-      $("btn-sync").title = `Đồng bộ giữa các máy · ${enabled || current === "offline" ? title : "Chưa bật đồng bộ"}`;
+      $("btn-sync").title = `Tài khoản & đồng bộ · ${enabled || current === "offline" ? title : "Chưa bật đồng bộ"}`;
       $("btn-sync").setAttribute("aria-label", $("btn-sync").title);
       const notice = $("shelf-sync-notice");
       notice.hidden = !enabled || !["error", "conflict"].includes(current);

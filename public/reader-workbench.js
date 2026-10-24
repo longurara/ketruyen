@@ -55,29 +55,26 @@
   function create(options) {
     const $ = (s) => document.querySelector(s), ctx = options.context;
     let state; try { state = normalizeState(JSON.parse(localStorage.getItem(KEY))); } catch (_) { state = normalizeState(); }
-    let committed = JSON.stringify(state), generation = 0, activeTab = "map", opener = null, selection = null, target = null;
+    let committed = JSON.stringify(state), generation = 0, activeTab = "home", opener = null, selection = null, target = null;
     const entries = () => ReaderFeatures.chapterEntries(ctx().series);
     const currentIndex = (items = entries()) => Math.max(0, items.findIndex((e) => e.volIdx === ctx().volIdx && e.chapIdx === ctx().chapIdx));
     const persist = () => {
       try { const serialized = JSON.stringify(state); localStorage.setItem(KEY, serialized); committed = serialized; return true; }
       catch (_) { state = normalizeState(JSON.parse(committed)); options.message("Không đủ chỗ lưu tiện ích. Hãy sao lưu rồi giải phóng dung lượng."); return false; }
     };
-    document.body.insertAdjacentHTML("beforeend", `<dialog id="workbench-dialog" class="tools-dialog workbench-dialog" aria-labelledby="workbench-title"><header class="tools-header"><div><p class="tools-eyebrow" id="workbench-book"></p><h2 id="workbench-title">Tiện ích sách</h2></div><button type="button" class="tools-close" aria-label="Đóng tiện ích sách"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></header><nav class="workbench-tabs" aria-label="Tiện ích sách">${["map", "preview", "xray", "words", "vocabulary", "profiles", "options"].map((a) => `<button type="button" data-workbench-tab="${a}">${escape(ACTIONS[a] || "Tùy chỉnh")}</button>`).join("")}</nav><div id="workbench-panel" class="workbench-panel"></div></dialog><aside id="reader-quick-menu" class="reader-quick-menu" hidden><button id="reader-quick-toggle" type="button" class="btn-secondary" aria-expanded="false" aria-controls="reader-quick-actions"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>Tiện ích</button><div id="reader-quick-actions" hidden></div></aside><div id="reader-status-footer" class="reader-status-footer" hidden></div>`);
+    document.body.insertAdjacentHTML("beforeend", `<dialog id="workbench-dialog" class="tools-dialog workbench-dialog" aria-labelledby="workbench-title"><header class="tools-header"><div><p class="tools-eyebrow" id="workbench-book"></p><h2 id="workbench-title">Tiện ích sách</h2></div><button type="button" class="tools-close" aria-label="Đóng tiện ích sách"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></header><section id="workbench-home-panel" class="workbench-home-panel"><label>Tìm chức năng<input id="workbench-search" type="search" placeholder="Ghi chú, nhân vật, cỡ chữ…"></label><div id="workbench-home-results"></div></section><div id="workbench-panel" class="workbench-panel"></div></dialog><aside id="reader-quick-menu" class="reader-quick-menu" hidden><button id="reader-quick-toggle" type="button" class="btn-secondary" aria-expanded="false" aria-controls="reader-quick-actions"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>Tiện ích</button><div id="reader-quick-actions" hidden></div></aside><div id="reader-status-footer" class="reader-status-footer" hidden></div>`);
     const dialog = $("#workbench-dialog"), panel = $("#workbench-panel"), quick = $("#reader-quick-menu"), quickActions = $("#reader-quick-actions"), footer = $("#reader-status-footer");
-    let activeGroup = "read", featureArgument = null, libraryActive = false;
+    let featureArgument = null, libraryActive = false;
     $("#workbench-title").textContent = "Tiện ích đọc";
-    dialog.querySelector(".workbench-tabs").insertAdjacentHTML("beforebegin", `<nav class="workbench-groups" aria-label="Nhóm tiện ích">${Object.entries(GROUPS).map(([id, group]) => `<button type="button" data-workbench-group="${id}">${group.label}</button>`).join("")}</nav>`);
-    dialog.querySelector(".workbench-tabs").insertAdjacentHTML("afterend", '<label class="workbench-section-select"><select id="workbench-section" aria-label="Chọn tiện ích"></select></label><button type="button" class="btn-secondary workbench-return" id="workbench-library-return" hidden>← Về tiện ích</button>');
+    panel.insertAdjacentHTML("beforebegin", '<button type="button" class="btn-link workbench-return" id="workbench-library-return" hidden>← Về tiện ích</button>');
     panel.insertAdjacentHTML("afterend", '<div id="workbench-feature-slot" class="workbench-external" hidden></div><div id="workbench-library-slot" class="workbench-external" hidden></div>');
     const featureSlot = $("#workbench-feature-slot"), librarySlot = $("#workbench-library-slot");
     featureSlot.append($("#tools-feedback"), $("#tools-panel")); librarySlot.append($("#library-feedback"), $("#library-tools-panel"));
     $("#reader-tools-dialog").hidden = true; $("#library-dialog").hidden = true;
     options.features.attachHost({ open: (tab, argument) => open(tab, argument), close, isOpen: () => dialog.open && FEATURE_TABS.includes(activeTab) && !libraryActive });
-    options.library.attachHost({ show: showLibrary, close, isOpen: () => dialog.open && libraryActive });
+    options.library.attachHost({ show: showLibrary, close, closeLibrary: () => options.surfaces.close(dialog), isOpen: () => dialog.open && libraryActive });
     options.surfaces.attach(dialog, { canClose: () => !libraryActive || options.library.canClose() });
-    $("#workbench-library-return").onclick = () => { if (options.library.canClose()) render(activeTab === "library" ? "map" : activeTab); };
-    $("#workbench-section").onchange = (ev) => render(ev.target.value);
-    dialog.querySelectorAll("[data-workbench-group]").forEach((b) => b.onclick = () => { if (!libraryActive || options.library.canClose()) render(GROUPS[b.dataset.workbenchGroup].tabs[0]); });
+    $("#workbench-library-return").onclick = () => render("home");
     const dockMedia = matchMedia("(max-width: 1080px)");
     function updateDock() { if (dockMedia.matches) $("#reader-bottom-nav").prepend(footer); else document.body.append(footer); }
     dockMedia.addEventListener("change", updateDock); updateDock();
@@ -85,7 +82,7 @@
     settings.innerHTML = '<h4 class="settings-section-title">Tiện ích sách</h4><p class="settings-hint">Bản đồ sách, xem trước, chú giải, sổ từ và hồ sơ đọc.</p><button type="button" class="btn-secondary settings-action" data-workbench="options">Tùy chỉnh tiện ích</button>';
     $("#settings-progress-section").before(settings);
     $("#selection-summary").insertAdjacentHTML("beforebegin", '<button type="button" data-workbench-selection="words" title="Chú giải hoặc lưu vào sổ từ"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M9 8h7M9 12h5"/></svg><span>Chú giải</span></button>');
-    const sideButton = document.createElement("button"); sideButton.type = "button"; sideButton.className = "side-settings-btn"; sideButton.dataset.workbench = "map"; sideButton.innerHTML = '<span class="side-settings-glyph" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v16H4zM14 4h6v16h-6zM7 8h1M7 12h1M17 8h1M17 12h1"></path></svg></span>Tiện ích đọc';
+    const sideButton = document.createElement("button"); sideButton.type = "button"; sideButton.className = "side-settings-btn"; sideButton.dataset.workbench = "home"; sideButton.innerHTML = '<span class="side-settings-glyph" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v16H4zM14 4h6v16h-6zM7 8h1M7 12h1M17 8h1M17 12h1"></path></svg></span>Tiện ích đọc';
     $("#btn-reader-listen").after(sideButton);
     function close() { if (!libraryActive || options.library.canClose()) options.surfaces.close(dialog); }
     dialog.querySelector(".tools-close").onclick = close;
@@ -98,13 +95,23 @@
       if (!dialog.open) options.surfaces.open(dialog); updateStatus(); render(tab);
     }
     function updateNavigation() {
-      activeGroup = Object.keys(GROUPS).find((g) => GROUPS[g].tabs.includes(activeTab)) || activeGroup;
-      dialog.querySelectorAll("[data-workbench-group]").forEach((b) => { b.setAttribute("aria-pressed", String(b.dataset.workbenchGroup === activeGroup)); b.disabled = libraryActive && !options.library.canClose(); });
-      dialog.querySelector(".workbench-tabs").innerHTML = GROUPS[activeGroup].tabs.map((a) => `<button type="button" data-workbench-tab="${a}" aria-pressed="${activeTab === a}">${escape(LABELS[a])}</button>`).join("");
-      dialog.querySelectorAll("[data-workbench-tab]").forEach((b) => b.onclick = () => render(b.dataset.workbenchTab));
-      $("#workbench-section").innerHTML = GROUPS[activeGroup].tabs.map((a) => `<option value="${a}"${activeTab === a ? " selected" : ""}>${escape(LABELS[a])}</option>`).join("");
-      $("#workbench-section").disabled = libraryActive && !options.library.canClose();
+      $("#workbench-home-panel").hidden = activeTab !== "home" || libraryActive;
+      $("#workbench-library-return").hidden = activeTab === "home" && !libraryActive;
+      $("#workbench-library-return").disabled = libraryActive && !options.library.canClose();
     }
+    function renderHome() {
+      const fold = (v) => v.normalize("NFD").replace(/\p{M}/gu, "").replace(/đ/g, "d").toLowerCase();
+      const registry = Object.entries(GROUPS).flatMap(([group, data]) => data.tabs.map((id) => ({ id, group, name: LABELS[id] }))).concat([{id:"bookmark",group:"read",name:LABELS.bookmark},{id:"settings",group:"read",name:LABELS.settings}]);
+      const search = $("#workbench-search"), host = $("#workbench-home-results");
+      const button = (id) => `<button type="button" class="workbench-home-action" data-home-action="${id}">${escape(LABELS[id])}<span aria-hidden="true">→</span></button>`;
+      const list = () => {
+        const query = fold(search.value.trim()), matches = registry.filter((r) => fold(r.name + " " + GROUPS[r.group].label + " " + ({ words: "chu giai word wise", xray: "x ray", settings: "co chu font", profiles: "cai dat" }[r.id] || "")).includes(query));
+        host.innerHTML = query ? matches.map((r) => button(r.id)).join("") || '<p class="tools-empty">Không tìm thấy chức năng phù hợp.</p>' : '<h3>Hay dùng</h3><div class="workbench-home-quick">' + state.quick.map(button).join("") + '</div><details id="workbench-all"><summary>Tất cả tiện ích (' + registry.length + ')</summary>' + Object.entries(GROUPS).map(([id, group]) => '<section><h3>' + group.label + '</h3>' + registry.filter((r) => r.group === id).map((r) => button(r.id)).join("") + '</section>').join("") + '</details>';
+        host.querySelectorAll("[data-home-action]").forEach((b) => b.onclick = () => act(b.dataset.homeAction));
+      };
+      search.oninput = list; list();
+    }
+    function openHome() { open("home"); }
     function showLibrary(title) {
       if (!dialog.open) { opener = document.activeElement; options.closeSettings(); options.surfaces.open(dialog); }
       libraryActive = true; generation++; panel.hidden = true; featureSlot.hidden = true; librarySlot.hidden = false;
@@ -113,8 +120,9 @@
     function render(tab) {
       if (libraryActive && !options.library.canClose()) return;
       activeTab = tab; libraryActive = false; generation++; panel.scrollTop = 0;
-      $("#workbench-title").textContent = "Tiện ích đọc"; $("#workbench-library-return").hidden = true;
+      $("#workbench-title").textContent = LABELS[tab] || "Tiện ích đọc";
       panel.hidden = FEATURE_TABS.includes(tab); featureSlot.hidden = !panel.hidden; librarySlot.hidden = true; updateNavigation();
+      if (tab === "home") { panel.hidden = true; renderHome(); return; }
       if (FEATURE_TABS.includes(tab)) { options.features.renderEmbedded(tab, featureArgument); featureArgument = null; return; }
       if (tab === "marks") { options.library.openMarks(); return; }
       if (tab === "journal") { options.journal.open(ctx().series.slug); return; }
@@ -306,7 +314,7 @@
     function act(action) {
       if (action === "bookmark") options.bookmark();
       else if (action === "marks") options.openMarks();
-      else if (action === "settings") options.openSettings();
+      else if (action === "settings") { close(); options.openSettings(); }
       else open(action);
       quickActions.hidden = true; $("#reader-quick-toggle").setAttribute("aria-expanded", "false");
     }
@@ -343,7 +351,7 @@
     window.addEventListener("scroll", () => { if (!frame) frame = requestAnimationFrame(() => { frame = 0; updateStatus(); }); }, { passive: true });
     window.addEventListener("resize", updateStatus);
     renderQuick(); updateStatus();
-    return { open, decorateSection, isOpen: () => dialog.open, updateStatus, onView() { generation++; selection = null; if (dialog.open) close(); quickActions.hidden = true; $("#reader-quick-toggle").setAttribute("aria-expanded", "false"); updateStatus(); } };
+    return { open, openHome, decorateSection, isOpen: () => dialog.open, updateStatus, onView() { generation++; selection = null; if (dialog.open) close(); quickActions.hidden = true; $("#reader-quick-toggle").setAttribute("aria-expanded", "false"); updateStatus(); } };
   }
   return { create, normalizeState, profileSettings, bookPosition, positionTarget, termMatches };
 });

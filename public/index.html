@@ -38,6 +38,7 @@
   <link rel="stylesheet" href="reader-mobile.css">
   <link rel="stylesheet" href="settings-ui.css">
   <link rel="stylesheet" href="ui-controls.css">
+  <link rel="stylesheet" href="shelf-polish.css">
   <link rel="stylesheet" href="motion.css">
   <link rel="stylesheet" href="reading-comfort.css">
   <link rel="stylesheet" href="sync.css">
@@ -98,10 +99,10 @@
       </button>
 
       <div class="header-actions">
-        <button id="btn-sync" class="header-btn" type="button" data-open-sync aria-label="Đồng bộ giữa các máy" title="Đồng bộ giữa các máy"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17H6a4 4 0 0 1-.7-7.9 7 7 0 0 1 13.4 0A4 4 0 0 1 18 17h-1M9 15l3-3 3 3M12 12v8"></path></svg></button>
+        <button id="btn-sync" class="header-btn" type="button" data-open-sync aria-label="Đồng bộ giữa các máy" title="Đồng bộ giữa các máy"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a6 6 0 0 0-6-6h-4a6 6 0 0 0-6 6v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8"></path></svg></button>
         <button id="btn-reader-tools" class="header-btn" aria-label="Thống kê đọc" title="Thống kê đọc">
           <svg class="header-icon-stats" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M7 16v-5M12 16V6M17 16v-8"></path></svg>
-          <svg class="header-icon-tools" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v16H4zM14 4h6v16h-6zM7 8h1M7 12h1M17 8h1M17 12h1"></path></svg>
+
         </button>
         <button id="btn-settings" class="header-btn" aria-label="Cài đặt đọc" title="Cài đặt đọc">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -313,8 +314,12 @@
         <p class="eyebrow">Một khoảng lặng, một cuốn sách</p>
         <div class="shelf-heading">
           <h1 class="shelf-title">Kệ truyện</h1>
+        <nav class="shelf-view-tabs" role="tablist" aria-label="Không gian thư viện">
+          <button id="shelf-view-mine" type="button" role="tab" aria-selected="false" aria-controls="shelf-content" data-shelf-view="mine">Kệ của tôi</button>
+          <button id="shelf-view-discover" type="button" role="tab" aria-selected="true" aria-controls="shelf-content" data-shelf-view="discover">Khám phá</button>
+        </nav>
           <div class="shelf-actions">
-            <button id="btn-import-ebook" class="btn-secondary" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Nhập ebook</button>
+            <button aria-label="Nhập ebook" title="Nhập ebook" id="btn-import-ebook" class="btn-secondary" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Nhập ebook</button>
             <details id="shelf-more" class="shelf-more">
               <summary aria-label="Thao tác thư viện" title="Thao tác thư viện"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg></summary>
               <div class="shelf-more-menu">
@@ -328,10 +333,6 @@
           </div>
         </div>
         <p class="shelf-intro">Trở lại câu chuyện đang dở, hoặc tìm một cuốn để bắt đầu.</p>
-        <nav class="shelf-view-tabs" role="tablist" aria-label="Không gian thư viện">
-          <button id="shelf-view-mine" type="button" role="tab" aria-selected="false" aria-controls="shelf-content" data-shelf-view="mine">Kệ của tôi</button>
-          <button id="shelf-view-discover" type="button" role="tab" aria-selected="true" aria-controls="shelf-content" data-shelf-view="discover">Khám phá</button>
-        </nav>
         <p id="shelf-offline-status" class="shelf-offline-status" role="status" aria-live="polite" hidden></p>
         <div id="shelf-sync-notice" class="shelf-sync-notice" role="status" hidden><span id="shelf-sync-notice-copy"></span><button id="shelf-sync-review" class="btn-link" type="button">Kiểm tra đồng bộ →</button></div>
         <div id="shelf-resume" class="shelf-resume" hidden></div>
@@ -344,71 +345,10 @@
           <h2 id="shelf-library-title">Khám phá thư viện</h2>
           <span id="shelf-result-count" role="status" aria-live="polite" aria-atomic="true"></span>
         </div>
-        <div class="shelf-device-controls">
-          <button id="shelf-on-device" type="button" aria-pressed="false"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"></path></svg><span>Sách trên máy</span><span id="shelf-on-device-count"></span></button>
-          <span id="shelf-device-hint" class="shelf-device-hint" hidden>Nội dung đã lưu; một số ảnh có thể chưa tải đủ.</span>
-        </div>
-        <div id="shelf-section-tabs" class="shelf-section-tabs" aria-label="Danh mục kệ truyện">
-          <div class="toolbar-group shelf-primary-tabs" role="tablist" aria-label="Nguồn kệ truyện">
-            <button id="tab-shelf-main" class="filter-btn is-active" type="button" role="tab" aria-selected="true" data-shelf-primary="main">
-              <span>Kệ truyện chính</span>
-              <span id="shelf-count-main" class="shelf-badge"></span>
-            </button>
-            <button id="tab-shelf-hlc" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-primary="hlc">
-              <span>Hội Lẩu Chay</span>
-              <span id="shelf-count-hlc-total" class="shelf-badge"></span>
-            </button>
-            <button id="tab-shelf-b1k" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-primary="b1k">
-              <span>Tủ Sách 1000</span>
-              <span id="shelf-count-b1k-total" class="shelf-badge"></span>
-            </button>
-          </div>
-          <div id="shelf-hlc-subtabs" class="shelf-subtabs-row" role="tablist" aria-label="Phân loại Hội Lẩu Chay" hidden>
-            <span class="shelf-subtabs-label">Phân loại</span>
-            <div class="toolbar-group shelf-sub-tabs">
-              <button id="tab-shelf-hlc-all" class="filter-btn is-active" type="button" role="tab" aria-selected="true" data-shelf-section="hlc-all">
-                <span>Tất cả</span>
-                <span id="shelf-count-hlc-all" class="shelf-badge"></span>
-              </button>
-              <button id="tab-shelf-hlc-oneshot" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="hlc-oneshot">
-                <span>OneShot</span>
-                <span id="shelf-count-hlc-oneshot" class="shelf-badge"></span>
-              </button>
-              <button id="tab-shelf-hlc-completed" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="hlc-completed">
-                <span>Đã Hoàn Thành</span>
-                <span id="shelf-count-hlc-completed" class="shelf-badge"></span>
-              </button>
-              <button id="tab-shelf-hlc-multivol" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="hlc-multivol">
-                <span>Truyện nhiều tập</span>
-                <span id="shelf-count-hlc-multivol" class="shelf-badge"></span>
-              </button>
-            </div>
-          </div>
-          <div id="shelf-b1k-subtabs" class="shelf-subtabs-row" role="tablist" aria-label="Phân loại Tủ Sách 1000" hidden>
-            <span class="shelf-subtabs-label">Chủ đề</span>
-            <div class="toolbar-group shelf-sub-tabs">
-              <button id="tab-shelf-b1k-all" class="filter-btn is-active" type="button" role="tab" aria-selected="true" data-shelf-section="b1k-all">
-                <span>Tất cả</span>
-                <span id="shelf-count-b1k-all" class="shelf-badge"></span>
-              </button>
-              <button id="tab-shelf-b1k-lit" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="b1k-lit">
-                <span>Văn học &amp; Kinh điển</span>
-                <span id="shelf-count-b1k-lit" class="shelf-badge"></span>
-              </button>
-              <button id="tab-shelf-b1k-mystery" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="b1k-mystery">
-                <span>Trinh thám &amp; Kỳ ảo</span>
-                <span id="shelf-count-b1k-mystery" class="shelf-badge"></span>
-              </button>
-              <button id="tab-shelf-b1k-knowledge" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="b1k-knowledge">
-                <span>Lịch sử &amp; Khoa học</span>
-                <span id="shelf-count-b1k-knowledge" class="shelf-badge"></span>
-              </button>
-              <button id="tab-shelf-b1k-life" class="filter-btn" type="button" role="tab" aria-selected="false" data-shelf-section="b1k-life">
-                <span>Kinh tế &amp; Kỹ năng</span>
-                <span id="shelf-count-b1k-life" class="shelf-badge"></span>
-              </button>
-            </div>
-          </div>
+
+        <div id="shelf-section-tabs" class="shelf-source-selects">
+          <label>Nguồn sách<select id="shelf-source"><option value="main">Kệ truyện chính</option><option value="hlc">Hội Lẩu Chay</option><option value="b1k">Tủ Sách 1000</option></select></label>
+          <label id="shelf-category-label" hidden>Phân loại<select id="shelf-category"></select></label>
         </div>
         <div class="shelf-filters">
           <div class="shelf-search-row">
@@ -425,9 +365,13 @@
           <div id="shelf-advanced-filters" class="shelf-advanced-filters">
             <label><span>Trạng thái</span><select id="shelf-status"><option value="all">Tất cả sách</option><option value="favorite">Yêu thích</option><option value="want">Muốn đọc</option><option value="reading">Đang đọc</option><option value="done">Đã đọc</option><option value="personal">Ebook cá nhân</option></select></label>
             <label><span>Nhóm</span><select id="shelf-group"><option value="">Tất cả nhóm</option></select></label>
-            <label><span>Sắp xếp</span><select id="shelf-sort"><option value="recent">Đọc gần đây</option><option value="title">Tên sách A–Z</option><option value="newest">Mới nhập</option><option value="author">Tác giả A–Z</option></select></label>
+            <label><span>Sắp xếp</span><select id="shelf-sort"><option value="recent">Đọc gần đây</option><option value="title">Tên sách A–Z</option><option value="newest">Mới nhập</option><option value="author">Tác giả A–Z</option></select></label>        <div class="shelf-device-controls">
+          <button id="shelf-on-device" type="button" aria-pressed="false"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"></path></svg><span>Sách trên máy</span><span id="shelf-on-device-count"></span></button>
+          <span id="shelf-device-hint" class="shelf-device-hint" hidden>Nội dung đã lưu; một số ảnh có thể chưa tải đủ.</span>
+        </div>
           </div>
         </div>
+        <button id="shelf-device-chip" class="btn-link shelf-device-chip" type="button" hidden>Trên máy ×</button>
         <div id="shelf-grid" class="shelf-grid" aria-busy="true">
           <div class="shelf-skeleton" aria-hidden="true"><span class="shelf-skeleton-cover"></span><span class="shelf-skeleton-lines"><span></span><span></span><span></span><span></span></span></div>
           <div class="shelf-skeleton" aria-hidden="true"><span class="shelf-skeleton-cover"></span><span class="shelf-skeleton-lines"><span></span><span></span><span></span><span></span></span></div>
@@ -457,10 +401,21 @@
           <div class="hero-head">
             <p class="eyebrow"><span id="series-kind">Light novel</span><span id="series-kind-extra" class="eyebrow-extra"> · Bản dịch tiếng Việt</span></p>
             <h1 id="series-title-vi" class="hero-title">Thiên Sứ Nhà Bên</h1>
-            <p id="series-title-jp" class="hero-subtitle">Otonari no Tenshi-sama ni Itsunomanika Dame Ningen ni Sareteita Ken</p>
           </div>
 
           <div class="hero-body">
+            <div id="reading-progress-card" class="hero-continue" style="display:none;">
+              <div id="continue-info" class="continue-info"></div>
+            </div>
+
+            <div class="hero-actions">
+              <button id="btn-continue" class="btn-primary" style="display:none;">
+                Đọc tiếp
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </button>
+              <button id="btn-start-reading" class="btn-primary">Đọc lại từ đầu</button>
+            </div>
+            <details id="series-info" class="series-info"><summary>Thông tin sách</summary>            <p id="series-title-jp" class="hero-subtitle">Otonari no Tenshi-sama ni Itsunomanika Dame Ningen ni Sareteita Ken</p>
             <p class="hero-byline">
               <span>Tác giả <strong id="meta-author"></strong></span>
               <span id="meta-illustrator-wrap">Minh họa <strong id="meta-illustrator"></strong></span>
@@ -472,17 +427,7 @@
 
             <div id="series-tags" class="chip-row"></div>
 
-            <div id="reading-progress-card" class="hero-continue" style="display:none;">
-              <div id="continue-info" class="continue-info"></div>
-            </div>
-
-            <div class="hero-actions">
-              <button id="btn-continue" class="btn-primary" style="display:none;">
-                Đọc tiếp
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-              </button>
-              <button id="btn-start-reading" class="btn-primary">Đọc từ đầu</button>
-            </div>
+</details>
             <div id="series-updates" class="series-updates" hidden role="status">
               <span id="series-updates-text"></span>
               <button type="button" class="btn-link">Đọc chương mới đầu tiên →</button>
@@ -820,7 +765,7 @@
     </form>
   </dialog>
   <dialog id="sync-dialog" class="tools-dialog sync-dialog" aria-labelledby="sync-title">
-    <div class="tools-heading"><h2 id="sync-title">Đọc tiếp trên mọi máy</h2><button id="sync-close" class="tools-close" type="button" aria-label="Đóng đồng bộ">×</button></div>
+    <div class="tools-heading"><h2 id="sync-title">Tài khoản &amp; đồng bộ</h2><button id="sync-close" class="tools-close" type="button" aria-label="Đóng đồng bộ">×</button></div>
     <div class="sync-body">
     <p class="sync-copy">Đồng bộ vị trí đọc, tiến độ chương, yêu thích, nhóm sách và ghi chú. Bạn vẫn đọc được khi mất mạng.</p>
     <form id="sync-login"><label for="sync-email">Email</label><input id="sync-email" type="email" autocomplete="email" required maxlength="254" placeholder="ban@example.com"><label for="sync-password">Mật khẩu</label><input id="sync-password" type="password" autocomplete="current-password" required maxlength="256"><div class="sync-actions"><button id="sync-send" class="btn-primary" type="submit">Đăng nhập</button><button id="sync-signup" class="btn-secondary" type="button">Tạo tài khoản</button></div><button id="sync-forgot" class="btn-link" type="button">Quên mật khẩu?</button></form>
@@ -845,6 +790,7 @@
   <script src="reader-characters.js"></script>
   <script src="reader-features.js"></script>
   <script src="library-tools.js"></script>
+  <script src="reader-journal.js"></script>
   <script src="library-backup.js"></script>
   <script src="hand-tracking.js"></script>
   <script src="hand-calibration.js"></script>
@@ -866,6 +812,7 @@
   <script src="reader-workspace.js"></script>
   <script src="cloud-workspace.js"></script>
   <script src="sync-ui.js"></script>
+  <script src="ui-appearance.js"></script>
   <script src="app.js"></script>
   <script src="ui-controls.js"></script>
 </body>

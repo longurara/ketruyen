@@ -14,6 +14,7 @@
     const settings = {};
     for (const [key, item] of Object.entries(value)) {
       if (!/^tenshi-[a-z\d_-]{1,100}$/i.test(key) || typeof item !== "string" || item.length > 5 * 1024 * 1024) fail();
+      if (key === "tenshi-ui-size-v1" && !["standard", "large"].includes(item)) fail();
       if (key.startsWith("tenshi-journal-")) { let record; try { record = JSON.parse(item); } catch (_) { fail(); } if (!journalCore?.valid(key.slice(journalCore.PREFIX.length), record)) fail(); }
       if (key === "tenshi-reader-tools-v1") {
         let state; try { state = JSON.parse(item); } catch (_) { fail(); }
