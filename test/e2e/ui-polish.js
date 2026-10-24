@@ -27,6 +27,11 @@ async function runUIPolishChecks(browser, base) {
     assert.match(await page.locator("#shelf-grid").innerText(), /182 chương · 12 phần minh họa/);
     assert.doesNotMatch(await page.locator("#shelf-grid").innerText(), /194 chương/);
     await page.setViewportSize({ width:390, height:844 });
+    await page.locator(".shelf-inline-cover img").evaluate((image) => new Promise((resolve) => {
+      image.onload = image.onerror = resolve; image.src = "/missing-resume-cover-for-layout.png";
+    }));
+    assert.ok((await page.locator(".shelf-resume-inline").boundingBox()).height < 100, "missing cover expanded the reading row");
+    assert.ok((await page.locator("#shelf-grid .shelf-card").first().boundingBox()).y < 480, "missing cover pushed books below the fold");
     await page.locator(".shelf-card-more summary").first().click(); await page.locator("[data-manage]").first().click();
     await page.fill("#book-group-draft", "Đọc mùa thu"); await page.locator("#book-group-draft").press("Enter");
     assert.match(await page.locator(".book-group-chips").innerText(), /Đọc mùa thu/);

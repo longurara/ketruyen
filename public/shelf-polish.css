@@ -15,7 +15,8 @@ body[data-ui-size="large"] { --text-2xs: 15px; --text-xs: 15px; --text-sm: 16px;
 .shelf-library-heading:has(.shelf-heading-hidden) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); margin: 0; }
 #shelf-resume { margin-top: 12px; }
 #shelf-resume .shelf-resume-inline { display: grid; grid-template-columns: 44px minmax(0,1fr) auto 44px; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 14px; min-height: 86px; }
-#shelf-resume .shelf-inline-cover { display: block; width: 44px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+#shelf-resume .shelf-inline-cover { display: block; width: 44px; height: 62px; overflow: hidden; padding: 0; border: 0; background: transparent; cursor: pointer; }
+#shelf-resume .shelf-inline-cover .shelf-feature-cover { height: 100%; }
 #shelf-resume .shelf-resume-inline h2 { margin: 0; font: 600 1.1rem/1.5 var(--font-serif); -webkit-line-clamp: 2; text-wrap: initial; }
 #shelf-resume .shelf-resume-inline .shelf-feature-place { margin: 2px 0 0; font-size: var(--text-xs); line-height: 1.6; -webkit-line-clamp: 1; }
 #shelf-resume .shelf-resume-inline .shelf-feature-button { min-height: 44px; margin: 0; padding: 8px 14px; gap: 12px; }
@@ -71,7 +72,7 @@ body[data-ui-size="large"] { --text-2xs: 15px; --text-xs: 15px; --text-sm: 16px;
   .shelf-heading #btn-import-ebook { width: 44px; padding: 0; font-size: 0; justify-content: center; }
   .shelf-heading #btn-import-ebook svg { margin: 0; }
   #shelf-resume .shelf-resume-inline { grid-template-columns: 36px minmax(0,1fr) 44px 44px; gap: 6px; padding: 8px; }
-  #shelf-resume .shelf-inline-cover { width: 36px; }
+  #shelf-resume .shelf-inline-cover { width: 36px; height: 50px; }
   #shelf-resume .shelf-resume-inline h2 { font-size: 1rem; }
   #shelf-resume .shelf-resume-inline .shelf-feature-button { width: 44px; padding: 8px; justify-content: center; }
   .shelf-resume-button-text { display: none; }
