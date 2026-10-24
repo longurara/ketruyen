@@ -5044,6 +5044,7 @@
     continueCard.style.display = isReturning ? "" : "none";
     btnContinue.style.display = isReturning ? "" : "none";
     btnStartReading.className = isReturning ? "btn-secondary" : "btn-primary";
+    btnStartReading.textContent = isReturning ? "Đọc lại từ đầu" : "Bắt đầu đọc";
 
     if (!isReturning) {
       continueInfo.textContent = "";

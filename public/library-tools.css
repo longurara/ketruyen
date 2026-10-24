@@ -41,7 +41,7 @@ body[data-theme="dark"] .shelf-shell { --shelf-accent: #abc6ad; --shelf-accent-r
 #shelf-on-device-count, .shelf-device-hint { color: var(--text-muted); font: 400 var(--text-2xs)/1.6 var(--font-ui); }
 .shelf-device-badge { color: var(--shelf-accent); font: 500 var(--text-2xs)/1.6 var(--font-ui); }
 .shelf-device-badge { display: block; min-height: 1.6em; }
-.shelf-device-badge[data-state="remote"] { color: var(--text-muted); }
+.shelf-device-badge[data-state="remote"] { display: none; }
 .shelf-device-badge[data-state="partial"] { color: var(--text-soft); }
 .shelf-shell .ebook-storage-note { margin-top: 8px; font-size: var(--text-2xs); }
 .shelf-more { position: relative; flex: 0 0 auto; }

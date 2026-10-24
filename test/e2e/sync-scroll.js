@@ -45,10 +45,16 @@ async function runSyncScrollChecks(browser, base) {
       const down = await page.locator(".sync-body").evaluate((el) => el.scrollTop);
       await page.mouse.wheel(0, -300);
       await page.waitForFunction((down) => document.querySelector(".sync-body").scrollTop < down - 30, down);
+      // Conflicts sit under the status card; the dialog's last control ends the scroll.
+      const inView = (selector) => page.waitForFunction((selector) => { const box = document.querySelector(selector)?.getBoundingClientRect(); return box && box.top >= 0 && box.bottom <= innerHeight; }, selector);
+      await page.locator(".sync-conflict:last-child button:last-child").evaluate((el) => el.scrollIntoView({ block: "center" }));
+      await inView(".sync-conflict:last-child button:last-child");
       await page.locator(".sync-body").evaluate((el) => { el.scrollTop = el.scrollHeight; });
-      await page.waitForFunction(() => { const el = document.querySelector(".sync-conflict:last-child button:last-child"), box = el?.getBoundingClientRect(); return box && box.top >= 0 && box.bottom <= innerHeight; });
-      const last = await page.locator(".sync-conflict:last-child button:last-child").boundingBox();
+      await page.locator(".sync-body").evaluate((el) => { [...el.querySelectorAll("button, summary")].filter((b) => b.offsetParent).at(-1).dataset.lastControl = ""; });
+      await inView(".sync-body [data-last-control]");
+      const last = await page.locator(".sync-body [data-last-control]").boundingBox();
       assert.ok(last.y >= 0 && last.y + last.height <= page.viewportSize().height, `${engine}/${label}: final action is clipped`);
+      await page.locator(".sync-body [data-last-control]").evaluate((el) => { delete el.dataset.lastControl; });
       assert.equal(await page.locator("body").evaluate((el) => el.style.position), "fixed", "background reader was unlocked to enable scrolling");
     }
     await scrollBothWays("portrait");

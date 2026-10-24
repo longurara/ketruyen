@@ -230,15 +230,23 @@
       } catch (error) { options.message(error.name === "QuotaExceededError" ? "Chưa lưu được mốc nhật ký vì bộ nhớ đã đầy." : error.message); }
       finally { observing = false; }
     }
+    // With nothing to show, the journal shrinks to a button in the shelf
+    // heading instead of taking a row above the books.
+    const journalAnchor = document.createComment("shelf-journal");
+    $("shelf-journal")?.before(journalAnchor);
     function renderHome() {
       const host = $("shelf-journal"); if (!host) return;
+      const compactSlot = document.querySelector(".shelf-heading .shelf-actions");
       const items = all(), entries = items.filter((v) => v.kind === "entry").sort((a, b) => b.on.localeCompare(a.on)), memory = core.memories(items)[0];
       host.classList.toggle("is-compact", !suggested && !memory);
       if (!suggested && !memory) {
         host.hidden = false;
-        host.innerHTML = `<span>${entries.length ? `${entries.length.toLocaleString("vi-VN")} cảm nhận` : "Nhật ký đọc"}</span><button type="button" id="shelf-journal-open" class="btn-link">${entries.length ? "Mở nhật ký →" : "Viết nhật ký →"}</button>`;
+        if (compactSlot && host.parentElement !== compactSlot) compactSlot.prepend(host);
+        const label = entries.length ? `Mở nhật ký đọc, ${entries.length.toLocaleString("vi-VN")} cảm nhận` : "Viết nhật ký đọc";
+        host.innerHTML = `<button type="button" id="shelf-journal-open" class="btn-secondary" aria-label="${label}" title="${label}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"></path><path d="M5 17a3 3 0 0 1 3-3h11M9 8h6"></path></svg><span>Nhật ký</span></button>`;
         $("shelf-journal-open").onclick = () => open(); return;
       }
+      if (host.parentElement === compactSlot) journalAnchor.after(host);
       host.hidden = false; host.innerHTML = `<div><p class="shelf-feature-kicker">Nhật ký của bạn</p><h2>${suggested ? "Một tập vừa khép lại" : memory ? "Ngày này trong ký ức đọc" : entries.length ? "Những trang đã để lại điều gì?" : "Giữ lại cảm nhận sau mỗi cuốn"}</h2><p>${esc(suggested ? options.series.find((b) => b.slug === suggested.slug)?.titleVi || "Sách vừa đọc xong" : memory ? `${memory.title} · ${showDate(memory.on)}` : entries[0] ? `${entries[0].title} · ${entries[0].text.slice(0, 110) || "Một cảm nhận đã được lưu"}` : "Từ một trích dẫn đến một lần đọc lại, mọi cảm nhận đều có chỗ để trở về.")}</p></div><button type="button" id="shelf-journal-open" class="btn-secondary">${suggested ? "Ghi lại cảm nhận?" : "Mở nhật ký"}</button>${suggested ? '<button type="button" id="shelf-journal-dismiss" class="btn-link">Để sau</button>' : ""}`;
       $("shelf-journal-open").onclick = () => { open(suggested?.slug); if (suggested) edit(null, suggested.runId); };
       if ($("shelf-journal-dismiss")) $("shelf-journal-dismiss").onclick = () => { suggested = null; renderHome(); };

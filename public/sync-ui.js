@@ -17,7 +17,12 @@
     });
     try { linked = localStorage.getItem(core.LINK_KEY) || ""; } catch (_) {}
     options.surfaces.attach(dialog);
-    const message = (text, next = phase) => { phase = next; status.textContent = text; paintStatus(); };
+    const message = (text, next = phase) => {
+      phase = next; status.textContent = text;
+      // A device error that is this sync failure is already shown here.
+      if (text && $("workspace-status")?.textContent === text) $("workspace-status").textContent = "";
+      paintStatus();
+    };
     function paintStatus() {
       const enabled = Boolean(session && linked === session.user.id), own = state?.owner === session?.user?.id ? state : null;
       const conflicts = Object.keys(own?.conflicts || {}).length, pending = Object.keys(own?.pending || {}).length;
@@ -47,6 +52,8 @@
       $("sync-account").hidden = !session || recovery;
       $("sync-reset").hidden = !session || !recovery;
       $("sync-email-label").textContent = session?.user?.email || "";
+      $("sync-email-label").dataset.initial = (session?.user?.email || "?").charAt(0).toUpperCase();
+      dialog.classList.toggle("is-signed-in", Boolean(session) && !recovery);
       $("sync-reset-email").value = session?.user?.email || "";
       const enabled = Boolean(session && linked === session.user.id);
       workspace.setContext(enabled && !recovery ? { owner: session.user.id, client, session } : null);
@@ -194,7 +201,7 @@
     async function open() {
       document.querySelector("#shelf-more")?.removeAttribute("open");
       options.closeSettings(); options.surfaces.open(dialog);
-      if (!session || linked !== session.user.id) message(recovery ? "Nhập mật khẩu mới để khôi phục tài khoản." : "Đăng nhập cùng một tài khoản trên các máy để đọc tiếp.", "idle");
+      if (!session || linked !== session.user.id) message(recovery ? "Nhập mật khẩu mới để khôi phục tài khoản." : "", "idle"); // the intro and hint already say what to do
       render();
       try { await setup(); render(); transfers.refresh(); if (session && linked === session.user.id) schedule(0); } catch (error) { failure(error); }
     }

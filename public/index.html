@@ -346,13 +346,13 @@
           <span id="shelf-result-count" role="status" aria-live="polite" aria-atomic="true"></span>
         </div>
 
-        <div id="shelf-section-tabs" class="shelf-source-selects">
-          <label>Nguồn sách<select id="shelf-source"><option value="main">Kệ truyện chính</option><option value="hlc">Hội Lẩu Chay</option><option value="b1k">Tủ Sách 1000</option></select></label>
-          <label id="shelf-category-label" hidden>Phân loại<select id="shelf-category"></select></label>
-        </div>
         <div class="shelf-filters">
           <div class="shelf-search-row">
             <input id="shelf-search" type="search" placeholder="Tìm sách, tác giả…" aria-label="Tìm sách theo tên, tác giả hoặc nhóm">
+            <div id="shelf-section-tabs" class="shelf-source-selects">
+              <label><span class="shelf-select-label">Nguồn sách</span><select id="shelf-source"><option value="main">Kệ truyện chính</option><option value="hlc">Hội Lẩu Chay</option><option value="b1k">Tủ Sách 1000</option></select></label>
+              <label id="shelf-category-label" hidden><span class="shelf-select-label">Phân loại</span><select id="shelf-category"></select></label>
+            </div>
             <div class="shelf-density" role="group" aria-label="Kiểu hiển thị">
               <button type="button" data-shelf-density="list" aria-pressed="true" aria-label="Danh sách có mô tả" title="Danh sách có mô tả"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4.5" width="5" height="6.5" rx="1"></rect><rect x="4" y="13" width="5" height="6.5" rx="1"></rect><path d="M12 6h8M12 9h5M12 14.5h8M12 17.5h5"></path></svg></button>
               <button type="button" data-shelf-density="grid" aria-pressed="false" aria-label="Lưới bìa sách" title="Lưới bìa sách"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="6.5" height="7" rx="1"></rect><rect x="13.5" y="4" width="6.5" height="7" rx="1"></rect><rect x="4" y="13" width="6.5" height="7" rx="1"></rect><rect x="13.5" y="13" width="6.5" height="7" rx="1"></rect></svg></button>
@@ -413,7 +413,7 @@
                 Đọc tiếp
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
               </button>
-              <button id="btn-start-reading" class="btn-primary">Đọc lại từ đầu</button>
+              <button id="btn-start-reading" class="btn-primary">Bắt đầu đọc</button>
             </div>
             <details id="series-info" class="series-info"><summary>Thông tin sách</summary>            <p id="series-title-jp" class="hero-subtitle">Otonari no Tenshi-sama ni Itsunomanika Dame Ningen ni Sareteita Ken</p>
             <p class="hero-byline">

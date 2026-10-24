@@ -245,7 +245,7 @@
       const moreOpen = $("#shelf-shortcuts .shelf-quick-more")?.open;
       const filter = $("#shelf-status").value;
       const counts = { all: series.length, reading: 0, want: 0, favorite: 0, personal: 0 };
-      if ($("#view-shelf").dataset.shelfView === "discover") counts.all = series.filter((book) => !book.personal).length;
+      if ($("#view-shelf").dataset.shelfView === "discover") counts.all = series.filter((book) => !book.personal && inActiveSection(book)).length;
       for (const book of series) {
         const current = status(book);
         if (current === "reading" || current === "want") counts[current]++;
@@ -389,6 +389,12 @@
         if (el) el.textContent = val ? val.toLocaleString("vi-VN") : "";
       }
     }
+    function inActiveSection(book) {
+      const bookSec = normalizeBookSection(book.section);
+      if (activeSection === "hlc-all") return bookSec.startsWith("hlc-");
+      if (activeSection === "b1k-all") return bookSec.startsWith("b1k-");
+      return bookSec === activeSection;
+    }
     function filterSeries(series, { onDevice = false, savedSlugs = new Set() } = {}) {
       const mine = personalBooks(series, savedSlugs);
       if (!shelfView) { shelfView = mine.length ? "mine" : "discover"; try { localStorage.setItem(VIEW_KEY, shelfView); } catch (_) {} }
@@ -403,13 +409,7 @@
       if (onDevice) { sectionTabs.hidden = true; if (!personalShelf) $("#shelf-library-title").textContent = "Sách có trên máy"; }
       const query = fold($("#shelf-search").value), filter = $("#shelf-status").value, group = $("#shelf-group").value, sort = $("#shelf-sort").value;
       const result = shown.filter((book) => {
-        const bookSec = normalizeBookSection(book.section);
-        if (!personalShelf && !onDevice && effectiveView === "discover") {
-          if (activeSection === "main" && bookSec !== "main") return false;
-          if (activeSection === "hlc-all" && !bookSec.startsWith("hlc-")) return false;
-          if (activeSection === "b1k-all" && !bookSec.startsWith("b1k-")) return false;
-          if (activeSection !== "main" && activeSection !== "hlc-all" && activeSection !== "b1k-all" && bookSec !== activeSection) return false;
-        }
+        if (!personalShelf && !onDevice && effectiveView === "discover" && !inActiveSection(book)) return false;
         if (query) {
           if (!book._searchFold) book._searchFold = fold([book.titleVi, book.titleJp, book.author, ...(book.tags || [])].join(" "));
           const groupsFold = row(book).groups.length ? " " + fold(row(book).groups.join(" ")) : "";
@@ -479,13 +479,14 @@
       const saved = progress(series), position = document.createElement("span"); position.className = "shelf-book-position";
       const active = row(series).status !== null && Number.isInteger(saved.volIdx) && Number.isInteger(saved.chapIdx);
       const volume = series.volumesData?.[saved.volIdx], chapter = volume?.chapters[saved.chapIdx];
-      position.textContent = active ? chapter ? `${volume.name || `Tập ${saved.volIdx + 1}`} · ${chapter.title}` : `Tập ${saved.volIdx + 1} · Vị trí đã lưu` : status(series) === "done" ? "Đã đọc" : status(series) === "reading" ? "Chưa có vị trí đọc" : "Chưa bắt đầu";
+      position.textContent = active ? chapter ? `${volume.name || `Tập ${saved.volIdx + 1}`} · ${chapter.title}` : `Tập ${saved.volIdx + 1} · Vị trí đã lưu` : status(series) === "done" ? "Đã đọc" : status(series) === "reading" ? "Chưa có vị trí đọc" : "";
       position.title = position.textContent;
-      card.querySelector(".shelf-card-action").before(position);
+      // An untouched book needs no "not started" line; the card is quieter without it.
+      if (position.textContent) card.querySelector(".shelf-card-action").before(position);
       if (active && Array.isArray(series.volumesData)) {
         let chapters = {}; try { chapters = JSON.parse(localStorage.getItem(series.legacyStorage ? "tenshi-chapters" : `tenshi-${series.slug}-chapters`)) || {}; } catch (_) {}
         const { done, total, unit } = BookFormat.completedProgress(series, chapters);
-        if (total) {
+        if (total && done) {
           const meter = document.createElement("span"); meter.className = "shelf-book-progress"; meter.setAttribute("role", "progressbar"); meter.setAttribute("aria-label", "Đã đọc xong"); meter.setAttribute("aria-valuetext", `${done}/${total} ${unit}`); meter.setAttribute("aria-valuemin", "0"); meter.setAttribute("aria-valuemax", String(total)); meter.setAttribute("aria-valuenow", String(done));
           meter.innerHTML = `<span style="width:${Math.round(done / total * 100)}%"></span>`; position.before(meter);
           const caption = document.createElement("span"); caption.className = "shelf-book-completion"; caption.textContent = `Đã đọc xong ${done}/${total} ${unit}`; position.before(caption);

@@ -9,7 +9,9 @@
     const sid = (session) => { try { return JSON.parse(atob(session.access_token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))).session_id || ""; } catch (_) { return ""; } };
     const tabs = document.createElement("div"); tabs.className = "sync-tabs"; tabs.hidden = true; tabs.setAttribute("aria-label", "Tài khoản");
     tabs.innerHTML = '<button type="button" data-panel="sync" aria-pressed="true">Đồng bộ</button><button type="button" data-panel="devices" aria-pressed="false">Thiết bị</button><button type="button" data-panel="security" aria-pressed="false">Bảo mật</button>';
-    $("sync-account").before(tabs);
+    // Signed in, the dialog reads top-down: who you are, how sync is doing
+    // (and any conflicts to settle), then the tabs.
+    $("sync-account").after($("sync-feedback"), $("sync-conflict-heading"), $("sync-conflicts"), tabs);
     const syncPanel = document.createElement("section"); syncPanel.dataset.accountPanel = "sync"; $("ebook-auto-panel").before(syncPanel); syncPanel.append($("ebook-auto-panel"), $("ebook-transfer-panel"));
     const syncActions = document.createElement("div"); syncActions.className = "sync-actions"; syncActions.append($("sync-connect"), $("sync-now"));
     syncPanel.prepend($("sync-account-hint"), syncActions);
@@ -47,6 +49,8 @@
     function report(error) {
       if (error?.message === "sync-cancelled") return;
       if (/device-revoked/.test(error?.message || "")) { setContext(null); options.revoked(); return; }
+      // The sync card already shows a failed sync's message; don't repeat it.
+      if (error?.message && error.message === $("sync-status").textContent) return;
       $("workspace-status").textContent = error?.code === "40001" ? "Mục này đã thay đổi trên máy khác. Kiểm tra đồng bộ và chọn bản cần giữ trước khi thử lại." : error?.message || "Chưa cập nhật được thiết bị.";
     }
     async function ensure() {
@@ -59,7 +63,7 @@
         const cached = await core.journal(a.owner); a.guard(); core.setSummary(core.aggregate(Object.values(cached.events), cached.meta?.legacy, cached.meta?.cutover_ms || 0));
         subscribe(); return true;
       } catch (error) {
-        if (["PGRST202", "PGRST205", "42P01"].includes(error.code)) { registered = true; available = false; $("workspace-status").textContent = "Cần migration 0003 để bật thiết bị, thống kê và lịch sử ghi chú."; return false; }
+        if (["PGRST202", "PGRST205", "42P01"].includes(error.code)) { registered = true; available = false; $("workspace-status").textContent = "Máy chủ chưa hỗ trợ quản lý thiết bị, thống kê và lịch sử ghi chú. Đồng bộ đọc vẫn hoạt động bình thường."; return false; }
         report(error); throw error;
       }
     }

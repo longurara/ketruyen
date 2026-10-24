@@ -88,3 +88,36 @@ body[data-ui-size="large"] { --text-2xs: 15px; --text-xs: 15px; --text-sm: 16px;
   .workbench-home-panel { padding-inline: 16px; }
   body[data-ui-size="large"] #shelf-shortcuts > button { padding-inline: 4px; }
 }
+
+/* One control row above the books: search, source, layout and a filter
+   panel that stays closed until asked for, on every screen size. */
+.shelf-filters { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.shelf-search-row { align-items: stretch; }
+.shelf-search-row .shelf-source-selects { flex: 0 1 auto; flex-wrap: nowrap; gap: 8px; margin: 0; }
+.shelf-search-row .shelf-source-selects[hidden] { display: none; }
+.shelf-search-row .shelf-source-selects label { flex: 0 1 200px; }
+.shelf-select-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+#shelf-filter-toggle { display: flex; }
+.shelf-advanced-filters { display: none; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.shelf-advanced-filters.is-expanded { display: grid; }
+.shelf-actions > .shelf-journal.is-compact { display: flex; min-height: 0; margin: 0; padding: 0; border: 0; background: none; }
+.shelf-actions #shelf-journal-open { display: inline-flex; align-items: center; gap: 8px; }
+
+/* Three books a row on wide screens, so a large shelf can be scanned. */
+@media (min-width: 1100px) {
+  .shelf-shell .shelf-grid:not(.is-covers) { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .shelf-grid:not(.is-covers) .shelf-card { min-height: 0; padding: 18px; gap: 16px; }
+  .shelf-grid:not(.is-covers) .shelf-cover { width: 104px; flex-basis: 104px; }
+  .shelf-grid:not(.is-covers) .shelf-card-title, .shelf-grid:not(.is-covers) .shelf-card-title.is-long { font-size: 1.2rem; -webkit-line-clamp: 2; line-height: 1.35; }
+  .shelf-grid:not(.is-covers) .shelf-card-description { -webkit-line-clamp: 2; font-size: var(--text-xs); }
+}
+
+@media (max-width: 600px) {
+  .shelf-search-row { flex-wrap: wrap; }
+  .shelf-search-row input { flex: 1 1 0; min-width: 0; }
+  .shelf-search-row .shelf-source-selects { order: 5; flex: 1 1 100%; }
+  .shelf-search-row .shelf-source-selects label { flex: 1 1 0; }
+  .shelf-advanced-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .shelf-actions #shelf-journal-open { width: 44px; padding: 0; justify-content: center; }
+  .shelf-actions #shelf-journal-open span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}
