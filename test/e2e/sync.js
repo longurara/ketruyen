@@ -72,6 +72,7 @@ async function runSyncChecks(browser, base) {
     await a.page.click("#sync-connect");
     await a.page.waitForFunction(() => document.getElementById("sync-status").textContent.includes("Đã đồng bộ lúc"));
     assert.equal(await a.page.getAttribute("#sync-feedback", "data-sync-state"), "synced");
+    assert.equal(await a.page.locator("#shelf-sync-notice").evaluate((e) => e.hidden), true, "success created a persistent shelf banner");
     assert.match(await a.page.textContent("#sync-transfer"), /Đã gửi \d+ mục/);
     assert.match(await a.page.textContent("#sync-last-success"), /Lần thành công gần nhất/);
     await screenshot(a.page, "sync-state-success");
@@ -93,6 +94,7 @@ async function runSyncChecks(browser, base) {
     const successBeforeError = await a.page.textContent("#sync-last-success");
     failRead = true; await flush(a.page);
     assert.equal(await a.page.getAttribute("#sync-feedback", "data-sync-state"), "error");
+    assert.equal(await a.page.locator("#shelf-sync-notice").evaluate((e) => e.hidden), false, "sync error has no local action on shelf");
     assert.equal(await a.page.textContent("#sync-last-success"), successBeforeError);
     await screenshot(a.page, "sync-state-error");
     await a.context.setOffline(true); await a.page.waitForSelector('#sync-feedback[data-sync-state="offline"]');

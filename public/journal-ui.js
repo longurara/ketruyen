@@ -212,6 +212,12 @@
     function renderHome() {
       const host = $("shelf-journal"); if (!host) return;
       const items = all(), entries = items.filter((v) => v.kind === "entry").sort((a, b) => b.on.localeCompare(a.on)), memory = core.memories(items)[0];
+      host.classList.toggle("is-compact", !suggested && !memory);
+      if (!suggested && !memory) {
+        host.hidden = false;
+        host.innerHTML = `<span>${entries.length ? `${entries.length.toLocaleString("vi-VN")} cảm nhận trong nhật ký` : "Giữ lại cảm nhận sau mỗi cuốn"}</span><button type="button" id="shelf-journal-open" class="btn-link">${entries.length ? "Mở nhật ký →" : "Viết nhật ký →"}</button>`;
+        $("shelf-journal-open").onclick = () => open(); return;
+      }
       host.hidden = false; host.innerHTML = `<div><p class="shelf-feature-kicker">Nhật ký của bạn</p><h2>${suggested ? "Một tập vừa khép lại" : memory ? "Ngày này trong ký ức đọc" : entries.length ? "Những trang đã để lại điều gì?" : "Giữ lại cảm nhận sau mỗi cuốn"}</h2><p>${esc(suggested ? options.series.find((b) => b.slug === suggested.slug)?.titleVi || "Sách vừa đọc xong" : memory ? `${memory.title} · ${showDate(memory.on)}` : entries[0] ? `${entries[0].title} · ${entries[0].text.slice(0, 110) || "Một cảm nhận đã được lưu"}` : "Từ một trích dẫn đến một lần đọc lại, mọi cảm nhận đều có chỗ để trở về.")}</p></div><button type="button" id="shelf-journal-open" class="btn-secondary">${suggested ? "Ghi lại cảm nhận?" : "Mở nhật ký"}</button>${suggested ? '<button type="button" id="shelf-journal-dismiss" class="btn-link">Để sau</button>' : ""}`;
       $("shelf-journal-open").onclick = () => { open(suggested?.slug); if (suggested) edit(null, suggested.runId); };
       if ($("shelf-journal-dismiss")) $("shelf-journal-dismiss").onclick = () => { suggested = null; renderHome(); };

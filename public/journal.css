@@ -36,6 +36,8 @@
 .shelf-journal > div { flex: 1 1 300px; min-width: 0; }
 .shelf-journal h2 { margin: 6px 0; font: 600 1.1rem/1.6 var(--font-serif); }
 .shelf-journal p:not(.shelf-feature-kicker) { color: var(--text-soft); font-size: var(--text-sm); line-height: 1.8; overflow-wrap: anywhere; }
+.shelf-journal.is-compact { gap: 4px 16px; min-height: 44px; padding: 4px 0; margin-top: 12px; border: 0; border-radius: 0; background: transparent; color: var(--text-muted); font: 400 var(--text-xs)/1.8 var(--font-ui); }
+.shelf-journal.is-compact .btn-link { min-height: 44px; margin: 0; padding: 8px 0; color: var(--text-soft); font-size: var(--text-xs); }
 .library-health-local { font-weight: 600; margin: 10px 0; }
 @media (max-width:600px) {
   .journal-dialog { width: calc(100vw - 16px); max-height: calc(var(--reader-viewport-height, 100dvh) - 20px); }

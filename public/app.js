@@ -254,6 +254,7 @@
     return Boolean(localStorage.getItem(`${prefix}-progress`) || localStorage.getItem(`${prefix}-chapters`));
   }
 
+  let catalogLoadError = false;
   async function loadData() {
     try {
       const [catalog, ebooks] = await Promise.allSettled([
@@ -287,6 +288,7 @@
         EbookImport.list()
       ]);
       SERIES = catalog.status === "fulfilled" ? catalog.value : [];
+      catalogLoadError = catalog.status === "rejected";
       if (ebooks.status === "fulfilled") SERIES.push(...ebooks.value.sort((a, b) => b.importedAt - a.importedAt).map(EbookImport.hydrate));
       if (!SERIES.length) throw new Error("Không có dữ liệu truyện.");
       SERIES_META = SERIES[0];
@@ -301,6 +303,7 @@
       console.error(error);
       document.body.classList.remove("is-shelf-boot");
       loadingScreen.querySelector("p").textContent = "Không tải được dữ liệu truyện. Kiểm tra kết nối mạng rồi tải lại trang.";
+      const retry = document.createElement("button"); retry.type = "button"; retry.className = "btn-secondary"; retry.textContent = "Thử lại"; retry.onclick = () => location.reload(); loadingScreen.append(retry);
     }
   }
 
@@ -346,8 +349,9 @@
     volumeGrid.style.display = "";
   }
 
-  const SHELF_BATCH_SIZE = 60;
-  let shelfObserver = null;
+  const SHELF_BATCH_SIZE = 24;
+  const shelfBookLoads = new Map();
+  let shelfRenderedLimit = SHELF_BATCH_SIZE, shelfFilterSignature = "";
 
   function createShelfNode(series) {
     const seriesIdx = SERIES.indexOf(series);
@@ -367,16 +371,17 @@
         <span class="shelf-card-title${series.titleVi.length > 32 ? " is-long" : ""}">${escapeHtml(series.titleVi)}</span>
         <span class="shelf-card-author">${escapeHtml(series.author || "")}</span>
         <span class="shelf-card-meta">${series.personal ? `${escapeHtml(series.sourceFormat)} · Ebook cá nhân` : `${series.volumes} tập`} · ${series.chapters} chương</span>
-        ${shelfOnDevice && shelfDeviceBooks.has(series.slug) ? `<span class="shelf-device-badge">${series.personal ? "Đã lưu trên máy" : `${shelfDeviceBooks.get(series.slug).volumes}/${series.volumes} tập có nội dung trên máy`}</span>` : ""}
+        <span class="shelf-device-badge"></span>
         ${updates ? `<span class="chapter-update-badge">${updates} chương mới</span>` : ""}
         ${series.description ? `<span class="shelf-card-description">${escapeHtml(series.description)}</span>` : ""}
-        <span class="shelf-card-action">${resume ? `Đang đọc dở · ${escapeHtml(resume)}` : series.personal ? "Mở sách" : "Xem bộ truyện"} <span aria-hidden="true">→</span></span>
+        <span class="shelf-card-action">Mở sách <span aria-hidden="true">→</span></span>
       </span>
     `;
     if (resume) card.dataset.resume = "1";
     card.addEventListener("click", () => openSeries(seriesIdx, card.querySelector(".shelf-cover")));
     if (libraryTools) {
-      return libraryTools.shelfItem(series, card);
+      const item = libraryTools.shelfItem(series, card);
+      paintShelfBook(item, series); return item;
     }
     if (series.personal) {
       const item = document.createElement("div");
@@ -392,73 +397,53 @@
   }
 
   function renderShelf() {
-    if (shelfObserver) {
-      shelfObserver.disconnect();
-      shelfObserver = null;
-    }
     shelfGrid.innerHTML = "";
+    const more = $("#shelf-load-more"); more.hidden = true;
     paintShelfConnection();
     const books = shelfOnDevice ? SERIES.filter((book) => shelfDeviceBooks.has(book.slug)) : SERIES;
-    const ordered = libraryTools ? libraryTools.filterSeries(books, { onDevice: shelfOnDevice }) : books;
+    const ordered = libraryTools ? libraryTools.filterSeries(books, { onDevice: shelfOnDevice, savedSlugs: new Set(shelfDeviceBooks.keys()) }) : books;
+    const signature = JSON.stringify([$("#view-shelf").dataset.shelfView, shelfOnDevice, $("#shelf-search").value, $("#shelf-status").value, $("#shelf-group").value, $("#shelf-sort").value, $("#shelf-section-tabs [data-shelf-section].is-active")?.dataset.shelfSection, $("#shelf-section-tabs [data-shelf-primary].is-active")?.dataset.shelfPrimary]);
+    if (signature !== shelfFilterSignature) { shelfRenderedLimit = SHELF_BATCH_SIZE; shelfFilterSignature = signature; }
+    $("#shelf-source-status").hidden = !catalogLoadError || $("#view-shelf").dataset.shelfView !== "discover";
     if (!ordered.length) {
       const query = $("#shelf-search").value.trim();
       const filtered = $("#shelf-status").value !== "all" || $("#shelf-group").value;
       const noLocal = shelfOnDevice && !shelfDeviceBooks.size;
+      const emptyMine = !shelfOnDevice && libraryTools?.shelfView() === "mine" && !query && !filtered;
+      const catalogEmpty = catalogLoadError && $("#view-shelf").dataset.shelfView === "discover" && !query && !filtered;
       const title = noLocal ? !shelfDeviceReady ? "Đang kiểm tra sách trên máy…" : shelfDeviceError ? "Chưa kiểm tra được sách trên máy" : "Chưa có sách đọc offline trên máy này" : query ? `Không có sách nào khớp “${escapeHtml(query)}”` : "Không có sách phù hợp";
       const hint = noLocal ? shelfDeviceError ? "Chưa truy cập được bộ nhớ trình duyệt. Thử tải lại app hoặc kiểm tra quyền lưu trữ." : "Nhập ebook hoặc tải truyện khi có mạng để đọc tại đây. Sách trên thiết bị khác cần được nhận về máy này trước." : filtered ? "Thử bỏ bớt bộ lọc trạng thái hoặc nhóm, hoặc tìm ở một kệ khác." : "Thử từ khóa ngắn hơn, tên tác giả, hoặc tìm ở một kệ khác.";
-      shelfGrid.innerHTML = `<div class="shelf-empty" role="status"><p class="shelf-empty-title">${title}</p><p class="tools-empty">${hint}</p><button type="button" class="btn-secondary">${noLocal ? "Xem toàn bộ thư viện" : "Xóa tìm kiếm và bộ lọc"}</button></div>`;
+      shelfGrid.innerHTML = `<div class="shelf-empty" role="status"><p class="shelf-empty-title">${catalogEmpty ? "Khám phá đang tạm gián đoạn" : emptyMine ? "Một kệ sách dành riêng cho bạn" : title}</p><p class="tools-empty">${catalogEmpty ? "Bạn vẫn có thể mở sách đã lưu trong Kệ của tôi, hoặc thử tải lại danh mục phía trên." : emptyMine ? "Sách bạn đọc, yêu thích, muốn đọc và ebook đã nhập sẽ xuất hiện ở đây." : hint}</p><button type="button" class="btn-secondary">${catalogEmpty ? "Mở Kệ của tôi" : emptyMine || noLocal ? "Khám phá sách" : "Xóa tìm kiếm và bộ lọc"}</button></div>`;
       shelfGrid.querySelector(".shelf-empty button").addEventListener("click", () => {
         $("#shelf-search").value = "";
         $("#shelf-status").value = "all";
         $("#shelf-group").value = "";
-        if (noLocal) shelfOnDevice = false;
+        if (catalogEmpty) { libraryTools.setShelfView("mine"); return; }
+        if (noLocal || emptyMine) { shelfOnDevice = false; libraryTools.setShelfView("discover"); return; }
         renderShelf();
         $("#shelf-search").focus();
       });
       return;
     }
     let renderedCount = 0;
-    const appendNextBatch = () => {
-      const slice = ordered.slice(renderedCount, renderedCount + SHELF_BATCH_SIZE);
+    const appendNextBatch = (limit = SHELF_BATCH_SIZE) => {
+      const slice = ordered.slice(renderedCount, renderedCount + limit);
       if (!slice.length) return;
       const frag = document.createDocumentFragment();
-      slice.forEach((series, index) => {
+      slice.forEach((series) => {
         const node = createShelfNode(series);
-        // Only the first screenful is staggered; later batches load off screen.
-        if (!renderedCount && index < 12) {
-          node.classList.add("is-entering");
-          node.style.setProperty("--enter", index);
-          node.addEventListener("animationend", () => node.classList.remove("is-entering"), { once: true });
-        }
         frag.appendChild(node);
       });
       renderedCount += slice.length;
-      const sentinel = shelfGrid.querySelector(".shelf-load-sentinel");
-      if (sentinel) shelfGrid.insertBefore(frag, sentinel);
-      else shelfGrid.appendChild(frag);
-      if (renderedCount >= ordered.length && sentinel) {
-        if (shelfObserver) {
-          shelfObserver.disconnect();
-          shelfObserver = null;
-        }
-        sentinel.remove();
-      }
+      shelfGrid.appendChild(frag);
+      more.hidden = renderedCount >= ordered.length;
+      more.textContent = `Xem thêm ${Math.min(SHELF_BATCH_SIZE, ordered.length - renderedCount)} sách · ${renderedCount}/${ordered.length.toLocaleString("vi-VN")}`;
     };
-    appendNextBatch();
-    if (renderedCount < ordered.length && typeof IntersectionObserver === "function") {
-      const sentinel = document.createElement("div");
-      sentinel.className = "shelf-load-sentinel";
-      sentinel.setAttribute("aria-hidden", "true");
-      sentinel.style.height = "1px";
-      sentinel.style.gridColumn = "1 / -1";
-      shelfGrid.appendChild(sentinel);
-      shelfObserver = new IntersectionObserver((entries) => {
-        if (entries.some((e) => e.isIntersecting)) appendNextBatch();
-      }, { rootMargin: "600px 0px" });
-      shelfObserver.observe(sentinel);
-    } else if (renderedCount < ordered.length) {
-      while (renderedCount < ordered.length) appendNextBatch();
-    }
+    appendNextBatch(shelfRenderedLimit);
+    more.onclick = () => {
+      const before = renderedCount; appendNextBatch(); shelfRenderedLimit = renderedCount;
+      shelfGrid.querySelectorAll(".shelf-card")[before]?.focus({ preventScroll: true });
+    };
   }
 
   // `fromCover`: the shelf cover that was pressed. Without the e-ink effect
@@ -468,6 +453,7 @@
     if (!series) return;
     const turn = { lagMs: 70, totalMs: 420, morph: fromCover && { from: fromCover, to: () => $("#series-hero .hero-book") } };
     if (Array.isArray(series.volumesData)) {
+      shelfBookLoads.delete(series.slug);
       runEinkPageTurn(() => {
         activateSeries(seriesIdx);
         showView("home");
@@ -475,7 +461,7 @@
       return;
     }
     const token = ++pendingOpenToken;
-    document.body.classList.add("is-fetching");
+    shelfBookLoads.set(series.slug, "loading"); paintShelfBookStates();
     ensureSeriesIndex(series)
       .then(() => {
         if (token !== pendingOpenToken) return;
@@ -485,10 +471,12 @@
         }, turn);
       })
       .catch(() => {
-        if (token === pendingOpenToken) showMessage("Không tải được mục lục truyện. Kiểm tra kết nối mạng rồi thử lại.");
+        shelfBookLoads.set(series.slug, "error");
+        if (token === pendingOpenToken && !fromCover?.closest(".ebook-shelf-item")) showMessage("Không tải được mục lục truyện.", { label: "Thử lại", run: () => openSeries(seriesIdx, fromCover) });
       })
       .finally(() => {
-        if (token === pendingOpenToken) document.body.classList.remove("is-fetching");
+        if (shelfBookLoads.get(series.slug) === "loading") shelfBookLoads.delete(series.slug);
+        paintShelfBookStates();
       });
   }
 
@@ -573,6 +561,39 @@
   let shelfOnDevice = navigator.onLine === false;
   let shelfDeviceBooks = new Map(), shelfDeviceReady = false, shelfDeviceError = false;
   let shelfDeviceScan = null, shelfDeviceRescan = false;
+  let shelfTransfers = { errors: [], transfers: [], active: [] };
+
+  function paintShelfBookStates() {
+    shelfGrid.querySelectorAll(".ebook-shelf-item").forEach((item) => {
+      const book = SERIES.find((b) => b.slug === item.dataset.book); if (book) paintShelfBook(item, book);
+    });
+  }
+  function paintShelfBook(item, book) {
+    const card = item.querySelector(".shelf-card"), badge = card.querySelector(".shelf-device-badge"), saved = shelfDeviceBooks.get(book.slug);
+    const load = shelfBookLoads.get(book.slug), active = shelfTransfers.active?.find((r) => r.slug === book.slug);
+    const error = active ? null : shelfTransfers.errors?.find((r) => r.slug === book.slug);
+    const pending = shelfTransfers.transfers?.find((r) => r.slug === book.slug && !r.received_at && Date.parse(r.expires_at) > Date.now());
+    badge.dataset.state = saved ? saved.incomplete ? "partial" : "local" : "remote";
+    badge.textContent = !shelfDeviceReady ? "Đang kiểm tra…" : saved ? saved.personal ? "Trên máy · Ebook" : `${saved.incomplete ? "Chưa tải đủ" : "Trên máy"} · ${saved.volumes}/${saved.total} tập` : "Chưa tải về";
+    badge.title = saved?.incomplete ? "Đã lưu nội dung chữ; một số ảnh chưa tải đủ." : saved ? "Có nội dung đọc trên thiết bị này." : "Cần mạng để mở sách chưa lưu.";
+    card.setAttribute("aria-busy", String(load === "loading")); card.disabled = load === "loading";
+    card.querySelector(".shelf-card-action").textContent = load === "loading" ? "Đang tải mục lục…" : "Mở sách →";
+    const message = load === "error" ? "Chưa tải được mục lục. Nội dung đang xem vẫn được giữ." : error?.message || (active ? active.direction === "incoming" ? "Đang tải về…" : "Đang gửi ebook…" : pending ? pending.recipient_device === shelfTransfers.device ? "Ebook đang chờ nhận về máy" : "Đang chờ máy nhận ebook" : "");
+    const kind = load === "error" ? "load" : error ? "transfer" : "activity";
+    let feedback = item.querySelector(".shelf-card-feedback");
+    if (!message) { feedback?.remove(); return; }
+    if (feedback?.dataset.message === message && feedback.dataset.kind === kind) return;
+    if (!feedback) { feedback = document.createElement("div"); feedback.className = "shelf-card-feedback"; feedback.setAttribute("role", "status"); item.append(feedback); }
+    feedback.dataset.message = message; feedback.dataset.kind = kind; feedback.replaceChildren();
+    const copy = document.createElement("span"); copy.textContent = message; feedback.append(copy);
+    if (load === "error" || error) {
+      const retry = document.createElement("button"); retry.type = "button"; retry.className = "btn-link"; retry.textContent = load === "error" ? "Thử lại" : "Kiểm tra sách";
+      retry.onclick = load === "error" ? () => openSeries(SERIES.indexOf(book), card.querySelector(".shelf-cover")) : () => {
+        document.querySelector("[data-open-library-health]").click();
+        const search = $("#library-health-search"); search.value = book.titleVi; search.dispatchEvent(new Event("input"));
+      }; feedback.append(retry);
+    }
+  }
 
   function paintShelfConnection() {
     const offline = navigator.onLine === false, status = $("#shelf-offline-status");
@@ -581,7 +602,7 @@
     if (status.textContent !== text) status.textContent = text;
     $("#shelf-on-device").setAttribute("aria-pressed", String(shelfOnDevice));
     $("#shelf-on-device-count").textContent = shelfDeviceReady ? shelfDeviceBooks.size.toLocaleString("vi-VN") : "";
-    $("#shelf-device-hint").hidden = !shelfOnDevice || ![...shelfDeviceBooks.values()].some((book) => !book.personal);
+    $("#shelf-device-hint").hidden = !shelfOnDevice || ![...shelfDeviceBooks.values()].some((book) => book.incomplete);
   }
 
   // Inspect actual local storage only: no network fetch and no claim that a
@@ -597,6 +618,7 @@
           const shells = (await caches.keys()).filter((n) => n.startsWith("tenshi-shell-")).reverse();
           const textCache = await caches.open(TEXT_CACHE);
           const textUrls = new Set((await textCache.keys()).map((request) => request.url));
+          const imageUrls = new Set((await (await caches.open(IMAGE_CACHE)).keys()).map((request) => request.url));
           const indexPaths = new Set([...textUrls].map((url) => { const pathname = new URL(url).pathname; return pathname.slice(0, pathname.lastIndexOf("/") + 1) + "index.json"; }));
           await Promise.all(SERIES.filter((book) => !book.personal && indexPaths.has(book.index)).map(async (book) => {
             // CacheStorage.match never recreates an old shell cache that the
@@ -606,8 +628,9 @@
             if (!response) return;
             const volumes = await response.json();
             if (!Array.isArray(volumes)) return;
-            const count = volumes.filter((v) => v.text && textUrls.has(new URL(v.text, location.origin).href)).length;
-            if (count) books.set(book.slug, { volumes: count });
+            const saved = volumes.filter((v) => v.text && textUrls.has(new URL(v.text, location.origin).href));
+            const incomplete = saved.some((v) => [...(v.cover ? [v.cover] : []), ...(v.chapters || []).flatMap((c) => (c.images || []).map((i) => i.src))].some((src) => !imageUrls.has(new URL(src, location.origin).href)));
+            if (saved.length) books.set(book.slug, { volumes: saved.length, total: volumes.length, incomplete });
           }));
         } catch (_) { failed = true; }
       }
@@ -1103,6 +1126,7 @@
     libraryTools = LibraryTools.create({
       series: SERIES, context: () => ({ series: SERIES_META, view: currentView, volIdx: currentVolIdx, chapIdx: currentChapIdx }),
       message: showMessage, renderShelf, openChapter, openSeries,
+      onShelfViewChange: () => { shelfOnDevice = false; },
       openMark: async (seriesIdx, mark) => { if (seriesIdx < 0 || !SERIES[seriesIdx]) return; try { await ensureSeriesIndex(SERIES[seriesIdx]); } catch (_) { showMessage("Không tải được mục lục truyện."); return; } if (mark.type !== "bookmark") returnReaderPosition ||= captureReaderPosition(); activateSeries(seriesIdx); openChapter(mark.volIdx, mark.chapIdx, mark.type === "bookmark" ? { anchor: mark.anchor } : { hit: { p: mark.parts[0]?.p || 0 } }); },
       capturePosition: () => { recordReadingPosition(); return captureReaderPosition()?.anchor || null; },
       deleteBook: (book, settings) => ebookUI?.deleteBook(book, settings),
@@ -1207,6 +1231,7 @@
     attachEvents();
     await restoreRoute();
     CloudSync.create({ surfaces: readerSurfaces, closeSettings, journal: readingJournal,
+      onEbookState: (snapshot) => { shelfTransfers = snapshot; paintShelfBookStates(); },
       capture: () => { if (currentView !== "reader") return null; const p = captureReaderPosition(); return p ? { slug: p.slug, volIdx: p.volIdx, chapIdx: p.chapIdx, anchor: p.anchor } : null; },
       resume: async (position) => { const index = SERIES.findIndex((s) => s.slug === position.slug); if (index < 0) return false; await ensureSeriesIndex(SERIES[index]); if (!SERIES[index].volumesData?.[position.volIdx]?.chapters[position.chapIdx]) throw new Error("Chương nguồn không còn trong mục lục."); activateSeries(index); openChapter(position.volIdx, position.chapIdx, { anchor: position.anchor }); return true; },
       reloadNotes: () => libraryTools.reload(),
@@ -1245,6 +1270,16 @@
 
   function attachEvents() {
     setupSettingsUI();
+    $("#shelf-source-retry").onclick = async () => {
+      const button = $("#shelf-source-retry"); button.disabled = true; button.textContent = "Đang tải…";
+      try {
+        const response = await fetch("/data/series.json", { cache: "no-cache" }); if (!response.ok) throw new Error("catalog");
+        const catalog = await response.json(), known = new Set(SERIES.map((b) => b.slug));
+        catalog.forEach((book, index) => { if (!known.has(book.slug)) SERIES.push({ ...book, volumesData: null, legacyStorage: index === 0 }); });
+        catalogLoadError = false; renderShelf(); refreshShelfDeviceBooks();
+      } catch (_) { $("#shelf-source-status span").textContent = "Chưa tải được danh mục. Kiểm tra kết nối rồi thử lại; sách trên máy vẫn được giữ."; }
+      finally { button.disabled = false; button.textContent = "Thử lại"; }
+    };
     $("#shelf-on-device").addEventListener("click", () => {
       shelfOnDevice = !shelfOnDevice;
       renderShelf(); refreshShelfDeviceBooks();

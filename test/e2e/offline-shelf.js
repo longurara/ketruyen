@@ -48,10 +48,13 @@ async function runOfflineShelfChecks(browser, base) {
     await page.reload(); await page.waitForSelector("body:not(.is-shelf-boot) .shelf-card");
     await page.waitForFunction(() => document.querySelector("#shelf-on-device-count").textContent === "3");
     assert.equal(await page.locator("#shelf-offline-status").isVisible(), false);
+    await page.click("#shelf-view-mine");
+    assert.equal(await page.locator("#shelf-grid .shelf-card").count(), 3, "personal shelf omitted downloaded books without reading progress");
     await page.locator("#shelf-on-device").click();
     assert.equal(await page.locator("#shelf-grid .shelf-card").count(), 3, "filter omitted cached book from another source");
     assert.equal(await page.locator("#shelf-section-tabs").isVisible(), false);
-    assert.match(await page.locator("#shelf-grid").innerText(), /1\/13 tập có nội dung/);
+    assert.match(await page.locator("#shelf-grid").innerText(), /1\/13 tập/);
+    assert.match(await page.locator('[data-book="thien-su-nha-ben"] .shelf-device-badge').innerText(), /Chưa tải đủ/);
     await page.locator("#shelf-on-device").click();
     await context.setOffline(true);
     await page.waitForSelector("#shelf-offline-status:not([hidden])");

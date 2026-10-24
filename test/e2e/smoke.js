@@ -138,10 +138,11 @@ async function run(name, context) {
   });
 
   await step("new reader sees suggestions", async () => {
-    check(/Bắt đầu với/.test(await page.textContent("#shelf-resume")), "no suggestions for a first visit");
-    const title = await page.textContent(".shelf-feature h2");
+    check(await page.locator("#shelf-resume").isHidden(), "first visit has a large empty resume card");
+    check(/Bắt đầu với/.test(await page.textContent("#shelf-recommendation")), "no suggestions below the library");
+    const title = await page.textContent("#shelf-recommendation .shelf-feature h2");
     await page.click(".shelf-change-pick");
-    check(await page.textContent(".shelf-feature h2") !== title, "changing the recommendation kept the same book");
+    check(await page.textContent("#shelf-recommendation .shelf-feature h2") !== title, "changing the recommendation kept the same book");
     check(/Gọn trong một tập/.test(await page.textContent(".shelf-feature-reason")), "recommendation has no reason");
     await noSidewaysScroll(page, "featured book");
   });
@@ -152,6 +153,7 @@ async function run(name, context) {
     await page.locator(".shelf-card-more summary").first().click();
     await page.click(".shelf-card-more[open] [data-favorite]");
     await page.click('[data-shelf-quick="all"]');
+    await page.click("#shelf-view-discover");
     await page.click("#tab-shelf-main");
     await page.click('[data-shelf-quick="favorite"]');
     check(await page.locator(".ebook-shelf-item").count() === 1, "favorites includes unselected books");
@@ -344,6 +346,8 @@ async function checkLinkPreviews() {
     catch (error) { failed = true; console.error(`✖ remove reading: ${error.stack}`); }
     try { await require("./offline-shelf").runOfflineShelfChecks(browser, BASE); }
     catch (error) { failed = true; console.error(`✖ offline shelf: ${error.stack}`); }
+    try { await require("./shelf-ui").runShelfUIChecks(browser, BASE); }
+    catch (error) { failed = true; console.error(`✖ shelf UI: ${error.stack}`); }
   } finally {
     await browser.close();
     server.kill();

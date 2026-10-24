@@ -31,6 +31,9 @@
 .sync-indicator svg { width: 22px; height: 22px; }
 .sync-glyph-done, .sync-glyph-alert, .sync-glyph-offline { display: none; }
 .sync-feedback[data-sync-state="synced"] { --sync-accent: #456d4e; }
+.sync-feedback[data-sync-state="synced"] { background: transparent; padding: 12px; }
+.sync-feedback[data-sync-state="synced"] .sync-indicator { flex-basis: 24px; height: 24px; background: transparent; }
+.sync-feedback[data-sync-state="synced"] .sync-indicator svg { width: 18px; height: 18px; }
 .sync-feedback:is([data-sync-state="conflict"], [data-sync-state="pending"]) { --sync-accent: #916327; }
 .sync-feedback[data-sync-state="error"] { --sync-accent: #a3463b; }
 .sync-feedback:is([data-sync-state="syncing"], [data-sync-state="working"]) { --sync-accent: var(--ink); }

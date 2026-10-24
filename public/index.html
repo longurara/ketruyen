@@ -328,11 +328,18 @@
           </div>
         </div>
         <p class="shelf-intro">Trở lại câu chuyện đang dở, hoặc tìm một cuốn để bắt đầu.</p>
+        <nav class="shelf-view-tabs" role="tablist" aria-label="Không gian thư viện">
+          <button id="shelf-view-mine" type="button" role="tab" aria-selected="false" aria-controls="shelf-content" data-shelf-view="mine">Kệ của tôi</button>
+          <button id="shelf-view-discover" type="button" role="tab" aria-selected="true" aria-controls="shelf-content" data-shelf-view="discover">Khám phá</button>
+        </nav>
         <p id="shelf-offline-status" class="shelf-offline-status" role="status" aria-live="polite" hidden></p>
+        <div id="shelf-sync-notice" class="shelf-sync-notice" role="status" hidden><span id="shelf-sync-notice-copy"></span><button id="shelf-sync-review" class="btn-link" type="button">Kiểm tra đồng bộ →</button></div>
         <div id="shelf-resume" class="shelf-resume" hidden></div>
         <section id="shelf-device-reading" class="shelf-device-reading" aria-label="Đọc tiếp từ thiết bị khác" hidden></section>
         <section id="shelf-journal" class="shelf-journal" aria-label="Nhật ký và kỷ niệm đọc" hidden></section>
+        <div id="shelf-content" role="tabpanel" aria-labelledby="shelf-view-discover">
         <nav id="shelf-shortcuts" class="shelf-shortcuts" aria-label="Kệ sách cá nhân"></nav>
+        <div id="shelf-source-status" class="shelf-source-status" role="status" hidden><span>Chưa tải được danh mục online. Sách trên máy vẫn được giữ.</span><button id="shelf-source-retry" type="button" class="btn-secondary">Thử lại</button></div>
         <div class="shelf-library-heading">
           <h2 id="shelf-library-title">Khám phá thư viện</h2>
           <span id="shelf-result-count" role="status" aria-live="polite" aria-atomic="true"></span>
@@ -429,6 +436,9 @@
           <div class="shelf-skeleton" aria-hidden="true"><span class="shelf-skeleton-cover"></span><span class="shelf-skeleton-lines"><span></span><span></span><span></span><span></span></span></div>
           <div class="shelf-skeleton" aria-hidden="true"><span class="shelf-skeleton-cover"></span><span class="shelf-skeleton-lines"><span></span><span></span><span></span><span></span></span></div>
         </div>
+        <div class="shelf-pagination"><button id="shelf-load-more" class="btn-secondary" type="button" aria-controls="shelf-grid" hidden>Xem thêm sách</button></div>
+        </div>
+        <section id="shelf-recommendation" class="shelf-recommendation" aria-label="Gợi ý sách" hidden></section>
       </div>
     </section>
 

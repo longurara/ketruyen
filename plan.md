@@ -1,5 +1,15 @@
 # Kế hoạch tính năng
 
+## Hoàn thiện UI kệ sách — 5 mục
+
+Trạng thái: đã triển khai. Hướng dẫn và giới hạn: [docs/shelf-ui.md](docs/shelf-ui.md). Không cần migration.
+
+- [x] Một thẻ Đọc tiếp chính; nhật ký trống gọn một dòng; gợi ý ở sau danh sách, có nút Xem thêm để tiếp cận được phần dưới.
+- [x] Tách Kệ của tôi / Khám phá, nhớ lựa chọn trên trình duyệt; sách cá nhân và sách online đã lưu/đánh dấu không bị giới hạn theo nguồn.
+- [x] Thống nhất nhãn sách trên máy/chưa tải đủ/chưa tải, vị trí và tiến độ chương, hoạt động gửi/nhận cùng nút xử lý lỗi.
+- [x] Đồng bộ thành công nhẹ ở biểu tượng; vấn đề cần xử lý nằm trên trang chính và trong bảng Đồng bộ, không che trang đọc.
+- [x] Trạng thái tải tại thẻ, thử lại tại chỗ, hướng dẫn kệ trống và phục hồi danh mục online mà vẫn giữ ebook.
+
 ## Trạng thái offline trên kệ sách
 
 Trạng thái: đã triển khai. Không cần migration Supabase mới.

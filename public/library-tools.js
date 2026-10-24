@@ -161,7 +161,29 @@
       const next = items[(items.indexOf(document.activeElement) + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length];
       next?.focus(); event.preventDefault();
     });
-    let suggestionOffset = 0, personalShelf = false;
+    let suggestionOffset = 0, personalShelf = false, shelfView;
+    const VIEW_KEY = "ketruyen-shelf-view-v1";
+    try { const saved = localStorage.getItem(VIEW_KEY); if (["mine", "discover"].includes(saved)) shelfView = saved; } catch (_) {}
+    function personalBooks(series, savedSlugs = new Set()) {
+      const marked = new Set(state.marks.map((m) => m.slug));
+      return series.filter((book) => book.personal || savedSlugs.has(book.slug) || row(book).favorite || row(book).groups.length || row(book).status || marked.has(book.slug) || (row(book).status !== null && progress(book).timestamp));
+    }
+    function setShelfView(value) {
+      shelfView = value === "mine" ? "mine" : "discover"; personalShelf = false;
+      try { localStorage.setItem(VIEW_KEY, shelfView); } catch (_) {}
+      $("#shelf-search").value = ""; $("#shelf-status").value = "all"; $("#shelf-group").value = "";
+      options.onShelfViewChange?.(); options.renderShelf();
+    }
+    const viewTabs = [...document.querySelectorAll("[data-shelf-view]")];
+    viewTabs.forEach((button, index) => {
+      button.onclick = () => setShelfView(button.dataset.shelfView);
+      button.onkeydown = (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const target = viewTabs[event.key === "Home" ? 0 : event.key === "End" ? viewTabs.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + viewTabs.length) % viewTabs.length];
+        target.click(); target.focus();
+      };
+    });
     function updateShelfResume(series) {
       const host = $("#shelf-resume");
       const recent = series
@@ -195,14 +217,17 @@
         if (compact) return `<article class="shelf-feature is-discovery"><div class="shelf-feature-copy"><p class="shelf-feature-kicker">${reason}</p><h2><button type="button" class="shelf-discovery-title" data-suggest>${escape(suggested.titleVi)} ${arrow}</button></h2><p class="shelf-feature-author">${escape(suggested.author || "")}</p></div>${art}${change}</article>`;
         return `<article class="shelf-feature is-welcome"><div class="shelf-feature-copy"><p class="shelf-feature-kicker">Bắt đầu với một câu chuyện</p><h2>${escape(suggested.titleVi)}</h2><p class="shelf-feature-author">${escape(suggested.author || "")}</p><p class="shelf-feature-reason">${reason}${suggested.tags?.[0] ? ` · ${escape(suggested.tags[0])}` : ""}</p>${suggested.description ? `<p class="shelf-feature-description">${escape(suggested.description)}</p>` : ""}</div>${art}<div class="shelf-feature-actions"><button type="button" class="shelf-suggest-button" data-suggest>Xem sách <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"></path></svg></button>${change}</div></article>`;
       }
-      host.hidden = !recent.length && !suggested;
+      const recommendationHost = $("#shelf-recommendation");
+      recommendationHost.hidden = !suggested;
+      recommendationHost.innerHTML = suggested ? `<h2 class="shelf-section-title">Một cuốn cho lần đọc tới</h2>${recommendation()}` : "";
+      host.hidden = !recent.length;
       host.classList.toggle("has-reading", recent.length > 0);
-      let featured = recommendation();
+      let featured = "";
       if (recent.length) {
         const { book, saved } = recent[0], volume = book.volumesData[saved.volIdx], chapter = volume.chapters[saved.chapIdx], share = bookShare(book);
-        featured = `<article class="shelf-feature is-reading"><div class="shelf-feature-copy"><p class="shelf-feature-kicker"><span class="shelf-reading-dot" aria-hidden="true"></span>Câu chuyện đang dở</p><h2>${escape(book.titleVi)}</h2><p class="shelf-feature-author">${escape(book.author || "")}</p><p class="shelf-feature-place">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</p><div class="shelf-feature-progress"><span class="shelf-resume-meter" role="progressbar" aria-label="Tiến độ cả sách" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${share.percent}"><span style="width:${share.percent}%"></span></span><span>${share.percent}% · ${share.done}/${share.total} chương</span></div><div class="shelf-reading-actions"><button type="button" class="shelf-feature-button" data-resume="0">Đọc tiếp <span aria-hidden="true">→</span></button><button type="button" class="shelf-remove-reading" data-dismiss-reading="${escape(book.slug)}" aria-label="Bỏ ${escape(book.titleVi)} khỏi Đang đọc" title="Bỏ khỏi Đang đọc">×</button></div></div><button type="button" class="shelf-feature-art" data-resume="0" aria-label="Đọc tiếp ${escape(book.titleVi)}">${cover(book, "shelf-feature-cover")}</button></article>${recommendation(true)}`;
+        featured = `<article class="shelf-feature is-reading"><div class="shelf-feature-copy"><p class="shelf-feature-kicker"><span class="shelf-reading-dot" aria-hidden="true"></span>Câu chuyện đang dở</p><h2>${escape(book.titleVi)}</h2><p class="shelf-feature-author">${escape(book.author || "")}</p><p class="shelf-feature-place">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</p><div class="shelf-feature-progress"><span class="shelf-resume-meter" role="progressbar" aria-label="Tiến độ cả sách" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${share.percent}"><span style="width:${share.percent}%"></span></span><span>${share.percent}% · ${share.done}/${share.total} chương</span></div><div class="shelf-reading-actions"><button type="button" class="shelf-feature-button" data-resume="0">Đọc tiếp <span aria-hidden="true">→</span></button><button type="button" class="shelf-remove-reading" data-dismiss-reading="${escape(book.slug)}" aria-label="Bỏ ${escape(book.titleVi)} khỏi Đang đọc" title="Bỏ khỏi Đang đọc">×</button></div></div><button type="button" class="shelf-feature-art" data-resume="0" aria-label="Đọc tiếp ${escape(book.titleVi)}">${cover(book, "shelf-feature-cover")}</button></article>`;
       }
-      host.innerHTML = `<div class="shelf-feature-layout${recent.length && suggested ? " has-discovery" : ""}">${featured}</div>${recent.length > 1 ? `<div class="shelf-other-reading"><p>Cũng đang đọc</p><div class="shelf-resume-row">${recent.slice(1).map(({ book, saved }, offset) => {
+      host.innerHTML = `<div class="shelf-feature-layout">${featured}</div>${recent.length > 1 ? `<div class="shelf-other-reading"><p>Cũng đang đọc</p><div class="shelf-resume-row">${recent.slice(1).map(({ book, saved }, offset) => {
         const index = offset + 1;
         const volume = book.volumesData[saved.volIdx], chapter = volume.chapters[saved.chapIdx], share = bookShare(book);
         return `<div class="shelf-resume-entry"><button type="button" class="shelf-resume-card" data-resume="${index}" aria-label="Đọc tiếp ${escape(book.titleVi)}, ${escape(chapter.title)}, đã đọc ${share.done} trên ${share.total} chương">${book.cover ? `<img class="shelf-resume-cover" src="${escape(book.cover)}" alt="" width="104" height="148" loading="lazy" decoding="async">` : '<span class="shelf-resume-cover" aria-hidden="true"></span>'}<span class="shelf-resume-copy"><strong>${escape(book.titleVi)}</strong><span class="shelf-resume-chapter">${escape(volume.name || volume.title)} · ${escape(chapter.title)}</span><span class="shelf-resume-meter" aria-hidden="true"><span style="width:${Math.max(share.percent, share.done ? 2 : 0)}%"></span></span><span class="shelf-resume-share">${share.done}/${share.total}</span></span></button><button type="button" class="shelf-remove-reading" data-dismiss-reading="${escape(book.slug)}" aria-label="Bỏ ${escape(book.titleVi)} khỏi Đang đọc" title="Bỏ khỏi Đang đọc">×</button></div>`;
@@ -212,14 +237,15 @@
         const { book, saved } = recent[Number(button.dataset.resume)];
         button.onclick = () => options.openMark(options.series.indexOf(book), { type: "bookmark", volIdx: saved.volIdx, chapIdx: saved.chapIdx });
       });
-      host.querySelectorAll("[data-suggest]").forEach((button) => {
-        button.onclick = () => options.openSeries(options.series.indexOf(suggested), host.querySelector("[data-suggest] .shelf-feature-cover"));
+      recommendationHost.querySelectorAll("[data-suggest]").forEach((button) => {
+        button.onclick = () => options.openSeries(options.series.indexOf(suggested), recommendationHost.querySelector("[data-suggest] .shelf-feature-cover"));
       });
-      host.querySelector(".shelf-change-pick")?.addEventListener("click", () => { suggestionOffset++; updateShelfResume(series); host.querySelector(".shelf-change-pick")?.focus({ preventScroll: true }); });
+      recommendationHost.querySelector(".shelf-change-pick")?.addEventListener("click", () => { suggestionOffset++; updateShelfResume(series); recommendationHost.querySelector(".shelf-change-pick")?.focus({ preventScroll: true }); });
     }
     function updateShortcuts(series) {
       const filter = $("#shelf-status").value;
       const counts = { all: series.length, reading: 0, want: 0, favorite: 0, personal: 0 };
+      if ($("#view-shelf").dataset.shelfView === "discover") counts.all = series.filter((book) => !book.personal).length;
       for (const book of series) {
         const current = status(book);
         if (current === "reading" || current === "want") counts[current]++;
@@ -235,6 +261,7 @@
       $("#shelf-shortcuts").innerHTML = [["all", "Thư viện"], ["reading", "Đang đọc"], ["want", "Muốn đọc"], ["favorite", "Yêu thích"], ["personal", "Ebook cá nhân"]].map(([value, label]) => `<button type="button" data-shelf-quick="${value}" aria-pressed="${value === "all" ? !personalShelf && filter === "all" : personalShelf && filter === value}">${icons[value]}<span>${label}</span><span class="shelf-shortcut-count">${counts[value].toLocaleString("vi-VN")}</span></button>`).join("") + `<button type="button" data-library-action="marks">${ICONS.edit}<span>Ghi chú</span><span class="shelf-shortcut-count">${state.marks.length.toLocaleString("vi-VN")}</span></button>`;
       $("#shelf-shortcuts").querySelectorAll("[data-shelf-quick]").forEach((button) => button.addEventListener("click", () => {
         const value = button.dataset.shelfQuick;
+        if (value !== "all") { shelfView = "mine"; try { localStorage.setItem(VIEW_KEY, shelfView); } catch (_) {} }
         personalShelf = value !== "all";
         $("#shelf-status").value = value;
         $("#shelf-search").value = ""; $("#shelf-group").value = "";
@@ -352,14 +379,22 @@
         if (el) el.textContent = val ? val.toLocaleString("vi-VN") : "";
       }
     }
-    function filterSeries(series, { onDevice = false } = {}) {
+    function filterSeries(series, { onDevice = false, savedSlugs = new Set() } = {}) {
+      const mine = personalBooks(series, savedSlugs);
+      if (!shelfView) { shelfView = mine.length ? "mine" : "discover"; try { localStorage.setItem(VIEW_KEY, shelfView); } catch (_) {} }
+      const effectiveView = onDevice ? "mine" : shelfView;
+      const shown = effectiveView === "mine" && !onDevice ? mine : series.filter((book) => !book.personal || onDevice);
+      viewTabs.forEach((button) => { const selected = button.dataset.shelfView === effectiveView; button.setAttribute("aria-selected", String(selected)); button.tabIndex = selected ? 0 : -1; });
+      $("#shelf-content").setAttribute("aria-labelledby", `shelf-view-${effectiveView}`);
+      $("#view-shelf").dataset.shelfView = effectiveView;
       if ($("#shelf-status").value === "all") personalShelf = false;
-      updateFilterSummary(); updateShelfResume(series); updateSectionCounts(series); updateShortcuts(series);
+      updateFilterSummary(); updateShelfResume(series); updateSectionCounts(series); updateShortcuts(effectiveView === "mine" ? shown : series);
+      if (effectiveView === "mine") { sectionTabs.hidden = true; if (!personalShelf) $("#shelf-library-title").textContent = "Kệ của tôi"; }
       if (onDevice) { sectionTabs.hidden = true; if (!personalShelf) $("#shelf-library-title").textContent = "Sách có trên máy"; }
       const query = fold($("#shelf-search").value), filter = $("#shelf-status").value, group = $("#shelf-group").value, sort = $("#shelf-sort").value;
-      const result = series.filter((book) => {
+      const result = shown.filter((book) => {
         const bookSec = normalizeBookSection(book.section);
-        if (!personalShelf && !onDevice) {
+        if (!personalShelf && !onDevice && effectiveView === "discover") {
           if (activeSection === "main" && bookSec !== "main") return false;
           if (activeSection === "hlc-all" && !bookSec.startsWith("hlc-")) return false;
           if (activeSection === "b1k-all" && !bookSec.startsWith("b1k-")) return false;
@@ -403,7 +438,7 @@
     updateGroups();
     function shelfItem(series, card) {
       const item = document.createElement("div"); item.className = "ebook-shelf-item"; item.dataset.book = series.slug;
-      if (row(series).status === null) { delete card.dataset.resume; card.querySelector(".shelf-card-action").textContent = series.personal ? "Mở sách →" : "Xem bộ truyện →"; }
+      if (row(series).status === null) { delete card.dataset.resume; card.querySelector(".shelf-card-action").textContent = "Mở sách →"; }
       const favorite = row(series).favorite;
       // Per-book actions live in one overflow menu so the grid reads as books, not toolbars.
       const actions = document.createElement("details"); actions.className = "shelf-card-more";
@@ -429,6 +464,21 @@
       if (label || row(series).groups.length) {
         const tags = document.createElement("span"); tags.className = "shelf-book-tags";
         tags.textContent = [label, ...row(series).groups].filter(Boolean).join(" · "); card.querySelector(".shelf-card-action").before(tags);
+      }
+      const saved = progress(series), position = document.createElement("span"); position.className = "shelf-book-position";
+      const active = row(series).status !== null && Number.isInteger(saved.volIdx) && Number.isInteger(saved.chapIdx);
+      const volume = series.volumesData?.[saved.volIdx], chapter = volume?.chapters[saved.chapIdx];
+      position.textContent = active ? chapter ? `${volume.name || `Tập ${saved.volIdx + 1}`} · ${chapter.title}` : `Tập ${saved.volIdx + 1} · Vị trí đã lưu` : status(series) === "done" ? "Đã đọc" : "Chưa bắt đầu";
+      position.title = position.textContent;
+      card.querySelector(".shelf-card-action").before(position);
+      if (active && Array.isArray(series.volumesData)) {
+        let chapters = {}; try { chapters = JSON.parse(localStorage.getItem(series.legacyStorage ? "tenshi-chapters" : `tenshi-${series.slug}-chapters`)) || {}; } catch (_) {}
+        let done = 0, total = 0;
+        series.volumesData.forEach((v, vi) => v.chapters.forEach((c, ci) => { if (!c.isIllustration) { total++; if (chapters[`${vi}:${ci}`]?.done) done++; } }));
+        if (total) {
+          const meter = document.createElement("span"); meter.className = "shelf-book-progress"; meter.setAttribute("role", "progressbar"); meter.setAttribute("aria-label", "Chương đã đọc"); meter.setAttribute("aria-valuemin", "0"); meter.setAttribute("aria-valuemax", String(total)); meter.setAttribute("aria-valuenow", String(done));
+          meter.innerHTML = `<span style="width:${Math.round(done / total * 100)}%"></span>`; position.before(meter);
+        }
       }
       item.append(card, actions); return item;
     }
@@ -675,7 +725,7 @@
       if (action === "toc") showToc();
     });
     applyLayout();
-    return { filterSeries, setSection, shelfItem, decorate, quickBookmark, openMarks: () => { markScope = ctx().view === "reader" ? ctx().series.slug : ""; showMarks(); }, openLayout: showLayout, openToc: showToc,
+    return { filterSeries, setSection, setShelfView, shelfView: () => shelfView, shelfItem, decorate, quickBookmark, openMarks: () => { markScope = ctx().view === "reader" ? ctx().series.slug : ""; showMarks(); }, openLayout: showLayout, openToc: showToc,
       reload: () => { const next = normalizeState(JSON.parse(localStorage.getItem(KEY) || "null")); Object.assign(state, next); updateGroups(); },
       attachHost: (host) => { embeddedHost = host; }, canClose: () => !busy,
       resumeReading(series) { if (row(series).status !== null) return; const previous = state.books[series.slug]; state.books[series.slug] = { ...row(series), status: "reading" }; if (!persist()) state.books[series.slug] = previous; },

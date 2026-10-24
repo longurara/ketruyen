@@ -7,7 +7,7 @@
     let showAfterLogin = new URLSearchParams(location.search).has("auth_complete");
     let recovery = sessionStorage.getItem("ketruyen-password-recovery") === "1";
     let phase = "idle", syncing = false, dirty = false;
-    const transfers = root.EbookTransferUI.create({ onReceived: options.onEbookReceived });
+    const transfers = root.EbookTransferUI.create({ onReceived: options.onEbookReceived, onState: options.onEbookState });
     root.LibraryHealth.create({ surfaces: options.surfaces, snapshot: transfers.snapshot, check: transfers.check, receive: transfers.receive, closeSettings: options.closeSettings,
       backup: () => document.getElementById("btn-library-backup").click(), openBook: (slug) => options.resume({ slug, volIdx: 0, chapIdx: 0, anchor: { block: 0, offset: 0 } }) });
     const workspace = root.CloudWorkspace.create({ transfers, session: () => recovery ? null : session, client: () => client, request,
@@ -30,6 +30,9 @@
       $("btn-sync").dataset.syncState = enabled || current === "offline" ? current : "idle";
       $("btn-sync").title = `Đồng bộ giữa các máy · ${enabled || current === "offline" ? title : "Chưa bật đồng bộ"}`;
       $("btn-sync").setAttribute("aria-label", $("btn-sync").title);
+      const notice = $("shelf-sync-notice");
+      notice.hidden = !enabled || !["error", "conflict"].includes(current);
+      $("shelf-sync-notice-copy").textContent = current === "conflict" ? `${conflicts} thay đổi cần kiểm tra. Các mục khác vẫn đồng bộ.` : "Có dữ liệu chưa đồng bộ. Bản trên máy vẫn được giữ.";
       const now = $("sync-now"); now.textContent = syncing ? "Đang đồng bộ…" : "Kiểm tra đồng bộ";
       $("sync-last-success").hidden = !enabled;
       $("sync-last-success").textContent = own?.lastSyncedAt ? `Lần thành công gần nhất: ${new Date(own.lastSyncedAt).toLocaleString("vi", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" })}` : "Chưa có lần đồng bộ thành công trên máy này.";
@@ -241,6 +244,7 @@
     };
     $("sync-connect").onclick = () => { linked = session.user.id; generation++; localStorage.setItem(core.LINK_KEY, linked); sync(); };
     $("sync-now").onclick = () => sync();
+    $("shelf-sync-review").onclick = () => open();
     $("sync-signout").onclick = async () => {
       generation++; linked = ""; localStorage.removeItem(core.LINK_KEY); clearTimeout(timer); render();
       try { const { error } = await client.auth.signOut({ scope: "local" }); if (error) throw error; session = null; recovery = false; dirty = false; sessionStorage.removeItem("ketruyen-password-recovery"); message("Đã đăng xuất. Bản đọc trên máy vẫn được giữ.", "idle"); }

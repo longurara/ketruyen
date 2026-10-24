@@ -6,7 +6,9 @@
     let context = null, generation = 0, busy = false, refreshing = false, rows = [];
     let devices = null, offered = null, autoTimer, autoAvailable = null;
     let inventorySnapshot = [], transferSnapshot = [], historyDevices = [], checkedAt = 0, labelsSent = "", labelsAvailable = true;
-    const healthErrors = new Map(), healthChanged = () => dispatchEvent(new Event("ketruyen-library-health"));
+    const healthErrors = new Map(), activeTransfers = new Map();
+    const healthChanged = () => { dispatchEvent(new Event("ketruyen-library-health")); options.onState?.(snapshot()); };
+    function snapshot() { return { connected: Boolean(context), device, devices: historyDevices, inventory: inventorySnapshot, transfers: transferSnapshot, checkedAt, errors: [...healthErrors.values()], active: [...activeTransfers.values()], checking: busy || refreshing, message: autoStatus.textContent }; }
     const autoPanel = $("ebook-auto-panel"), autoEnabled = $("ebook-auto-enabled"), autoStatus = $("ebook-auto-status"), retryAfter = new Map();
     try { autoEnabled.checked = localStorage.getItem("ketruyen-auto-ebook-v1") !== "off"; } catch (_) {}
     const receiver = document.createElement("select"); receiver.id = "ebook-transfer-recipient"; receiver.setAttribute("aria-label", "Thiết bị nhận ebook"); receiver.hidden = true; $("ebook-transfer-book").after(receiver);
@@ -18,8 +20,10 @@
     }
     const report = (text) => { status.textContent = text; };
     function setContext(next) {
+      if (context?.owner !== next?.owner || context?.sessionKey !== next?.sessionKey) activeTransfers.clear();
       if (context?.owner !== next?.owner || context?.sessionKey !== next?.sessionKey) { generation++; context = next; rows = []; inventorySnapshot = []; transferSnapshot = []; checkedAt = 0; labelsSent = ""; labelsAvailable = true; healthErrors.clear(); autoAvailable = null; retryAfter.clear(); clearTimeout(autoTimer); list.replaceChildren(); report(""); autoStatus.textContent = ""; $("ebook-transfer-open").hidden = true; healthChanged(); }
       else context = next;
+      if (!context) activeTransfers.clear();
       panel.hidden = !context;
       autoPanel.hidden = !context;
     }
@@ -72,7 +76,7 @@
         if (!sent && !expired && row.ready && !row.received_at) {
           const receive = document.createElement("button"); receive.type = "button"; receive.className = "btn-primary"; receive.textContent = "Nhận sách"; receive.disabled = busy;
           receive.onclick = () => run(async (api) => {
-            const result = await core.receive(row, api); api.guard();
+            const result = await receiveBook(row, api); api.guard();
             report(result.existing ? "Sách đã có trên máy. Đã xóa bản tạm trên bucket." : "Đã thêm sách vào thư viện và xóa bản tạm trên bucket.");
           }); item.append(receive);
         }
@@ -112,6 +116,20 @@
       finally { busy = false; paint(); healthChanged(); if (context?.owner === api.owner) await refresh(); }
     }
     async function send(api, slug, target, automatic = false) {
+      api.guard(); const token = generation, key = token + "/out/" + target + "/" + slug;
+      activeTransfers.set(key, { slug, direction: "outgoing" }); healthChanged();
+      try { return await sendBook(api, slug, target, automatic); }
+      catch (error) { if (token === generation && error.message !== "transfer-cancelled") healthErrors.set(target + "/" + slug, { slug, message: error.message, at: Date.now() }); throw error; }
+      finally { activeTransfers.delete(key); healthChanged(); }
+    }
+    async function receiveBook(row, api) {
+      api.guard(); const token = generation, key = token + "/in/" + row.id;
+      activeTransfers.set(key, { slug: row.slug, direction: "incoming" }); healthChanged();
+      try { return await core.receive(row, api); }
+      catch (error) { if (token === generation && error.message !== "transfer-cancelled") healthErrors.set(row.id, { slug: row.slug, message: error.message, at: Date.now() }); throw error; }
+      finally { activeTransfers.delete(key); healthChanged(); }
+    }
+    async function sendBook(api, slug, target, automatic = false) {
       if (devices !== null && !target) throw new Error("Chọn thiết bị nhận trước khi gửi."); api.report("Đang đóng gói sách…");
       const book = await root.EbookImport.get(slug); api.guard();
       if (!book) throw new Error("Sách không còn trên máy này.");
@@ -176,7 +194,7 @@
             if (row.recipient_device !== device || !row.automatic || !row.ready || Date.parse(row.expires_at) <= Date.now() || (retryAfter.get(row.id) || 0) > Date.now()) continue;
             try {
               if (row.received_at || ignoredBooks().includes(row.slug)) await core.cleanup(row, api);
-              else { await core.receive(row, { ...api, guard: () => { api.guard(); if (ignoredBooks().includes(row.slug)) throw new Error("Sách vừa được xóa khỏi máy này."); } }); received++; }
+              else { await receiveBook(row, { ...api, guard: () => { api.guard(); if (ignoredBooks().includes(row.slug)) throw new Error("Sách vừa được xóa khỏi máy này."); } }); received++; }
             } catch (error) { api.guard(); retryAfter.set(row.id, Date.now() + 60000); healthErrors.set(row.id, { slug: row.slug, message: error.message || "Chưa nhận được ebook.", at: Date.now() }); failed = true; api.report(`Chưa tự nhận được ebook: ${error.message || "Kiểm tra kết nối hoặc dung lượng máy."} Sẽ thử lại sau.`); }
           }
           books = await root.EbookImport.list(); api.guard();
@@ -234,9 +252,9 @@
       scheduleAuto();
     }
     return { setContext, refresh, setDevices,
-      snapshot: () => ({ connected: Boolean(context), device, devices: historyDevices, inventory: inventorySnapshot, transfers: transferSnapshot, checkedAt, errors: [...healthErrors.values()], checking: busy || refreshing, message: autoStatus.textContent }),
+      snapshot,
       async check() { autoAvailable = null; labelsAvailable = true; retryAfter.clear(); await autoSync(); await refresh(); },
-      async receive(id) { const row = transferSnapshot.find((r) => r.id === id); if (!row || busy) throw new Error("Đợi lượt chuyển hiện tại hoàn tất rồi kiểm tra lại."); try { await run((api) => core.receive(row, api), true); } catch (error) { healthErrors.set(id, { slug: row.slug, message: error.message, at: Date.now() }); healthChanged(); throw error; } },
+      async receive(id) { const row = transferSnapshot.find((r) => r.id === id); if (!row || busy) throw new Error("Đợi lượt chuyển hiện tại hoàn tất rồi kiểm tra lại."); try { await run((api) => receiveBook(row, api), true); } catch (error) { healthErrors.set(id, { slug: row.slug, message: error.message, at: Date.now() }); healthChanged(); throw error; } },
       async offer(slug, target, id) { panel.open = true; await refresh(); $("ebook-transfer-book").value = slug; receiver.value = target; offered = { slug, target, id }; paint(); $("ebook-transfer-send").focus(); report("Kiểm tra sách và máy nhận, rồi bấm Gửi sách để xác nhận."); } };
   }
   root.EbookTransferUI = { create };
