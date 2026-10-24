@@ -30,6 +30,9 @@ async function runSyncScrollChecks(browser, base) {
     await page.click("#btn-sync"); await page.waitForSelector('#sync-feedback[data-sync-state="conflict"]');
     // Ten real CAS conflicts keep the fixture stable across background renders.
     async function scrollBothWays(label) {
+      // Raw wheel input does not wait for the opening sheet transition. Use
+      // Playwright's stability/hit-target checks before choosing coordinates.
+      await page.locator(".sync-body").click({ trial: true });
       const geometry = await page.locator(".sync-body").evaluate((el) => ({ client: el.clientHeight, scroll: el.scrollHeight, overflow: getComputedStyle(el).overflowY, touch: getComputedStyle(el).touchAction }));
       assert.equal(geometry.overflow, "auto", `${engine}/${label}: content has no scroll container`);
       assert.ok(geometry.scroll > geometry.client + 200, `${engine}/${label}: fixture is not long enough`);
