@@ -371,7 +371,7 @@
       <span class="shelf-copy">
         <span class="shelf-card-title${series.titleVi.length > 32 ? " is-long" : ""}">${escapeHtml(series.titleVi)}</span>
         <span class="shelf-card-author">${escapeHtml(series.author || "")}</span>
-        <span class="shelf-card-meta">${series.personal ? `${escapeHtml(series.sourceFormat)} · Ebook cá nhân` : `${series.volumes} tập`} ${BookFormat.countLabel(series) ? ` · ${BookFormat.countLabel(series)}` : ""}</span>
+        <span class="shelf-card-meta">${series.personal ? `${escapeHtml(series.sourceFormat === "PDF-TEXT" ? "PDF · Sách chữ" : series.sourceFormat)} · Ebook cá nhân` : `${series.volumes} tập`} ${BookFormat.countLabel(series) ? ` · ${BookFormat.countLabel(series)}` : ""}</span>
         <span class="shelf-device-badge"></span>
         ${updates ? `<span class="chapter-update-badge">${updates} chương mới</span>` : ""}
         ${series.description ? `<span class="shelf-card-description">${escapeHtml(series.description)}</span>` : ""}

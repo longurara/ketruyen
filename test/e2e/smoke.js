@@ -353,6 +353,8 @@ async function checkLinkPreviews() {
     catch (error) { failed = true; console.error(`✖ shelf UI: ${error.stack}`); }
     try { await require("./ui-polish").runUIPolishChecks(browser, BASE); }
     catch (error) { failed = true; console.error(`✖ UI polish: ${error.stack}`); }
+    try { await require("./pdf-text").runPdfTextChecks(browser, BASE); }
+    catch (error) { failed = true; console.error(`✖ PDF text: ${error.stack}`); }
   } finally {
     await browser.close();
     server.kill();

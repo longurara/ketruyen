@@ -70,8 +70,10 @@
     const footnotes = Object.fromEntries(Object.entries(object(value.footnotes) ? value.footnotes : {}).slice(0, 10000).map(([key, note]) => [text(key, 1000), text(note, 8 * 1024 * 1024)]));
     return { slug: value.slug, digest: value.digest, personal: true, titleVi: text(value.titleVi, 250) || "Ebook",
       titleJp: "", author: text(value.author, 150), illustrator: "", status: "Lưu trên thiết bị",
-      tags: [text(value.sourceFormat, 10), "Ebook cá nhân"], description: text(value.description, 4000),
+      tags: [value.sourceFormat === "PDF-TEXT" ? "PDF" : text(value.sourceFormat, 10), "Ebook cá nhân"], description: text(value.description, 4000),
       sourceFilename: text(value.sourceFilename, 250), sourceFormat: text(value.sourceFormat, 10),
+      ...(value.sourceFormat === "PDF-TEXT" && /^[a-f\d]{64}$/.test(value.sourceDigest || "") ? { sourceDigest:value.sourceDigest } : {}),
+      ...(value.sourceFormat === "PDF-TEXT" && object(value.pdfConversion) && value.pdfConversion.version === 1 && Number.isInteger(value.pdfConversion.pages) && value.pdfConversion.pages > 0 && value.pdfConversion.pages <= 500 ? { pdfConversion:{version:1,pages:value.pdfConversion.pages,joinLines:value.pdfConversion.joinLines !== false,removeRepeated:value.pdfConversion.removeRepeated !== false} } : {}),
       importedAt: Number(value.importedAt) || Date.now(), sourceBytes: Number(value.sourceBytes) || 0,
       volumes: 1, chapters: chapters.length, assets, coverAsset: assets.some((a) => a.key === value.coverAsset) ? value.coverAsset : assets[0]?.key,
       toc, footnotes, warnings: "", volumesData: [{ name: text(value.titleVi, 250), title: text(value.titleVi, 250), dirName: "ebook", bytes: Number(value.sourceBytes) || 0, words: chapters.reduce((sum, c) => sum + c.words, 0), chapters }] };

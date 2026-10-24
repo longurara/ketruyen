@@ -24,19 +24,86 @@
     }
     if (line.trim()) lines.push(line.trim()); return lines.filter(Boolean);
   }
-  async function parse(bytes, report = () => {}) {
-    report("Đang mở PDF…");
+  async function openTask(bytes) {
     runtime ||= import("./vendor/pdfjs/pdf.mjs").catch(() => { runtime = null; throw new Error("Không tải được bộ đọc PDF. Kết nối mạng rồi thử lại hoặc cập nhật trình duyệt."); });
     const pdfjs = await runtime; pdfjs.GlobalWorkerOptions.workerSrc = new URL("vendor/pdfjs/pdf.worker.mjs", document.baseURI).href;
     const base = new URL("vendor/pdfjs/", document.baseURI).href;
     const task = pdfjs.getDocument({ data: bytes, cMapUrl: `${base}cmaps/`, cMapPacked: true, standardFontDataUrl: `${base}standard_fonts/`, wasmUrl: `${base}wasm/`, isEvalSupported: false, maxImageSize: 40000000 });
     task.onPassword = () => task.destroy();
+    task.promise.catch(() => {}); // Also handle cancellation before the caller starts awaiting it.
+    return { task, pdfjs };
+  }
+  async function extractText(bytes, report = () => {}, signal) {
+    signal?.throwIfAborted();
+    const { task, pdfjs } = await openTask(bytes);
+    const abort = () => { task.destroy().catch(() => {}); };
+    signal?.addEventListener("abort", abort, { once:true });
     try {
+      signal?.throwIfAborted();
+      const pdf = await task.promise;
+      if (pdf.numPages > MAX_PAGES) throw new Error(`PDF tối đa ${MAX_PAGES} trang. Hãy chia tệp lớn thành nhiều phần.`);
+      const metadata = await pdf.getMetadata().catch(() => null), pages = []; let chars = 0;
+      for (let i=1; i<=pdf.numPages; i++) {
+        signal?.throwIfAborted(); report(`Đang trích xuất chữ… trang ${i}/${pdf.numPages}`);
+        const page = await pdf.getPage(i);
+        try {
+          const viewport = page.getViewport({ scale:1 }), content = await page.getTextContent();
+          if (content.items.length > 100000) throw new Error(`Trang ${i} có quá nhiều mảnh chữ để chuyển đổi an toàn.`);
+          const items = content.items.filter((item) => typeof item.str === "string").map((item) => {
+            chars += item.str.length;
+            const transform = pdfjs.Util.transform(viewport.transform, item.transform);
+            return { str:item.str, x:transform[4], y:transform[5], w:item.width, h:Math.hypot(transform[2],transform[3]) || item.height };
+          });
+          if (chars > 20000000) throw new Error("PDF chứa quá nhiều chữ (tối đa 20 triệu ký tự). Hãy chia tệp thành nhiều phần.");
+          pages.push(globalThis.PdfText.pageLines(items, viewport.width, viewport.height));
+        } finally { page.cleanup(); }
+        await new Promise((resolve) => setTimeout(resolve,0));
+      }
+      const outline = [], pending = [...(await pdf.getOutline().catch(() => null) || [])]; let visited=0;
+      while (pending.length && visited++ < 3000) {
+        signal?.throwIfAborted(); const item = pending.shift(); pending.unshift(...(item.items || []));
+        try {
+          const dest = typeof item.dest === "string" ? await pdf.getDestination(item.dest) : item.dest;
+          if (!Array.isArray(dest)) continue;
+          const index = Number.isInteger(dest[0]) ? dest[0] : await pdf.getPageIndex(dest[0]);
+          if (!pages[index]) continue;
+          const page = await pdf.getPage(index+1), viewport = page.getViewport({ scale:1 });
+          const y = dest[1]?.name === "XYZ" ? dest[3] : dest[1]?.name === "FitH" ? dest[2] : null;
+          outline.push({ title:String(item.title || "").slice(0,250), page:index, ...(Number.isFinite(y) ? { y:viewport.convertToViewportPoint(0,y)[1] } : {}) });
+          page.cleanup();
+        } catch (_) { /* Broken destinations do not discard the page text. */ }
+      }
+      signal?.throwIfAborted();
+      return { pages, outline, title:String(metadata?.info?.Title || "").trim().slice(0,250), author:String(metadata?.info?.Author || "").slice(0,150) };
+    } catch (error) {
+      signal?.throwIfAborted();
+      if (/password|destroyed/i.test(error.message || "")) throw new Error("PDF có mật khẩu chưa được hỗ trợ. Hãy mở khóa tệp trước khi nhập.", {cause:error});
+      if (error.name === "InvalidPDFException") throw new Error("Tệp PDF bị hỏng hoặc không đúng định dạng.", {cause:error});
+      throw error;
+    } finally { signal?.removeEventListener("abort",abort); await task.destroy(); }
+  }
+  async function previewPage(bytes, index, canvas, signal) {
+    signal?.throwIfAborted(); const { task } = await openTask(bytes);
+    const abort = () => { task.destroy().catch(() => {}); }; signal?.addEventListener("abort",abort,{once:true});
+    try {
+      const pdf = await task.promise, page = await pdf.getPage(index+1), original = page.getViewport({scale:1});
+      const viewport = page.getViewport({scale:pageScale(original.width,original.height)});
+      signal?.throwIfAborted(); canvas.width=Math.floor(viewport.width); canvas.height=Math.floor(viewport.height);
+      await page.render({canvasContext:canvas.getContext("2d"),viewport,background:"rgb(255,255,255)"}).promise;
+    } finally { signal?.removeEventListener("abort",abort); await task.destroy(); }
+  }
+  async function parse(bytes, report = () => {}, signal) {
+    report("Đang mở PDF…"); signal?.throwIfAborted();
+    const { task } = await openTask(bytes);
+    const abort = () => { task.destroy().catch(() => {}); }; signal?.addEventListener("abort",abort,{once:true});
+    try {
+      signal?.throwIfAborted();
       const pdf = await task.promise;
       if (pdf.numPages > MAX_PAGES) throw new Error(`PDF tối đa ${MAX_PAGES} trang. Hãy chia tệp lớn thành nhiều phần.`);
       const metadata = await pdf.getMetadata().catch(() => null), labels = await pdf.getPageLabels().catch(() => null);
       const chapters = [], assets = []; let size = 0, textless = 0;
       for (let i = 1; i <= pdf.numPages; i++) {
+        signal?.throwIfAborted();
         report(`Đang nhập PDF… trang ${i}/${pdf.numPages}`);
         const page = await pdf.getPage(i), original = page.getViewport({ scale: 1 }), viewport = page.getViewport({ scale: pageScale(original.width, original.height) });
         const canvas = document.createElement("canvas"); canvas.width = Math.max(1, Math.floor(viewport.width)); canvas.height = Math.max(1, Math.floor(viewport.height));
@@ -56,10 +123,11 @@
       return { title: typeof metadata?.info?.Title === "string" ? metadata.info.Title.trim().slice(0, 250) : "", author: typeof metadata?.info?.Author === "string" ? metadata.info.Author.slice(0, 150) : "", chapters, assets, coverAsset: assets[0]?.key,
         warnings: `${textless ? `${textless} trang không có văn bản trích xuất; chưa hỗ trợ OCR. ` : ""}Trang gốc được lưu dạng ảnh để đọc offline. Văn bản nhiều cột có thể cần đọc bằng chế độ trang gốc.` };
     } catch (error) {
+      signal?.throwIfAborted();
       if (/password|destroyed/i.test(error.message || "")) throw new Error("PDF có mật khẩu chưa được hỗ trợ. Hãy mở khóa tệp trước khi nhập.");
       if (error.name === "InvalidPDFException") throw new Error("Tệp PDF bị hỏng hoặc không đúng định dạng.");
       throw error;
-    } finally { await task.destroy(); }
+    } finally { signal?.removeEventListener("abort",abort); await task.destroy(); }
   }
   function renderChapter(chapter, next, renderText) {
     const paragraphs = chapter.paragraphs || [], image = chapter.images?.[0], following = next?.images?.[0];
@@ -107,5 +175,5 @@
       view.onpointercancel = () => { drag = null; box.hidden = true; };
     });
   }
-  return { parse, create, renderChapter, attachSection, pageScale, pageParagraphs, MAX_PAGES };
+  return { parse, extractText, previewPage, create, renderChapter, attachSection, pageScale, pageParagraphs, MAX_PAGES };
 });

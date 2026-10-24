@@ -319,7 +319,7 @@
           <button id="shelf-view-discover" type="button" role="tab" aria-selected="true" aria-controls="shelf-content" data-shelf-view="discover">Khám phá</button>
         </nav>
           <div class="shelf-actions">
-            <button aria-label="Nhập ebook" title="Nhập ebook" id="btn-import-ebook" class="btn-secondary" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Nhập ebook</button>
+            <button aria-label="Nhập ebook" title="Nhập ebook" id="btn-import-ebook" class="btn-secondary" type="button" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Nhập ebook</button>
             <details id="shelf-more" class="shelf-more">
               <summary aria-label="Thao tác thư viện" title="Thao tác thư viện"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle></svg></summary>
               <div class="shelf-more-menu">
@@ -739,6 +739,9 @@
         <button id="ebook-close" type="button" class="tools-close" aria-label="Đóng nhập ebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
       </div>
       <p class="ebook-help">Chọn EPUB, TXT hoặc PDF (tối đa 50 MB/tệp) từ thiết bị. Tệp được lưu trong trình duyệt để đọc offline, không tải lên máy chủ.</p>
+      <label for="ebook-pdf-mode">Khi chọn PDF</label>
+      <select id="ebook-pdf-mode"><option value="pages">Giữ trang gốc</option><option value="text">Chuyển thành sách chữ</option></select>
+      <p class="ebook-help">Sách chữ dành cho PDF có lớp văn bản, không dùng OCR. Bản chữ được thêm riêng, không thay thế PDF đã có.</p>
       <label class="ebook-file-label" for="ebook-file">Chọn tệp ebook</label>
       <div id="ebook-drop" class="ebook-drop" tabindex="0" role="button" aria-label="Chọn hoặc kéo thả ebook"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M7 9l5-5 5 5M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"></path></svg><strong>Kéo thả tệp vào đây</strong><span>hoặc bấm để chọn EPUB, TXT, PDF</span></div>
       <input id="ebook-file" class="visually-hidden" type="file" multiple accept=".epub,.txt,.pdf,application/epub+zip,text/plain,application/pdf">
@@ -749,17 +752,31 @@
         <label for="ebook-author">Tác giả <span>(không bắt buộc)</span></label>
         <input id="ebook-author" type="text" maxlength="150">
         <p id="ebook-summary"></p>
+        <section id="ebook-pdf-tools" hidden aria-label="Chuyển đổi PDF">
+          <p id="ebook-pdf-report" role="status"></p>
+          <label class="pdf-import-check"><input id="ebook-pdf-join" type="checkbox" checked> Nối các dòng thành đoạn</label>
+          <label class="pdf-import-check"><input id="ebook-pdf-clean" type="checkbox" checked> Bỏ số trang và đầu/chân trang lặp lại</label>
+          <details><summary>So sánh với trang gốc</summary>
+            <label for="ebook-pdf-page">Trang PDF</label><select id="ebook-pdf-page"></select>
+            <button id="ebook-pdf-compare" type="button" class="btn-secondary">Xem trang gốc</button>
+            <p id="ebook-pdf-page-status" role="status"></p>
+            <div class="pdf-import-compare"><canvas id="ebook-pdf-canvas" hidden role="img" aria-label="Trang PDF gốc"></canvas><pre id="ebook-pdf-page-text"></pre></div>
+          </details>
+          <button id="ebook-pdf-download" type="button" class="btn-secondary">Tải TXT UTF-8</button>
+        </section>
         <div id="ebook-txt-tools" hidden>
           <label for="ebook-txt-mode">Cách nhận diện chương</label>
-          <select id="ebook-txt-mode"><option value="auto">Chương / Chapter / Phần</option><option value="numbered">Tiêu đề dạng 1. hoặc 1)</option><option value="markdown">Tiêu đề Markdown (#)</option><option value="single">Toàn bộ trong một chương</option></select>
+          <select id="ebook-txt-mode"><option value="pdf" hidden>Mục lục / tiêu đề PDF</option><option value="pdf-pages" hidden>Theo trang PDF</option><option value="auto">Chương / Chapter / Phần</option><option value="numbered">Tiêu đề dạng 1. hoặc 1)</option><option value="markdown">Tiêu đề Markdown (#)</option><option value="single">Toàn bộ trong một chương</option></select>
           <label for="ebook-txt-chapter">Xem trước chương</label><select id="ebook-txt-chapter"></select>
           <label for="ebook-txt-name">Tên chương</label><input id="ebook-txt-name" maxlength="250">
           <pre id="ebook-txt-preview" class="ebook-txt-preview"></pre>
+          <details id="ebook-pdf-editor" hidden><summary>Sửa chữ trong chương</summary><label for="ebook-pdf-edit">Nội dung · cách một dòng trống để ngắt đoạn</label><textarea id="ebook-pdf-edit" rows="10" maxlength="20000000"></textarea><p class="ebook-help">Chữ đã sửa được giữ trong bản nháp khi đổi chương và khi lưu.</p></details>
           <div class="tools-actions"><button id="ebook-txt-merge" type="button" class="btn-secondary">Gộp với chương sau</button><button id="ebook-txt-split" type="button" class="btn-secondary">Tách tại đoạn</button></div>
           <select id="ebook-txt-paragraph" aria-label="Đoạn để tách chương"></select>
         </div>
       </div>
       <p id="ebook-status" class="ebook-status" role="status" aria-live="polite"></p>
+      <button id="ebook-cancel-read" type="button" class="btn-secondary" hidden>Hủy xử lý</button>
       <p class="ebook-help">TXT nên dùng UTF-8 hoặc UTF-16. EPUB có DRM chưa được hỗ trợ. Xóa dữ liệu trang hoặc đổi trình duyệt sẽ làm mất ebook đã nhập.</p>
       <button id="ebook-save" type="submit" class="btn-primary" disabled>Thêm vào kệ</button>
     </form>
@@ -785,6 +802,7 @@
     </div>
   </dialog>
   <script src="app-dialog.js"></script>
+  <script src="pdf-text.js"></script>
   <script src="pdf-reader.js"></script>
   <script src="ebook-import.js"></script>
   <script src="reader-characters.js"></script>

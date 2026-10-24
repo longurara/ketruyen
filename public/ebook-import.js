@@ -10,6 +10,9 @@
   const MAX_ENTRIES = 5000;
   const MAX_CHAPTERS = 3000;
   const DB_NAME = "tenshi-ebooks-v1";
+  // Original bytes and layout are draft-only: never enter IndexedDB, backups,
+  // or the temporary ebook bucket.
+  const pdfDrafts = new WeakMap();
   const words = (text) => text.trim() ? text.trim().split(/\s+/u).length : 0;
   const clean = (text) => String(text || "").replace(/\u0000/g, "").trim();
   const escape = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -410,16 +413,32 @@
     return new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
   }
 
-  async function parseFile(file, report = () => {}) {
+  function rebuildPdf(book, options = {}) {
+    const source = pdfDrafts.get(book); if (!source) throw new Error("Hãy chọn lại tệp PDF để thay đổi chuyển đổi.");
+    const settings = { ...source.settings, ...options, title:book.titleVi };
+    const result = globalThis.PdfText.build(source.pages, source.outline, settings);
+    let chapters = result.chapters;
+    if (book.txtMode && !["pdf", "pdf-pages", "single"].includes(book.txtMode)) chapters = textChapters(result.text,book.titleVi,book.txtMode);
+    if (chapters.length > MAX_CHAPTERS) throw new Error("Ebook có quá nhiều chương (tối đa 3.000).");
+    source.settings=settings; source.result=result; source.edited=false;
+    updateChapters(book,chapters); book.txtSource=result.text; book.warnings=result.warnings.join(" ");
+    book.pdfConversion = { version:1, pages:source.pages.length, joinLines:settings.joinLines !== false, removeRepeated:settings.removeRepeated !== false, chapterMode:book.txtMode || "pdf" };
+    return result;
+  }
+  async function parseFile(file, report = () => {}, options = {}) {
     const extension = file.name.split(".").pop().toLowerCase();
     if (!["epub", "txt", "pdf"].includes(extension)) throw new Error("Chỉ hỗ trợ tệp EPUB, TXT và PDF.");
     if (!file.size || file.size > MAX_FILE) throw new Error("Chọn ebook có dung lượng từ 1 byte đến 50 MB.");
     report("Đang đọc tệp…");
     const bytes = new Uint8Array(await file.arrayBuffer());
     const digest = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map((n) => n.toString(16).padStart(2, "0")).join("");
+    options.signal?.throwIfAborted();
+    const pdfText = extension === "pdf" && options.pdfMode === "text";
+    const converted = pdfText ? await PdfReader.extractText(bytes.slice(), report, options.signal) : null;
+    const convertedText = converted ? globalThis.PdfText.build(converted.pages,converted.outline,{title:converted.title}) : null;
     const defaultTitle = clean(file.name.replace(/\.[^.]+$/, "").replace(/[_]/g, " ")) || "Ebook";
     const txtSource = extension === "txt" ? decodeText(bytes) : "";
-    const parsed = extension === "epub" ? await parseEpub(bytes, report) : extension === "pdf" ? await PdfReader.parse(bytes, report) : {
+    const parsed = converted ? { ...converted, chapters:convertedText.chapters, assets:[], warnings:convertedText.warnings.join(" ") } : extension === "epub" ? await parseEpub(bytes, report) : extension === "pdf" ? await PdfReader.parse(bytes, report, options.signal) : {
       title: defaultTitle, author: "", chapters: textChapters(txtSource, defaultTitle), assets: []
     };
     const title = parsed.title || defaultTitle;
@@ -428,14 +447,21 @@
       if (blob) { parsed.assets.push({ key: "fallback-cover", blob, w: 520, h: 736 }); parsed.coverAsset = "fallback-cover"; }
     }
     const count = parsed.chapters.length;
-    return { slug: `ebook-${digest.slice(0, 24)}`, digest, personal: true, titleVi: title, titleJp: "",
+    const bookDigest = pdfText ? [...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(`pdf-text-v1:${digest}`)))].map((n) => n.toString(16).padStart(2,"0")).join("") : digest;
+    const book = { slug: `ebook-${bookDigest.slice(0, 24)}`, digest:bookDigest, personal: true, titleVi: title, titleJp: "",
       author: parsed.author || "", illustrator: "", status: "Lưu trên thiết bị", tags: [extension.toUpperCase(), "Ebook cá nhân"],
       description: parsed.description || "Ebook do bạn nhập, được lưu riêng trong trình duyệt này.",
-      sourceFilename: file.name, sourceFormat: extension.toUpperCase(), importedAt: Date.now(),
+      sourceFilename: file.name, sourceFormat: pdfText ? "PDF-TEXT" : extension.toUpperCase(), importedAt: Date.now(),
       sourceBytes: file.size, volumes: 1, chapters: count, assets: parsed.assets, coverAsset: parsed.coverAsset,
       toc: parsed.toc || [], footnotes: parsed.footnotes || {}, txtSource,
       warnings: parsed.warnings || "", volumesData: [{ name: title, title, dirName: "ebook", bytes: file.size,
         words: parsed.chapters.reduce((sum, chapter) => sum + chapter.words, 0), chapters: parsed.chapters }] };
+    if (converted) {
+      book.sourceDigest=digest; book.txtMode="pdf";
+      pdfDrafts.set(book,{ ...converted, bytes, settings:{joinLines:true,removeRepeated:true,chapterMode:"auto"}, result:convertedText, edited:false });
+      rebuildPdf(book);
+    }
+    options.signal?.throwIfAborted(); return book;
   }
 
   async function openDB() {
@@ -556,8 +582,13 @@
     const title = document.querySelector("#ebook-title"), author = document.querySelector("#ebook-author");
     const queue = document.querySelector("#ebook-queue"), drop = document.querySelector("#ebook-drop");
     const chapterSelect = document.querySelector("#ebook-txt-chapter"), mode = document.querySelector("#ebook-txt-mode");
+    const pdfMode = document.querySelector("#ebook-pdf-mode"), cancelRead = document.querySelector("#ebook-cancel-read");
+    const pdfJoin = document.querySelector("#ebook-pdf-join"), pdfClean = document.querySelector("#ebook-pdf-clean"), pdfPage = document.querySelector("#ebook-pdf-page");
+    const pdfEdit = document.querySelector("#ebook-pdf-edit");
+    let readController = null, previewController = null;
     let draft = null, drafts = [], rows = [], active = 0, token = 0, busy = false, lastSaved = null;
     document.querySelector("#btn-import-ebook").addEventListener("click", () => dialog.showModal());
+    document.querySelector("#btn-import-ebook").disabled=false;
     document.querySelector("#ebook-close").addEventListener("click", () => { if (!busy) dialog.close(); });
     dialog.addEventListener("cancel", (event) => { if (busy) event.preventDefault(); });
     dialog.addEventListener("click", (event) => {
@@ -566,13 +597,16 @@
       if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
     });
     dialog.addEventListener("close", () => {
+      readController?.abort(); previewController?.abort(); document.querySelector("#ebook-pdf-canvas").width=1;
       token++; draft = null; drafts = []; rows = []; queue.innerHTML = ""; preview.hidden = true; input.value = ""; status.textContent = ""; submit.disabled = true;
       if (lastSaved) { const slug = lastSaved; lastSaved = null; onSaved(slug); }
     });
-    const setBusy = (value) => { busy = value; input.disabled = value; submit.disabled = value || !draft;
+    const setBusy = (value) => { busy = value; input.disabled = value; pdfMode.disabled=value; submit.disabled = value || !draft;
+      preview.inert=value;
       document.querySelector("#ebook-close").disabled = value; dialog.setAttribute("aria-busy", String(value)); };
     function writeDraft() {
       if (!draft) return;
+      commitPdfEdit();
       draft.titleVi = clean(title.value) || draft.titleVi; draft.author = clean(author.value);
       draft.volumesData[0].name = draft.titleVi; draft.volumesData[0].title = draft.titleVi;
     }
@@ -583,24 +617,31 @@
       submit.textContent = drafts.length > 1 ? `Thêm ${drafts.length} sách vào kệ` : "Thêm vào kệ";
     }
     function txtPreview() {
-      if (!draft || draft.sourceFormat !== "TXT") return;
+      if (!draft || !["TXT","PDF-TEXT"].includes(draft.sourceFormat)) return;
       const chapters = draft.volumesData[0].chapters;
       const index = Math.max(0, Math.min(chapters.length - 1, Number(chapterSelect.value) || 0));
       chapterSelect.innerHTML = chapters.map((chapter, i) => `<option value="${i}">${i + 1}. ${escape(chapter.title)}</option>`).join(""); chapterSelect.value = String(index);
       const chapter = chapters[index];
       document.querySelector("#ebook-txt-name").value = chapter.title;
       document.querySelector("#ebook-txt-preview").textContent = chapter.content.slice(0, 4000);
+      pdfEdit.value = chapter.content; pdfEdit.dataset.chapter=String(index); pdfEdit.dataset.dirty="false";
       document.querySelector("#ebook-txt-paragraph").innerHTML = chapter.paragraphs.slice(1).map((p, i) => `<option value="${i + 1}">Trước đoạn ${i + 2}: ${escape(p.slice(0, 65))}</option>`).join("");
       document.querySelector("#ebook-txt-merge").disabled = index >= chapters.length - 1;
       document.querySelector("#ebook-txt-split").disabled = chapter.paragraphs.length < 2 || chapters.length >= MAX_CHAPTERS;
       document.querySelector("#ebook-summary").textContent = `${draft.chapters} chương · ${draft.volumesData[0].words.toLocaleString("vi")} từ`;
     }
     function selectDraft(index) {
+      previewController?.abort(); document.querySelector("#ebook-pdf-canvas").hidden=true;
       active = index; draft = drafts[index] || null; preview.hidden = !draft;
       if (draft) {
         title.value = draft.titleVi; author.value = draft.author;
-        document.querySelector("#ebook-summary").textContent = `${draft.chapters} chương · ${draft.volumesData[0].words.toLocaleString("vi")} từ`;
-        document.querySelector("#ebook-txt-tools").hidden = draft.sourceFormat !== "TXT";
+        document.querySelector("#ebook-summary").textContent = `${draft.chapters} ${draft.sourceFormat === "PDF" ? "trang" : "chương"} · ${draft.volumesData[0].words.toLocaleString("vi")} từ`;
+        const isPdf = draft.sourceFormat === "PDF-TEXT";
+        document.querySelector("#ebook-txt-tools").hidden = !["TXT","PDF-TEXT"].includes(draft.sourceFormat);
+        document.querySelector("#ebook-pdf-tools").hidden = !isPdf;
+        document.querySelector("#ebook-pdf-editor").hidden = !isPdf;
+        for (const option of mode.options) if (option.value.startsWith("pdf")) option.hidden=!isPdf;
+        if (isPdf) paintPdf();
         mode.value = draft.txtMode || "auto"; chapterSelect.value = "0"; txtPreview();
       }
       renderQueue(); submit.disabled = busy || !draft;
@@ -608,25 +649,72 @@
     async function readFiles(files) {
       if (busy || !files.length) return;
       if (files.length > 30 || files.reduce((sum, file) => sum + file.size, 0) > MAX_EXPANDED) { status.textContent = "Mỗi lần tối đa 30 tệp, tổng dung lượng tối đa 150 MB."; return; }
-      const ownToken = ++token; draft = null; drafts = []; rows = []; preview.hidden = true; setBusy(true);
+      const ownToken = ++token; draft = null; drafts = []; rows = []; preview.hidden = true; readController=new AbortController(); cancelRead.hidden=false; setBusy(true);
       try {
         const existing = await list();
         for (const file of files) {
+          if (readController.signal.aborted) break;
           const row = { name: file.name, status: "Đang đọc…" }; rows.push(row); renderQueue();
           try {
-            const parsed = await parseFile(file, (value) => { status.textContent = `${file.name} · ${value}`; });
+            const parsed = await parseFile(file, (value) => { status.textContent = `${file.name} · ${value}`; }, {pdfMode:pdfMode.value,signal:readController.signal});
             if (ownToken !== token) return;
             const duplicate = existing.find((book) => book.digest === parsed.digest) || drafts.find((book) => book.digest === parsed.digest);
             if (duplicate) { row.status = "Đã có / trùng tệp"; if (existing.includes(duplicate)) row.slug = duplicate.slug; }
             else { row.draft = parsed; row.status = parsed.warnings || "Sẵn sàng"; drafts.push(parsed); }
-          } catch (error) { row.status = error.message || "Không đọc được tệp"; }
+          } catch (error) { row.status = error.name === "AbortError" ? "Đã hủy xử lý" : error.message || "Không đọc được tệp"; }
           renderQueue();
         }
         selectDraft(0);
-        status.textContent = drafts.length ? `Đã đọc ${drafts.length} sách. Bạn có thể sửa từng sách trước khi thêm.` : "Không có sách mới để nhập. Xem kết quả từng tệp ở trên.";
+        status.textContent = readController.signal.aborted ? "Đã hủy xử lý. Các bản nháp hoàn tất vẫn ở đây; chưa lưu sách mới vào kệ." : drafts.length ? `Đã đọc ${drafts.length} sách. Bạn có thể sửa từng sách trước khi thêm.` : "Không có sách mới để nhập. Xem kết quả từng tệp ở trên.";
       } catch (_) { status.textContent = "Không truy cập được kệ ebook. Kiểm tra quyền lưu trữ rồi thử lại."; }
-      finally { if (ownToken === token) { setBusy(false); renderQueue(); } }
+      finally { if (ownToken === token) { readController=null; cancelRead.hidden=true; setBusy(false); renderQueue(); } }
     }
+    cancelRead.onclick = () => { readController?.abort(); };
+    function commitPdfEdit() {
+      if (!draft || draft.sourceFormat !== "PDF-TEXT" || pdfEdit.dataset.dirty !== "true") return;
+      const index=Number(pdfEdit.dataset.chapter), chapter=draft.volumesData[0].chapters[index]; if (!chapter) return;
+      const paragraphs=pdfEdit.value.replace(/\r\n?/g,"\n").normalize("NFC").split(/\n\s*\n/).map(clean).filter(Boolean);
+      if (!paragraphs.length) { status.textContent="Chương không được để trống. Nội dung trước đó vẫn được giữ."; pdfEdit.value=chapter.content; }
+      else { draft.volumesData[0].chapters[index]=makeChapter(chapter.title,paragraphs); updateChapters(draft,draft.volumesData[0].chapters); pdfDrafts.get(draft).edited=true; }
+      pdfEdit.dataset.dirty="false";
+    }
+    pdfEdit.oninput = () => { pdfEdit.dataset.dirty="true"; };
+    pdfEdit.onchange = () => { commitPdfEdit(); txtPreview(); };
+    function paintPdf() {
+      const source=pdfDrafts.get(draft); if (!source) return;
+      pdfJoin.checked=source.settings.joinLines; pdfClean.checked=source.settings.removeRepeated;
+      const result=source.result;
+      document.querySelector("#ebook-pdf-report").textContent=`${source.pages.length} trang · ${result.removed.length} dòng đầu/chân trang đã bỏ · ${result.chapterMethod === "pages" ? "Chưa xác định chương, đang chia theo trang." : result.chapterMethod === "single" ? "Gộp thành một chương." : "Đã nhận diện chương."} ${draft.warnings}`;
+      const current=pdfPage.value; pdfPage.innerHTML=source.pages.map((_,i)=>`<option value="${i}">Trang ${i+1}${source.pages[i].lines.length ? "" : " · Không có chữ"}</option>`).join(""); pdfPage.value=Number(current) < source.pages.length ? current || "0" : "0"; // another draft may have fewer pages
+      paintPdfPageText();
+    }
+    function paintPdfPageText() {
+      const source=pdfDrafts.get(draft); document.querySelector("#ebook-pdf-page-text").textContent=source?.result.pageTexts[Number(pdfPage.value)] || "Trang này không có chữ trích xuất.";
+      document.querySelector("#ebook-pdf-canvas").hidden=true; document.querySelector("#ebook-pdf-page-status").textContent=""; previewController?.abort();
+    }
+    pdfPage.onchange=paintPdfPageText;
+    document.querySelector("#ebook-pdf-compare").onclick=async () => {
+      const source=pdfDrafts.get(draft); if (!source || busy) return;
+      previewController?.abort(); const controller=new AbortController(); previewController=controller;
+      const canvas=document.querySelector("#ebook-pdf-canvas"), label=document.querySelector("#ebook-pdf-page-status"); label.textContent="Đang mở trang gốc…";
+      try { await PdfReader.previewPage(source.bytes.slice(),Number(pdfPage.value),canvas,controller.signal); if (!controller.signal.aborted) { canvas.hidden=false; label.textContent="Trang gốc và chữ trích xuất để đối chiếu."; } }
+      catch (_) { if (!controller.signal.aborted) label.textContent="Không mở được ảnh trang gốc. Chữ trong bản nháp vẫn được giữ."; }
+    };
+    async function rebuildPdfUI() {
+      if (!pdfDrafts.has(draft)) return;
+      commitPdfEdit(); const source=pdfDrafts.get(draft);
+      if (source.edited && !await AppDialog.confirm({title:"Dựng lại bản chữ?",message:"Các tên chương, tách/gộp và chữ bạn đã sửa trong bản nháp sẽ được thay bằng kết quả chuyển đổi mới.",confirmLabel:"Dựng lại"})) { mode.value=draft.txtMode; pdfJoin.checked=source.settings.joinLines; pdfClean.checked=source.settings.removeRepeated; return; }
+      const oldMode=draft.txtMode;
+      try { draft.txtMode=mode.value; rebuildPdf(draft,{joinLines:pdfJoin.checked,removeRepeated:pdfClean.checked,chapterMode:mode.value === "pdf-pages" ? "pages" : mode.value === "single" ? "single" : "auto"}); chapterSelect.value="0"; paintPdf(); txtPreview(); }
+      catch(error) { draft.txtMode=oldMode; mode.value=oldMode; pdfJoin.checked=source.settings.joinLines; pdfClean.checked=source.settings.removeRepeated; status.textContent=error.message; }
+    }
+    pdfJoin.onchange=pdfClean.onchange=rebuildPdfUI;
+    document.querySelector("#ebook-pdf-download").onclick=() => {
+      if (!draft || draft.sourceFormat !== "PDF-TEXT" || busy) return; writeDraft();
+      const text=draft.volumesData[0].chapters.map((c)=>`${c.title}\n\n${c.content}`).join("\n\n");
+      const url=URL.createObjectURL(new Blob([text],{type:"text/plain;charset=utf-8"})), link=document.createElement("a");
+      link.href=url; link.download=(draft.titleVi.replace(/[<>:"/\\|?*]/g,"_") || "sach")+".txt"; link.click(); setTimeout(()=>URL.revokeObjectURL(url),60000);
+    };
     input.addEventListener("change", () => readFiles([...input.files]));
     drop.onclick = () => { if (!busy) input.click(); };
     drop.onkeydown = (event) => { if (["Enter", " "].includes(event.key)) { event.preventDefault(); if (!busy) input.click(); } };
@@ -634,6 +722,7 @@
     drop.ondragleave = () => drop.classList.remove("is-dragging");
     drop.ondrop = (event) => { event.preventDefault(); drop.classList.remove("is-dragging"); readFiles([...event.dataTransfer.files]); };
     mode.onchange = () => {
+      if (draft?.sourceFormat === "PDF-TEXT") return rebuildPdfUI();
       if (!draft?.txtSource) return;
       try { draft.txtMode = mode.value; updateChapters(draft, textChapters(draft.txtSource, draft.titleVi, mode.value)); chapterSelect.value = "0"; txtPreview(); }
       catch (error) { status.textContent = error.message; }
@@ -643,9 +732,10 @@
       if (!draft) return; const index = Number(chapterSelect.value);
       draft.volumesData[0].chapters[index].title = clean(event.target.value) || "Chương";
       chapterSelect.options[index].textContent = `${index + 1}. ${draft.volumesData[0].chapters[index].title}`;
+      if (pdfDrafts.has(draft)) pdfDrafts.get(draft).edited=true;
     };
-    document.querySelector("#ebook-txt-merge").onclick = () => { updateChapters(draft, mergeTextChapters(draft.volumesData[0].chapters, Number(chapterSelect.value))); txtPreview(); };
-    document.querySelector("#ebook-txt-split").onclick = () => { updateChapters(draft, splitTextChapter(draft.volumesData[0].chapters, Number(chapterSelect.value), Number(document.querySelector("#ebook-txt-paragraph").value))); txtPreview(); };
+    document.querySelector("#ebook-txt-merge").onclick = () => { commitPdfEdit(); updateChapters(draft, mergeTextChapters(draft.volumesData[0].chapters, Number(chapterSelect.value))); if (pdfDrafts.has(draft)) pdfDrafts.get(draft).edited=true; txtPreview(); };
+    document.querySelector("#ebook-txt-split").onclick = () => { commitPdfEdit(); updateChapters(draft, splitTextChapter(draft.volumesData[0].chapters, Number(chapterSelect.value), Number(document.querySelector("#ebook-txt-paragraph").value))); if (pdfDrafts.has(draft)) pdfDrafts.get(draft).edited=true; txtPreview(); };
     document.querySelector("#ebook-import-form").addEventListener("submit", async (event) => {
       event.preventDefault(); if (!drafts.length || busy) return;
       writeDraft();

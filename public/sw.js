@@ -7,7 +7,7 @@
 // and picture seen stays readable offline. app.js uses the same cache names
 // for "Tải về đọc offline".
 
-const SHELL_CACHE = "tenshi-shell-v45";
+const SHELL_CACHE = "tenshi-shell-v46";
 const INDEX_PATTERN = /^\/data\/(?:[^/]+\/)?index\.json$/;
 const TEXT_CACHE = "tenshi-text-v1";
 const IMAGE_CACHE = "tenshi-img-v2";
@@ -57,6 +57,7 @@ const SHELL = [
   "/ui-appearance.js",
   "/shelf-polish.css",
   "/pdf-reader.js",
+  "/pdf-text.js",
   "/pdf-reader.css",
   "/hand-camera.css",
   "/hand-camera-worker.js",
