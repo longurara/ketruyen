@@ -93,6 +93,12 @@ function collapseRepeats(paragraphs) {
   return paragraphs;
 }
 
+// Typed sources often drop the space after a comma ("ví von,song"). Only a
+// lowercase letter after it is fixed, so numbers like "1,5" stay intact.
+function spaceAfterCommas(text) {
+  return text.replace(/([,;])(?=\p{Ll})/gu, "$1 ");
+}
+
 function cleanChapter(title, content) {
   let heading = null;
   // NFC keeps one code unit per letter, so search can map matches in the
@@ -101,6 +107,7 @@ function cleanChapter(title, content) {
     .normalize("NFC")
     .split(/\n{2,}/)
     .map((p) => p.replace(/[ \t\r\f\v]*\n[ \t\r\f\v\n]*/g, " ").replace(/[ \t]{2,}/g, " ").trim())
+    .map(spaceAfterCommas)
     .filter(Boolean)
     .filter((p) => {
       if (CHROME_PATTERNS.some((re) => re.test(p))) return false;
@@ -363,4 +370,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { cleanDescription, splitDescriptions };
+module.exports = { cleanChapter, cleanDescription, splitDescriptions };
