@@ -76,14 +76,14 @@ body[data-theme="dark"] .shelf-shell { --shelf-accent: #abc6ad; --shelf-accent-r
 .shelf-feature-place { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .shelf-feature-description { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; max-width: 560px; margin-top: 10px; color: var(--text-soft); font-size: var(--text-sm); line-height: 1.8; }
 .shelf-feature-art { flex: 0 0 auto; width: 140px; padding: 0; border: 0; background: transparent; cursor: pointer; transform: rotate(4deg); transition: transform 0.2s var(--steps-3); }
-.shelf-feature-art:hover { transform: rotate(0); }
+@media (hover: hover) { .shelf-feature-art:hover { transform: rotate(0); } }
 .shelf-feature-cover { display: block; width: 100%; height: auto; aspect-ratio: 5 / 7; object-fit: cover; border-radius: 3px 8px 8px 3px; box-shadow: var(--shadow-book); }
 .shelf-cover-fallback { display: grid; place-items: center; padding: 14px; background: var(--surface-2); color: var(--text); font: 600 var(--text-md)/1.5 var(--font-serif); overflow-wrap: anywhere; }
 .shelf-feature-actions { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
 .shelf-suggest-button { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 44px; padding: 10px 16px; border: 1px solid rgba(var(--shelf-accent-rgb), 0.35); border-radius: 10px; background: transparent; color: var(--shelf-accent); font: 500 var(--text-sm)/1.5 var(--font-ui); cursor: pointer; transition: background-color 0.2s var(--steps-3), border-color 0.2s var(--steps-3); }
 .shelf-suggest-button:hover { background: rgba(var(--shelf-accent-rgb), 0.08); border-color: var(--shelf-accent); }
 .shelf-feature-button { display: inline-flex; align-items: center; justify-content: center; gap: 24px; min-height: 44px; padding: 11px 20px; border: 1px solid transparent; border-radius: 999px; background: var(--shelf-accent); color: var(--shelf-on-accent); font: 600 var(--text-sm)/1.5 var(--font-ui); cursor: pointer; }
-.shelf-feature-button:hover { box-shadow: 0 0 0 3px rgba(var(--shelf-accent-rgb), 0.14); }
+@media (hover: hover) { .shelf-feature-button:hover { box-shadow: 0 0 0 3px rgba(var(--shelf-accent-rgb), 0.14); } }
 .shelf-feature-progress { display: grid; gap: 6px; max-width: 340px; margin: 14px 0 18px; }
 .shelf-feature-progress > span:last-child { color: var(--text-muted); font-size: var(--text-2xs); font-variant-numeric: tabular-nums; }
 .shelf-shell .shelf-resume-meter > span { background: var(--shelf-accent); }
@@ -176,7 +176,7 @@ body[data-theme="dark"] .shelf-shell { --shelf-accent: #abc6ad; --shelf-accent-r
 /* Cover grid: many books per row, title and author only. */
 .shelf-grid.is-covers { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 28px 20px; }
 .shelf-grid.is-covers > .ebook-shelf-item > .shelf-card { flex-direction: column; gap: 12px; min-height: 0; padding: 0; border: 0; background: transparent; }
-.shelf-grid.is-covers > .ebook-shelf-item > .shelf-card:hover .shelf-cover { box-shadow: var(--shadow-book-hover); }
+@media (hover: hover) { .shelf-grid.is-covers > .ebook-shelf-item > .shelf-card:hover .shelf-cover { box-shadow: var(--shadow-book-hover); } }
 .shelf-grid.is-covers .shelf-cover { width: 100%; flex: none; }
 .shelf-grid.is-covers .ebook-shelf-item > .shelf-card .shelf-copy { padding-right: 0; }
 .shelf-grid.is-covers .shelf-card-title, .shelf-grid.is-covers .shelf-card-title.is-long { font-size: var(--text-md); -webkit-line-clamp: 2; line-height: 1.3; }

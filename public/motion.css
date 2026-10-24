@@ -67,7 +67,7 @@
   transition:
     opacity var(--motion-slow) var(--steps-5),
     transform var(--motion-slow) var(--steps-5),
-    background-color 0.3s var(--steps-4),
+    background-color var(--motion-slow) var(--steps-5),
     overlay var(--motion-slow) allow-discrete,
     display var(--motion-slow) allow-discrete;
 }
@@ -169,7 +169,8 @@
 }
 
 /* Large targets (whole cards, list rows) give less, or they lurch. */
-:is(.shelf-card, .volume-card, .chapter-item, .shelf-resume-card, .end-card, .recent-chapter-list button):not(:disabled):active {
+:is(.shelf-card, .volume-card, .chapter-item, .shelf-resume-card, .end-card, .recent-chapter-list button,
+  .shelf-menu-action, #shelf-load-more, .workbench-home-action, .settings-disclosure > summary, .search-result-item, .ebook-drop):not(:disabled):active {
   scale: 0.985;
 }
 
@@ -234,15 +235,4 @@
 .has-slider > button:is(.is-active, [aria-selected="true"], [aria-pressed="true"]) {
   background: transparent;
   box-shadow: none;
-}
-
-/* ---- Lists: shelf cards arrive one after another ------------------------ */
-
-@keyframes cardIn {
-  from { opacity: 0; translate: 0 10px; }
-}
-
-body[data-eink="off"] .shelf-grid > .is-entering {
-  animation: cardIn var(--motion-slow) var(--steps-3) backwards;
-  animation-delay: calc(var(--enter, 0) * 28ms);
 }

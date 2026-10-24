@@ -509,7 +509,6 @@ body:not([data-view="shelf"]) #btn-reader-tools .header-icon-stats {
   height: 100%;
   width: 0;
   background: var(--ink);
-  transition: width 0.26s var(--steps-6);
 }
 
 /* Immersive reading: header and bottom bar slide away while reading;
@@ -905,10 +904,17 @@ body.is-chrome-hidden .reader-bottom-nav {
   transition: border-color 0.2s var(--steps-3), transform 0.2s var(--steps-3);
 }
 
-.shelf-card:hover,
 .shelf-card:focus-visible {
   border-color: var(--line-strong);
   transform: translateY(-2px);
+}
+
+/* Only a real pointer lifts the card; a tap would leave it stuck "hovered". */
+@media (hover: hover) {
+  .shelf-card:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-2px);
+  }
 }
 
 .shelf-cover {
@@ -1620,14 +1626,16 @@ mark.search-hit {
   outline-offset: 4px;
 }
 
-.volume-card:hover .book {
-  box-shadow: var(--shadow-book-hover);
-}
+@media (hover: hover) {
+  .volume-card:hover .book {
+    box-shadow: var(--shadow-book-hover);
+  }
 
-.volume-card:hover .volume-card-title {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
+  .volume-card:hover .volume-card-title {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
 }
 
 .volume-progress {
@@ -2161,7 +2169,6 @@ mark.search-hit {
   width: 0;
   height: 100%;
   background: var(--ink);
-  transition: width 0.26s var(--steps-6);
 }
 
 .select-label {
