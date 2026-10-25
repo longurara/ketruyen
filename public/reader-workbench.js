@@ -84,7 +84,8 @@
       const host = $("#workbench-sync"); if (!host) return;
       host.hidden = libraryActive || !["words", "vocabulary", "profiles"].includes(activeTab);
       const snapshot = cloudSync.snapshot(); $("#workbench-sync-status").textContent = snapshot.message;
-      const accountStatus = $("#sync-workbench-status"); if (accountStatus) accountStatus.textContent = snapshot.message;
+      const accountStatus = $("#sync-workbench-status");
+      if (accountStatus) { accountStatus.textContent = snapshot.message; accountStatus.hidden = !snapshot.owner || snapshot.message.startsWith("Đã đồng bộ"); }
       const conflicts = $("#workbench-sync-conflicts"); conflicts.replaceChildren();
       let local = {}; try { local = root.WorkbenchSync.read(localStorage); } catch (_) {}
       const describe = (value) => !value ? "Đã xóa" : value.name ? `${value.name} · ${value.settings.fontSize}px · ${value.settings.theme}` : `${value.term}: ${value.meaning}${value.level !== undefined ? ` · Mức ${value.level} · Ôn ${new Date(value.due).toLocaleString("vi-VN")}` : ""}`;

@@ -16,7 +16,7 @@
     const syncActions = document.createElement("div"); syncActions.className = "sync-actions"; syncActions.append($("sync-connect"), $("sync-now"));
     syncPanel.prepend($("sync-account-hint"), syncActions);
     $("sync-account").classList.add("workspace-account"); $("sync-account").replaceChildren($("sync-email-label"), $("sync-signout"));
-    syncPanel.insertAdjacentHTML("beforeend", '<section class="workspace-card" id="workspace-baseline" hidden><h3>Thống kê trước khi đồng bộ</h3><p class="sync-copy">Chọn đúng máy có thống kê cũ cần giữ. Chỉ nhập một lần cho tài khoản; số liệu từ các máy khác không tự cộng vào.</p><button type="button" class="btn-secondary" id="workspace-import">Dùng thống kê cũ của máy này</button><p id="workspace-import-status" role="status"></p></section><div id="workspace-requests"></div>');
+    syncPanel.insertAdjacentHTML("beforeend", '<section class="workspace-card" id="workspace-baseline" hidden><h3>Thống kê cũ</h3><p id="workspace-import-status" class="sync-copy" role="status"></p><button type="button" class="btn-secondary" id="workspace-import">Nhập từ máy này</button><details id="workspace-import-help" class="sync-help"><summary>Cách nhập</summary><p class="sync-copy">Chọn máy có thống kê cũ cần giữ. Mỗi tài khoản chỉ nhập một lần; thống kê cũ từ các máy khác không được cộng thêm.</p></details></section><div id="workspace-requests"></div>');
     const devicePanel = document.createElement("section"); devicePanel.dataset.accountPanel = "devices"; devicePanel.hidden = true;
     devicePanel.innerHTML = '<h3>Thiết bị của bạn</h3><p class="sync-copy">Mỗi trình duyệt/PWA có một phiên riêng. Thu hồi chặn truy cập đám mây; sách đã lưu offline trên máy đó vẫn còn.</p><div id="workspace-devices"></div><button type="button" class="btn-secondary" id="workspace-signout-others">Đăng xuất các phiên khác</button>';
     syncPanel.after(devicePanel);
@@ -110,7 +110,8 @@
       options.transfers.setDevices(transferDevices.filter((d) => !d.revoked_at), transferDevices);
       const requests = await all(a, "reader_book_requests", "*", (q) => q.eq("source_session", a.sid).eq("resolved", false).order("id")); paintRequests(requests);
       $("workspace-baseline").hidden = false; $("workspace-import").hidden = Boolean(meta?.legacy);
-      $("workspace-import-status").textContent = meta?.legacy ? "Đã nhập thống kê gốc một lần · Phần trước đồng bộ được giữ riêng trong tổng số." : "Chưa chọn máy gốc. Thống kê đồng bộ mới vẫn được ghi nhận.";
+      $("workspace-import-help").hidden = Boolean(meta?.legacy);
+      $("workspace-import-status").textContent = meta?.legacy ? "Đã nhập vào tổng thống kê." : "Chưa nhập thống kê cũ.";
     }
     async function archive(a) {
       const local = JSON.parse(localStorage.getItem("tenshi-library-v1") || "null"), pending = (local?.versions || []).filter((v) => !v.uploaded);

@@ -3863,10 +3863,12 @@
     const known = listen.voiceURI === ONLINE_VOICE || voices.some((voice) => voice.voiceURI === listen.voiceURI);
     listenVoiceSelect.value = known ? listen.voiceURI : "";
 
-    const onlineNote = "Google Dịch: dùng được trên mọi máy và nghe được cả khi tắt màn hình, cần có mạng (dịch vụ không chính thức, nếu lỗi sẽ tự chuyển sang giọng của máy).";
-    listenVoiceHint.textContent = voices.length
-      ? `${onlineNote} Giọng của máy: không cần mạng nhưng màn hình phải luôn sáng; hay nhất là Edge (HoaiMy, NamMinh) và Android (Google Tiếng Việt).`
-      : `${onlineNote} Máy này chưa có giọng tiếng Việt riêng để đọc khi mất mạng. ${voiceInstallHint()}`;
+    const engine = chooseListenEngine(), voice = listenVoice();
+    listenVoiceHint.textContent = engine === "online" ? "Trực tuyến · Cần mạng."
+      : voice ? `${voice.localService ? "Trên máy" : "Trực tuyến"} · Giữ màn hình sáng.` : "Chưa có giọng tiếng Việt trên máy.";
+    const install = $("#listen-voice-install");
+    install.hidden = voices.some((item) => item.localService);
+    install.textContent = install.hidden ? "" : voiceInstallHint();
   }
 
   // Which voice reads: the one chosen in settings; on "Tự chọn", a neural
@@ -4845,7 +4847,7 @@
     }
     controls.append($("#hand-camera-entry")); panels.get("controls").append(controls);
     const listening = document.createElement("section"); listening.className = "settings-section";
-    listening.innerHTML = '<h4 class="settings-section-title">Nghe đọc</h4><p class="settings-hint">Chọn giọng tại đây. Tốc độ, hẹn giờ và vị trí nghe nằm trên thanh Nghe khi mở chương.</p>';
+    listening.innerHTML = '<h4 class="settings-section-title">Nghe đọc</h4>';
     listenVoiceGroup.hidden = false; listening.append(listenVoiceGroup); panels.get("listen").append(listening);
     readerSurfaces.attach(settingsPanel);
     settingsPanel.querySelector(".reader-sheet-handle").setAttribute("aria-label", "Mở rộng hoặc thu gọn cài đặt");

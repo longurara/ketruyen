@@ -121,3 +121,10 @@ body[data-theme="dark"] .sync-feedback[data-sync-state="error"] { --sync-accent:
 .sync-feedback[data-sync-state="synced"] #sync-last-success { display: none; }
 .sync-dialog #sync-conflict-heading { margin: 18px 0 4px; font: 600 var(--text-sm)/1.6 var(--font-ui); }
 #workspace-status:not(:empty) { margin-top: 14px; padding: 10px 14px; border-radius: 10px; background: var(--surface-2); font-size: var(--text-xs); }
+.sync-dialog .workspace-card h3, .sync-dialog .ebook-auto-toggle { font: 600 var(--text-sm)/1.6 var(--font-ui); }
+.sync-dialog .workspace-card p, .sync-dialog .workspace-card .btn-link { font: 400 var(--text-sm)/1.6 var(--font-ui); }
+.sync-dialog #workspace-import-status { margin: 4px 0 10px; }
+.sync-help { margin-top: 8px; }
+.sync-help > summary { width: fit-content; min-height: 36px; padding: 6px 0; color: var(--text-muted); cursor: pointer; font: 400 var(--text-sm)/1.6 var(--font-ui); }
+.sync-help > .sync-copy { margin: 4px 0 0; }
+.sync-help > summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }

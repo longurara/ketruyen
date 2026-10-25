@@ -132,7 +132,7 @@
           },
           push: async (changes) => { guard(); const data = await api.request(api.client.rpc("reader_workbench_apply", { changes })); guard(); return data; }
         });
-        guard(); message = result.conflicts ? `${result.conflicts} mục có hai bản thay đổi. Chọn bản giữ lại bên dưới.` : result.pending ? "Còn tiện ích chờ gửi; sẽ tự thử lại." : "Đã đồng bộ sổ từ, chú giải và hồ sơ đọc. Hồ sơ chỉ áp dụng khi bạn chọn.";
+        guard(); message = result.conflicts ? `${result.conflicts} mục có hai bản thay đổi. Chọn bản giữ lại bên dưới.` : result.pending ? "Còn tiện ích chờ gửi; sẽ tự thử lại." : "Đã đồng bộ sổ từ, chú giải và hồ sơ.";
         return result;
       } catch (error) {
         if (token !== epoch || error.message === "sync-cancelled") return { pending: 0, conflicts: 0 };

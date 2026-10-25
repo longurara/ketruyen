@@ -26,6 +26,10 @@
 .settings-body .settings-group { margin-bottom: 16px; }
 .settings-body .settings-group:last-child { margin-bottom: 0; }
 .settings-body .settings-hint { line-height: 1.65; }
+.settings-help { margin-top: 16px; border-top: 1px solid var(--line); }
+.settings-help > summary { min-height: 44px; padding-block: 12px; color: var(--text-soft); cursor: pointer; font: 400 var(--text-sm)/1.6 var(--font-ui); }
+.settings-help > .settings-hint { margin: 0 0 12px; }
+.settings-help > summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .settings-disclosure { border: 1px solid var(--line); border-radius: 14px; margin-bottom: 18px; }
 .settings-disclosure summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 62px; padding: 12px 14px; list-style: none; cursor: pointer; color: var(--text); font: 600 var(--text-sm)/1.5 var(--font-ui); border-radius: 14px; }
 .settings-disclosure summary::-webkit-details-marker { display: none; }

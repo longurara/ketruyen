@@ -284,11 +284,12 @@
       </div>
 
       <div class="settings-group" id="listen-voice-group" hidden>
-        <span class="settings-label">Giọng đọc khi nghe</span>
-        <p id="listen-voice-hint" class="settings-hint">Dùng giọng đọc có sẵn trên máy. Giọng hay nhất: Edge (HoaiMy, NamMinh) và Android (Google Tiếng Việt).</p>
+        <label class="settings-label" for="listen-voice">Giọng đọc</label>
         <div class="select-wrap">
           <select id="listen-voice" class="reader-select" aria-label="Giọng đọc"></select>
         </div>
+        <p id="listen-voice-hint" class="settings-hint">Chọn giọng để nghe.</p>
+        <details id="listen-voice-help" class="settings-help"><summary>Trợ giúp nghe đọc</summary><p class="settings-hint">Tốc độ, hẹn giờ và vị trí nghe nằm trên thanh Nghe trong chương.</p><p class="settings-hint">Google Dịch cần mạng và có thể nghe khi tắt màn hình. Đây là dịch vụ không chính thức; nếu lỗi, app thử chuyển sang giọng của máy. Giọng của máy cần giữ màn hình sáng; một số giọng cũng cần mạng.</p><p id="listen-voice-install" class="settings-hint"></p></details>
       </div>
     </section>
 
@@ -791,7 +792,7 @@
     <form id="sync-login"><label for="sync-email">Email</label><input id="sync-email" type="email" autocomplete="email" required maxlength="254" placeholder="ban@example.com"><label for="sync-password">Mật khẩu</label><input id="sync-password" type="password" autocomplete="current-password" required maxlength="256"><div class="sync-actions"><button id="sync-send" class="btn-primary" type="submit">Đăng nhập</button><button id="sync-signup" class="btn-secondary" type="button">Tạo tài khoản</button></div><button id="sync-forgot" class="btn-link" type="button">Quên mật khẩu?</button></form>
     <form id="sync-reset" hidden><input id="sync-reset-email" type="email" autocomplete="username" hidden><label for="sync-new-password">Mật khẩu mới</label><input id="sync-new-password" type="password" autocomplete="new-password" required minlength="8" maxlength="72"><label for="sync-confirm-password">Nhập lại mật khẩu mới</label><input id="sync-confirm-password" type="password" autocomplete="new-password" required minlength="8" maxlength="72"><button id="sync-reset-save" class="btn-primary" type="submit">Lưu mật khẩu mới</button></form>
     <div id="sync-account" class="sync-account" hidden><strong id="sync-email-label"></strong><p id="sync-account-hint" class="sync-copy">Bật đồng bộ để kết hợp thư viện trên máy này với tài khoản. Ebook nhập riêng cần có trên cả hai máy.</p><div class="sync-actions"><button id="sync-connect" class="btn-primary" type="button">Bật đồng bộ cho máy này</button><button id="sync-now" class="btn-primary" type="button" hidden>Kiểm tra đồng bộ</button><button id="sync-signout" class="btn-secondary" type="button">Đăng xuất</button></div></div>
-    <section id="ebook-auto-panel" class="workspace-card" hidden><label class="ebook-auto-toggle"><input id="ebook-auto-enabled" type="checkbox" checked> Tự đồng bộ ebook trên máy này</label><p class="sync-copy">Các máy cùng tài khoản đang mở sẽ tự trao đổi sách còn thiếu. Bản tạm được xóa sau khi nhận; sách đang đọc không bị gián đoạn.</p><p id="ebook-auto-status" class="sync-copy" role="status" aria-live="polite"></p><button id="ebook-auto-retry" type="button" class="btn-link">Kiểm tra ebook</button><button type="button" class="btn-link" data-open-library-health>Tình trạng thư viện</button></section>
+    <section id="ebook-auto-panel" class="workspace-card" hidden><label class="ebook-auto-toggle"><input id="ebook-auto-enabled" type="checkbox" checked> Tự đồng bộ ebook</label><p id="ebook-auto-status" class="sync-copy" role="status" aria-live="polite"></p><button id="ebook-auto-retry" type="button" class="btn-link">Kiểm tra ebook</button><button type="button" class="btn-link" data-open-library-health>Tình trạng thư viện</button><details class="sync-help"><summary>Cách hoạt động</summary><p class="sync-copy">Sách còn thiếu tự chuyển giữa các máy cùng tài khoản đang mở. Bản tạm được xóa sau khi nhận; sách đang đọc vẫn giữ nguyên.</p></details></section>
     <details id="ebook-transfer-panel" class="ebook-transfer-panel" hidden>
       <summary>Chuyển ebook sang máy khác</summary>
       <p class="sync-copy">Chuyển sách riêng tư qua đám mây. Bản tạm tự xóa khi nhận thành công; phiên nhận hết hạn sau 30 phút.</p>

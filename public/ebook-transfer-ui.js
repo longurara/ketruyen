@@ -143,7 +143,7 @@
       if (!id) return false;
       const path = core.objectPath(api.owner, id);
       if (!automatic) await api.request(api.client.from("reader_ebook_transfers").insert({ id, sender_device: device, slug, title: book.titleVi.slice(0, 250), bytes: blob.size, sha256, ...(devices !== null ? { recipient_device: target } : {}) }));
-      api.report("Đang tải sách lên bucket tạm…");
+      api.report("Đang gửi ebook…");
       try {
         const payload = await blob.arrayBuffer(); api.guard();
         await api.request(api.client.storage.from(core.BUCKET).upload(path, payload, { contentType: "application/zip", cacheControl: "0", upsert: false }));
@@ -172,7 +172,7 @@
       if (!context || devices === null || document.hidden || !navigator.onLine || autoAvailable === false) return;
       if (busy || refreshing) { scheduleAuto(3000); return; }
       const perform = async () => {
-        busy = true; const api = io(); api.report = (text) => { api.guard(); autoStatus.textContent = text; }; api.report("Đang kiểm tra ebook giữa các máy…"); paint();
+        busy = true; const api = io(); api.report = (text) => { api.guard(); autoStatus.textContent = text; }; api.report("Đang kiểm tra ebook…"); paint();
         try {
           let books = await root.EbookImport.list(); api.guard();
           await api.request(api.client.rpc("reader_ebook_inventory_set", { books: books.map((b) => b.slug), excluded_books: ignoredBooks(), active: autoEnabled.checked }));
@@ -185,7 +185,7 @@
           if (!autoEnabled.checked) {
             inventorySnapshot = await api.request(api.client.from("reader_ebook_inventory").select("*").eq("user_id", api.owner).limit(500));
             transferSnapshot = await api.request(api.client.from("reader_ebook_transfers").select("*").eq("user_id", api.owner).order("created_at", { ascending: false }).limit(100)); checkedAt = Date.now();
-            api.report("Đã tạm dừng tự đồng bộ trên máy này. Bạn vẫn có thể gửi và nhận thủ công."); return;
+            api.report("Đã tạm dừng tự đồng bộ."); return;
           }
           const incoming = await api.request(api.client.from("reader_ebook_transfers").select("*").eq("user_id", api.owner).order("created_at", { ascending: false }).limit(100));
           transferSnapshot = incoming; checkedAt = Date.now();
@@ -213,7 +213,7 @@
             }
           }
           const waiting = incoming.filter((r) => r.automatic && r.sender_device === device && !r.received_at && Date.parse(r.expires_at) > Date.now()).length;
-          if (!failed) api.report(sent || received ? `Đã nhận ${received} ebook · Đã gửi ${sent} ebook. Bản tạm được xóa khi máy nhận lưu xong.` : waiting ? `${waiting} ebook đang chờ máy nhận lưu. Sẽ tự kiểm tra lại.` : online.size ? "Ebook đã khớp với các máy đang mở." : "Sẵn sàng · Mở ứng dụng trên máy khác để tự đồng bộ ebook.");
+          if (!failed) api.report(sent || received ? `Đã nhận ${received} · Đã gửi ${sent} ebook.` : waiting ? `${waiting} ebook chờ nhận.` : online.size ? "Ebook đã khớp." : "Sẵn sàng · Mở app trên máy khác.");
         } catch (error) {
           if (error.message !== "transfer-cancelled" && context?.owner === api.owner) {
             if (["PGRST202", "PGRST205", "42P01"].includes(error.code)) { autoAvailable = false; autoStatus.textContent = "Cần chạy migration 0005 để bật tự đồng bộ ebook. Chuyển thủ công vẫn dùng được."; }

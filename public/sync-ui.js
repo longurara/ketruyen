@@ -63,10 +63,11 @@
       transfers.setContext(enabled && !recovery ? { owner: session.user.id, client, sessionKey: workspace.sessionKey(session) } : null);
       options.journal?.setContext(enabled && !recovery ? session.user.id : "", session ? workspace.sessionKey(session) : "");
       options.workbench?.setContext(enabled && !recovery ? session.user.id : "", session ? workspace.sessionKey(session) : "");
-      $("sync-workbench-status").hidden = !enabled;
+      $("sync-workbench-status").hidden = !enabled || options.workbench?.snapshot().message.startsWith("Đã đồng bộ");
       $("sync-workbench-status").textContent = options.workbench?.snapshot().message || "";
       $("sync-workbench-review").hidden = !enabled || !Object.keys(options.workbench?.snapshot().conflicts || {}).length;
-      $("sync-account-hint").textContent = enabled ? "Thiết bị này đã bật đồng bộ. Tiến độ tự giữ vị trí đọc xa hơn; ebook tự chuyển khi các máy đang mở." : "Bật đồng bộ để kết hợp thư viện trên máy này với tài khoản và chuyển ebook giữa các máy.";
+      $("sync-account-hint").hidden = enabled;
+      $("sync-account-hint").textContent = "Bật đồng bộ để dùng thư viện trên các máy cùng tài khoản.";
       $("sync-connect").hidden = enabled; $("sync-now").hidden = !enabled;
       for (const id of ["sync-send", "sync-signup", "sync-forgot", "sync-reset-save", "sync-connect", "sync-now", "sync-signout"]) $(id).disabled = busy;
       $("btn-sync").classList.toggle("is-connected", enabled);
