@@ -32,7 +32,7 @@ Mở **Tiện ích đọc** trong thanh bên máy tính, hoặc nút **Tiện í
 - Chọn tối đa tám thao tác cho menu nhanh trong tab **Tùy chỉnh**. Nút Tùy chỉnh luôn có để thay đổi danh sách.
 - Lưu tối đa 12 hồ sơ gồm cỡ chữ, giãn dòng, phông, giao diện, màu ảnh, E-Ink, đọc liên tục, chạm lật trang và vùng đọc. Có thể áp dụng, cập nhật hoặc xóa hồ sơ.
 - Thanh trạng thái có vị trí trong toàn sách, tiến độ chương và số phút còn lại ước tính theo 280 từ/phút. Có thể ẩn từng mục hoặc ẩn toàn bộ. Thanh tạm ẩn khi trình nghe đang mở.
-- Cài đặt, chú giải, từ vựng và hồ sơ lưu ở `tenshi-workbench-v1`, được đưa vào bản sao lưu ZIP hiện có. Không gửi lên máy chủ.
+- Cài đặt, chú giải, từ vựng và hồ sơ lưu ở `tenshi-workbench-v1`, được đưa vào bản sao lưu ZIP hiện có. Khi bật đồng bộ tài khoản và máy chủ đã có migration 0007, chú giải, sổ từ (gồm lịch ôn) và các hồ sơ đã lưu được đồng bộ. Hồ sơ chỉ đổi giao diện máy hiện tại khi bấm **Áp dụng**. Bật/tắt chú giải, menu nhanh, footer và cài đặt đang dùng vẫn riêng theo máy. Xem [hướng dẫn đồng bộ tiện ích](workbench-sync.md).
 
 ## PDF
 

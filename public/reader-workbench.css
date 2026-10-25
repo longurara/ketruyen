@@ -76,3 +76,6 @@ body.is-listening .reader-status-footer { display: none; }
 }
 @media (max-width: 1080px) { .reader-status-footer { bottom: calc(64px + env(safe-area-inset-bottom)); padding-bottom: 8px; } .reader-quick-menu { bottom: calc(106px + env(safe-area-inset-bottom)); right: 12px; } .workbench-panel { padding: 18px; } }
 @media (max-width: 600px) { .workbench-tabs { padding-inline: 14px; } .page-flip-preview { padding: 14px; } }
+.workbench-sync { flex: 0 0 auto; max-height: 44dvh; overflow: auto; padding: 0 20px; }
+.workbench-sync .tool-card { overflow-wrap: anywhere; }
+.workbench-sync .btn-secondary { margin: 4px 6px 4px 0; }

@@ -1,5 +1,9 @@
 # Đồng bộ giữa các máy
 
+## Sổ từ, chú giải và hồ sơ đọc (0007)
+
+Sau 0006, chạy `supabase/migrations/202610250007_workbench_sync.sql` rồi triển khai frontend với service worker `tenshi-shell-v50` và tải lại app trên các máy. Migration bổ sung bảng riêng, RLS theo tài khoản/phiên thiết bị, CAS và tín hiệu Realtime. Không cần bucket, Edge Function hoặc cron mới. Khi chưa có migration, app giữ dữ liệu tiện ích trên máy và báo rõ; dữ liệu đọc cũ vẫn đồng bộ. Xem [hướng dẫn đồng bộ tiện ích](workbench-sync.md).
+
 ## Nhật ký và tình trạng thư viện (0006)
 
 Sau 0005, chạy `supabase/migrations/202610230006_reading_journal.sql` và tải lại app. Migration bổ sung bảng nhật ký riêng với RLS/CAS, thời điểm xác nhận inventory và nhãn tên/tác giả ebook. Không cần thêm bucket hoặc cron; nhật ký không bị dọn theo hạn thống kê. Khi chưa có 0006, nhật ký lưu cục bộ và dữ liệu đọc/chuyển ebook cũ vẫn hoạt động. Xem [hướng dẫn nhật ký và tình trạng thư viện](reading-journal.md).
@@ -33,7 +37,7 @@ Khoảng đọc/nghe có UUID riêng, UTC, sách, thiết bị, lần tương t�
 
 Bộ tổng hợp lấy hợp các khoảng thời gian. Phần giao nhau thuộc lần tương tác mới nhất, sau đó phân xử bằng ID ổn định; không cộng bộ đếm từ từng máy. Mục tiêu chỉ đồng bộ định nghĩa (`id`, loại, đích, thời điểm bắt đầu) qua CAS; tiến độ lấy từ hoạt động và tập ID chương hoàn thành. Hai máy sửa cùng mục tiêu sẽ hiện lựa chọn bản giữ lại.
 
-**Thống kê** có lịch 366 ngày và chuỗi ngày đạt ít nhất một phút đọc/nghe. Múi giờ tài khoản thống nhất `Asia/Ho_Chi_Minh`. Cài đặt đọc, danh sách nhân vật và các tiện ích khác không được tải nguyên trạng lên server.
+**Thống kê** có lịch 366 ngày và chuỗi ngày đạt ít nhất một phút đọc/nghe. Múi giờ tài khoản thống nhất `Asia/Ho_Chi_Minh`. Cài đặt đang dùng trên máy và danh sách nhân vật không được tải nguyên trạng lên server; sau 0007, các hồ sơ đọc đã lưu, chú giải và sổ từ có luồng đồng bộ riêng.
 
 Khi nâng cấp, máy đóng băng một bản thống kê cũ riêng trước nhịp hoạt động mới. Tại **Đồng bộ → Thống kê trước khi đồng bộ**, chọn **Dùng thống kê cũ của máy này** trên đúng máy gốc. Server chỉ nhận một lần, lưu mốc trước đồng bộ; số liệu từ máy khác vẫn ở cục bộ, không tự cộng vào tài khoản. Khi chưa chọn máy gốc, thống kê cloud chỉ hiển thị hoạt động mới.
 

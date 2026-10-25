@@ -18,14 +18,39 @@ test("workspace migrations: real session binding, account RLS, revoked JWT denia
     await db.query("insert into auth.users values($1),($2)", [a, b]);
     await db.query("insert into auth.sessions values($1,$4),($2,$4),($3,$4),($5,$6)", [sa, sb, sc, a, other, b]);
     for (const name of ["202610230001_reader_sync.sql", "202610230002_ebook_transfers.sql", "202610230003_reader_workspace.sql", "202610230003_reader_workspace.sql", "202610230004_enforce_reader_devices.sql", "202610230004_enforce_reader_devices.sql", "202610230005_auto_ebook_sync.sql", "202610230005_auto_ebook_sync.sql", "202610230006_reading_journal.sql", "202610230006_reading_journal.sql"]) await db.exec(fs.readFileSync(path.join(__dirname, "../supabase/migrations", name), "utf8"));
+    const workbenchMigration = fs.readFileSync(path.join(__dirname, "../supabase/migrations/202610250007_workbench_sync.sql"), "utf8");
+    await db.exec(workbenchMigration); await db.exec(workbenchMigration);
     const user = async (id, sid) => { await db.exec("reset role; set role authenticated"); await db.query("select set_config('request.jwt.claim.sub',$1,false),set_config('request.jwt.claim.sid',$2,false)", [id, sid]); };
     const rpc = async (sql, args = []) => (await db.query(sql, args)).rows;
     const register = (id) => rpc("select reader_device_register($1,'Test device')", [id]);
     const write = async (key, value, expected = 0) => (await rpc("select * from reader_sync_apply($1::jsonb)", [JSON.stringify([{ key, value, expected_revision: expected }])]))[0];
     await user(a, sa); await assert.rejects(write("favorite/book", true), /row-level security/); await register(da);
     await write("favorite/book", true); await user(a, sb); await register(dbid); await user(a, sc); await register(dc);
+    const word = { id: "word", slug: "book", term: "天使", meaning: "Thiên sứ", sentence: "Câu gốc", volIdx: 0, chapIdx: 2, p: 3 };
+    const writeWorkbench = (key, value, expected_revision = 0) => rpc("select * from reader_workbench_apply($1)", [JSON.stringify([{ key, value, expected_revision }])]);
+    assert.equal((await writeWorkbench("glossary/word", word))[0].applied, true);
+    await user(a, sb); assert.equal((await writeWorkbench("glossary/word", { ...word, meaning: "Bản sửa cạnh tranh" }))[0].applied, false);
+    for (const value of [{ ...word, token: "not allowed" }, { ...word, p: -1 }, { ...word, meaning: "" }, { ...word, volIdx: 1.5 }, { ...word, sentence: null }, { ...word, id: "different" }]) await assert.rejects(writeWorkbench("glossary/word", value, 1), /Invalid workbench record/);
+    await assert.rejects(writeWorkbench("glossary/__proto__", null), /Invalid workbench record/);
+    await assert.rejects(rpc("update reader_workbench_records set value=null"), /permission denied/);
+    const settings = require("../public/reader-workbench").profileSettings();
+    for (let i = 0; i < 12; i++) assert.equal((await writeWorkbench("profile/p" + i, { id: "p" + i, name: "Hồ sơ " + i, settings }))[0].applied, true);
+    await assert.rejects(writeWorkbench("profile/over", { id: "over", name: "Vượt hạn", settings }), /giới hạn/);
+    await assert.rejects(writeWorkbench("profile/p0", { id: "p0", name: "Invalid", settings: { ...settings, layout: { ...settings.layout, width: "invalid" } } }, 1), /Invalid workbench record/);
+    await writeWorkbench("profile/p0", null, 1); await writeWorkbench("profile/p0", { id: "p0", name: "Khôi phục", settings }, 2);
+    const replaceAtCapacity = await rpc("select * from reader_workbench_apply($1)", [JSON.stringify([
+      { key: "profile/aaa", value: { id: "aaa", name: "Thay thế khi đầy", settings }, expected_revision: 0 },
+      { key: "profile/p0", value: null, expected_revision: 3 }
+    ])]); assert.equal(replaceAtCapacity.filter((row) => row.applied).length, 2);
+    const learned = { ...word, level: 2, due: 123456, added: 100 };
+    assert.equal((await writeWorkbench("vocabulary/word", learned))[0].applied, true);
+    await assert.rejects(writeWorkbench("vocabulary/word", { ...learned, level: 7 }, 1), /Invalid workbench record/);
+    await writeWorkbench("glossary/word", null, 1); assert.equal((await writeWorkbench("glossary/word", word, 1))[0].applied, false);
     await user(b, other); await register(randomUUID()); assert.equal((await rpc("select * from reader_devices")).length, 1); assert.equal((await rpc("select * from reader_sync_records")).length, 0);
     await rpc("select reader_device_manage($1,'revoke')", [sa]); await user(a, sa); assert.equal((await rpc("select reader_device_active() as active"))[0].active, true, "other account revoked a device");
+    await user(b, other); assert.equal((await rpc("select * from reader_workbench_records")).length, 0);
+    await assert.rejects(rpc("delete from reader_workbench_records"), /permission denied/);
+    await user(a, sa);
     // Automatic inventory is private and reservation is idempotent across sources.
     const autoSlug = "ebook-" + "f".repeat(24), autoArgs = [autoSlug, "Automatic book", 10, "f".repeat(64), dbid];
     const inventory = (books, ignored = [], active = true) => rpc("select reader_ebook_inventory_set($1,$2,$3)", [JSON.stringify(books), JSON.stringify(ignored), active]);
@@ -84,6 +109,8 @@ test("workspace migrations: real session binding, account RLS, revoked JWT denia
     await user(a, sc); assert.equal((await rpc("select * from reader_ebook_transfers")).length, 0, "wrong recipient sees transfer"); await rpc("select set_config('storage.operation','object.get_authenticated',false)"); assert.equal((await rpc("select * from storage.objects")).length, 0);
     await user(a, sb); assert.equal((await rpc("select * from storage.objects")).length, 1);
     await rpc("select reader_device_manage($1,'revoke')", [sa]); await user(a, sa);
+    assert.equal((await rpc("select * from reader_workbench_records")).length, 0);
+    await assert.rejects(writeWorkbench("glossary/new", { ...word, id: "new" }), /device-revoked/);
     assert.equal((await rpc("select * from reader_sync_records")).length, 0); assert.equal((await rpc("select * from storage.objects")).length, 0);
     await rpc("select set_config('storage.operation','object.upload',false)");
     await assert.rejects(rpc("insert into storage.objects(bucket_id,name) values('ebook-transfers',$1)", [file]), /row-level security/);

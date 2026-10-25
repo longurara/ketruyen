@@ -345,6 +345,8 @@ async function checkLinkPreviews() {
     catch (error) { failed = true; console.error(`✖ automatic ebooks: ${error.stack}`); }
     try { await require("./journal").runJournalChecks(browser, BASE); }
     catch (error) { failed = true; console.error(`✖ journal and library health: ${error.stack}`); }
+    try { await require("./workbench-sync").runWorkbenchSyncChecks(browser, BASE); }
+    catch (error) { failed = true; console.error(`✖ workbench sync: ${error.stack}`); }
     try { await require("./remove-reading").runRemoveReadingChecks(browser, BASE); }
     catch (error) { failed = true; console.error(`✖ remove reading: ${error.stack}`); }
     try { await require("./offline-shelf").runOfflineShelfChecks(browser, BASE); }

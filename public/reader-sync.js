@@ -133,13 +133,14 @@
   }
   async function synchronize(state, io) {
     const merge = io.merge || mergeReading;
+    const valid = io.valid || validRecord;
     const capture = () => stage(state, io.read());
     capture(); await io.save(state); // Durable outbox before attempting the network.
     const rows = await io.pull();
     capture();
     const updates = {}, accepted = [], local = io.read();
     for (const row of rows) {
-      if (!validRecord(row.record_key, row.value) || !Number.isSafeInteger(row.revision) || row.revision < 1) throw new Error("Dữ liệu đồng bộ không đúng định dạng.");
+      if (!valid(row.record_key, row.value) || !Number.isSafeInteger(row.revision) || row.revision < 1) throw new Error("Dữ liệu đồng bộ không đúng định dạng.");
       const pending = state.pending[row.record_key];
       if (pending || Object.hasOwn(local, row.record_key)) {
         const merged = merge(row.record_key, local[row.record_key] ?? null, row.value, state.baseline[row.record_key]?.value, Object.hasOwn(state.baseline, row.record_key));
@@ -166,7 +167,7 @@
       for (let offset = 0; offset < changes.length; offset += 100) {
         const replies = await io.push(changes.slice(offset, offset + 100));
         for (const row of replies) {
-          if (!validRecord(row.record_key, row.value) || !Number.isSafeInteger(row.revision) || row.revision < 0) throw new Error("Phản hồi đồng bộ không hợp lệ.");
+          if (!valid(row.record_key, row.value) || !Number.isSafeInteger(row.revision) || row.revision < 0) throw new Error("Phản hồi đồng bộ không hợp lệ.");
           if (row.applied || equal(state.pending[row.record_key]?.value, row.value)) {
             if (row.applied) uploaded++;
             state.baseline[row.record_key] = row; delete state.pending[row.record_key]; delete state.conflicts[row.record_key];

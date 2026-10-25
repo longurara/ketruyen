@@ -17,6 +17,8 @@
     });
     try { linked = localStorage.getItem(core.LINK_KEY) || ""; } catch (_) {}
     options.surfaces.attach(dialog);
+    $("sync-account-hint").insertAdjacentHTML("afterend", '<p id="sync-workbench-status" class="sync-copy" role="status" hidden></p><button id="sync-workbench-review" class="btn-secondary" type="button" hidden>Kiểm tra sổ từ & hồ sơ</button>');
+    $("sync-workbench-review").onclick = () => { options.surfaces.close(dialog); options.reviewWorkbench?.(); };
     const message = (text, next = phase) => {
       phase = next; status.textContent = text;
       // A device error that is this sync failure is already shown here.
@@ -25,7 +27,8 @@
     };
     function paintStatus() {
       const enabled = Boolean(session && linked === session.user.id), own = state?.owner === session?.user?.id ? state : null;
-      const conflicts = Object.keys(own?.conflicts || {}).length, pending = Object.keys(own?.pending || {}).length;
+      const workbench = options.workbench?.snapshot(), linkedWorkbench = enabled && workbench?.owner === session.user.id ? workbench : null;
+      const conflicts = Object.keys(own?.conflicts || {}).length + Object.keys(linkedWorkbench?.conflicts || {}).length, pending = Object.keys(own?.pending || {}).length + (linkedWorkbench?.pending || 0);
       const current = !navigator.onLine ? "offline" : phase === "pending" && conflicts ? "conflict" : phase;
       const labels = { idle: !session ? "Chưa đăng nhập" : enabled ? "Sẵn sàng đồng bộ" : "Chưa bật đồng bộ", syncing: "Đang kiểm tra và đồng bộ", working: "Đang xử lý…", synced: "Đã đồng bộ", pending: "Chờ kiểm tra thay đổi", offline: "Đang offline", conflict: "Có thay đổi cần chọn", error: "Chưa thực hiện được" };
       const title = labels[current];
@@ -59,6 +62,10 @@
       workspace.setContext(enabled && !recovery ? { owner: session.user.id, client, session } : null);
       transfers.setContext(enabled && !recovery ? { owner: session.user.id, client, sessionKey: workspace.sessionKey(session) } : null);
       options.journal?.setContext(enabled && !recovery ? session.user.id : "", session ? workspace.sessionKey(session) : "");
+      options.workbench?.setContext(enabled && !recovery ? session.user.id : "", session ? workspace.sessionKey(session) : "");
+      $("sync-workbench-status").hidden = !enabled;
+      $("sync-workbench-status").textContent = options.workbench?.snapshot().message || "";
+      $("sync-workbench-review").hidden = !enabled || !Object.keys(options.workbench?.snapshot().conflicts || {}).length;
       $("sync-account-hint").textContent = enabled ? "Thiết bị này đã bật đồng bộ. Tiến độ tự giữ vị trí đọc xa hơn; ebook tự chuyển khi các máy đang mở." : "Bật đồng bộ để kết hợp thư viện trên máy này với tài khoản và chuyển ebook giữa các máy.";
       $("sync-connect").hidden = enabled; $("sync-now").hidden = !enabled;
       for (const id of ["sync-send", "sync-signup", "sync-forgot", "sync-reset-save", "sync-connect", "sync-now", "sync-signout"]) $(id).disabled = busy;
@@ -156,6 +163,7 @@
               state.baseline[resolution.key] = remote; delete state.conflicts[resolution.key];
             }
           }
+          const previousSuccess = state.lastSyncedAt;
           const result = await core.synchronize(state, {
             read: () => { guard(); return core.readLocal(localStorage); },
             save: (value) => { guard(); return saveJournal(owner, value); },
@@ -173,8 +181,13 @@
           guard();
           await workspace.flush(); guard();
           await options.journal?.flush({ owner, client, guard, request: async (query) => { guard(); const result = await request(query); guard(); if (result.error) throw result.error; return result.data; } }); guard();
+          const workbenchResult = await options.workbench?.flush({ owner, client, guard, request: async (query) => { guard(); const result = await request(query); guard(); if (result.error) throw result.error; return result.data; } }); guard();
+          result.pending += workbenchResult?.pending || 0; result.conflicts += workbenchResult?.conflicts || 0;
+          state.lastTransfer = { uploaded: result.uploaded + (workbenchResult?.uploaded || 0), downloaded: result.downloaded + (workbenchResult?.downloaded || 0) };
+          if (result.pending || result.conflicts) state.lastSyncedAt = previousSuccess;
+          await saveJournal(owner, state); guard();
           dirty = result.pending > 0;
-          message(result.conflicts ? "Có thay đổi trên cả hai máy. Chọn bản cần giữ bên dưới; các mục khác vẫn đồng bộ."
+          message(result.conflicts ? "Có thay đổi trên cả hai máy. Kiểm tra bên dưới hoặc trong Tiện ích → Sổ từ / Hồ sơ; các mục khác vẫn đồng bộ."
             : result.pending ? "Còn thay đổi chờ gửi · Sẽ thử lại tự động." : `Đã đồng bộ lúc ${new Date(state.lastCheckedAt).toLocaleTimeString("vi", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}.`, result.conflicts ? "conflict" : result.pending ? "pending" : "synced");
         };
         if (navigator.locks) await navigator.locks.request("ketruyen-reader-sync", { ifAvailable: true }, async (lock) => { if (lock) await run(); else message("Đang đồng bộ ở tab khác.", "pending"); });
@@ -259,6 +272,7 @@
     };
     addEventListener("ketruyen-library-change", changed);
     addEventListener("ketruyen-journal-change", changed);
+    addEventListener("ketruyen-workbench-change", changed);
     addEventListener("ketruyen-workspace-change", () => schedule());
     addEventListener("storage", (event) => { if (event.key?.startsWith("tenshi-")) { options.onApplied(); changed(); } });
     addEventListener("online", () => { if (session && linked === session.user.id) message("Đã có mạng · Đang chờ kiểm tra lại dữ liệu.", "pending"); else paintStatus(); schedule(0); });
@@ -268,6 +282,7 @@
     if (localStorage.getItem(core.AUTH_KEY) || showAfterLogin) setup().catch(failure);
     paintStatus();
     options.journal?.connect({ schedule, exclusive });
+    options.workbench?.connect({ schedule, exclusive });
     return { open, sync };
   }
   root.CloudSync = { create };

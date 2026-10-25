@@ -1236,7 +1236,8 @@
     renderRecentChapters();
     attachEvents();
     await restoreRoute();
-    CloudSync.create({ surfaces: readerSurfaces, closeSettings, journal: readingJournal,
+    CloudSync.create({ surfaces: readerSurfaces, closeSettings, journal: readingJournal, workbench: readerWorkbench.sync,
+      reviewWorkbench: () => readerWorkbench.open("vocabulary"),
       onEbookState: (snapshot) => { shelfTransfers = snapshot; paintShelfBookStates(); },
       capture: () => { if (currentView !== "reader") return null; const p = captureReaderPosition(); return p ? { slug: p.slug, volIdx: p.volIdx, chapIdx: p.chapIdx, anchor: p.anchor } : null; },
       resume: async (position) => { const index = SERIES.findIndex((s) => s.slug === position.slug); if (index < 0) return false; await ensureSeriesIndex(SERIES[index]); if (!SERIES[index].volumesData?.[position.volIdx]?.chapters[position.chapIdx]) throw new Error("Chương nguồn không còn trong mục lục."); activateSeries(index); openChapter(position.volIdx, position.chapIdx, { anchor: position.anchor }); return true; },
@@ -1250,7 +1251,7 @@
         renderShelf();
       },
       onApplied: () => {
-        libraryTools.reload(); readerFeatures.reloadCloud(); readingProgress = null; readingHistory = []; chapterState = {};
+        libraryTools.reload(); readerFeatures.reloadCloud(); readerWorkbench.reload(); readingProgress = null; readingHistory = []; chapterState = {};
         loadReadingProgress(); loadChapterState(); loadReadingHistory();
         renderShelf(); renderVolumeGrid(); renderChapterList(); renderRecentChapters();
         preserveReaderPosition(() => document.querySelectorAll(".reader-frame").forEach((element) => libraryTools.decorate(element)));

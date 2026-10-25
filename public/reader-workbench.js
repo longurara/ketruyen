@@ -1,8 +1,8 @@
 (function (root, factory) {
-  const api = factory();
+  const api = factory(root);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.ReaderWorkbench = api;
-})(globalThis, function () {
+})(globalThis, function (root) {
   "use strict";
   const KEY = "tenshi-workbench-v1";
   const ACTIONS = { map: "Bản đồ sách", preview: "Lật xem trước", xray: "Lần xuất hiện", words: "Chú giải từ", vocabulary: "Sổ từ vựng", profiles: "Hồ sơ đọc", bookmark: "Đánh dấu", marks: "Ghi chú", settings: "Cài đặt", journal: "Nhật ký đọc" };
@@ -54,16 +54,64 @@
   }
   function create(options) {
     const $ = (s) => document.querySelector(s), ctx = options.context;
-    let state; try { state = normalizeState(JSON.parse(localStorage.getItem(KEY))); } catch (_) { state = normalizeState(); }
+    let state;
+    try { state = root.WorkbenchSync.initialize(localStorage, normalizeState); }
+    catch (error) {
+      try { state = normalizeState(JSON.parse(localStorage.getItem(KEY))); } catch (_) { state = normalizeState(); }
+      options.message(error.name === "QuotaExceededError" ? "Chưa đủ chỗ lưu tiện ích. Hãy sao lưu rồi giải phóng dung lượng." : error.message);
+    }
     let committed = JSON.stringify(state), generation = 0, activeTab = "home", directTab = null, opener = null, selection = null, target = null;
+    let formDirty = false;
+    const cloudSync = root.WorkbenchSync.create({ storage: localStorage, onApplied: reload, onStatus: paintSync });
     const entries = () => ReaderFeatures.chapterEntries(ctx().series);
     const currentIndex = (items = entries()) => Math.max(0, items.findIndex((e) => e.volIdx === ctx().volIdx && e.chapIdx === ctx().chapIdx));
     const persist = () => {
-      try { const serialized = JSON.stringify(state); localStorage.setItem(KEY, serialized); committed = serialized; return true; }
-      catch (_) { state = normalizeState(JSON.parse(committed)); options.message("Không đủ chỗ lưu tiện ích. Hãy sao lưu rồi giải phóng dung lượng."); return false; }
+      try {
+        const previous = JSON.parse(committed), result = root.WorkbenchSync.commit(localStorage, previous, normalizeState(state));
+        state = normalizeState(result.state); committed = JSON.stringify(state);
+        if (result.copied) options.message("Mục gốc đã thay đổi trên máy khác; phần bạn vừa viết được lưu thành mục riêng.");
+        if (JSON.stringify(root.WorkbenchSync.records(previous)) !== JSON.stringify(root.WorkbenchSync.records(state))) {
+          cloudSync.changed(navigator.onLine); dispatchEvent(new Event("ketruyen-workbench-change"));
+        }
+        return true;
+      } catch (error) { state = normalizeState(JSON.parse(committed)); options.message(error.name === "QuotaExceededError" ? "Không đủ chỗ lưu tiện ích. Hãy sao lưu rồi giải phóng dung lượng." : error.message); return false; }
     };
     document.body.insertAdjacentHTML("beforeend", `<dialog id="workbench-dialog" class="tools-dialog workbench-dialog" aria-labelledby="workbench-title"><header class="tools-header"><div><p class="tools-eyebrow" id="workbench-book"></p><h2 id="workbench-title">Tiện ích sách</h2></div><button type="button" class="tools-close" aria-label="Đóng tiện ích sách"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></header><section id="workbench-home-panel" class="workbench-home-panel"><label>Tìm chức năng<input id="workbench-search" type="search" placeholder="Ghi chú, nhân vật, cỡ chữ…"></label><div id="workbench-home-results"></div></section><div id="workbench-panel" class="workbench-panel"></div></dialog><aside id="reader-quick-menu" class="reader-quick-menu" hidden><button id="reader-quick-toggle" type="button" class="btn-secondary" aria-expanded="false" aria-controls="reader-quick-actions"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>Tiện ích</button><div id="reader-quick-actions" hidden></div></aside><div id="reader-status-footer" class="reader-status-footer" hidden></div>`);
     const dialog = $("#workbench-dialog"), panel = $("#workbench-panel"), quick = $("#reader-quick-menu"), quickActions = $("#reader-quick-actions"), footer = $("#reader-status-footer");
+    panel.insertAdjacentHTML("beforebegin", '<section id="workbench-sync" class="workbench-sync" hidden><p id="workbench-sync-status" class="tools-hint" role="status"></p><div id="workbench-sync-conflicts"></div></section>');
+    panel.addEventListener("input", (event) => { if (event.target.closest("#glossary-form, #profile-form")) formDirty = true; });
+    function paintSync() {
+      const host = $("#workbench-sync"); if (!host) return;
+      host.hidden = libraryActive || !["words", "vocabulary", "profiles"].includes(activeTab);
+      const snapshot = cloudSync.snapshot(); $("#workbench-sync-status").textContent = snapshot.message;
+      const accountStatus = $("#sync-workbench-status"); if (accountStatus) accountStatus.textContent = snapshot.message;
+      const conflicts = $("#workbench-sync-conflicts"); conflicts.replaceChildren();
+      let local = {}; try { local = root.WorkbenchSync.read(localStorage); } catch (_) {}
+      const describe = (value) => !value ? "Đã xóa" : value.name ? `${value.name} · ${value.settings.fontSize}px · ${value.settings.theme}` : `${value.term}: ${value.meaning}${value.level !== undefined ? ` · Mức ${value.level} · Ôn ${new Date(value.due).toLocaleString("vi-VN")}` : ""}`;
+      for (const [key, remote] of Object.entries(snapshot.conflicts)) {
+        const card = document.createElement("article"); card.className = "tool-card";
+        const title = document.createElement("strong"); title.textContent = ({ glossary: "Chú giải", vocabulary: "Từ vựng", profile: "Hồ sơ đọc" })[key.split("/")[0]];
+        card.append(title);
+        for (const [name, value] of [["Máy này", local[key]], ["Đám mây", remote.value]]) { const p = document.createElement("p"); p.textContent = `${name}: ${describe(value)}`; card.append(p); }
+        for (const [remoteChoice, label] of [[false, "Giữ bản trên máy"], [true, "Dùng bản đám mây"]]) {
+          const button = document.createElement("button"); button.type = "button"; button.className = "btn-secondary"; button.textContent = label; button.disabled = snapshot.busy;
+          button.dataset.workbenchResolve = remoteChoice ? "remote" : "local"; button.onclick = () => cloudSync.resolve(key, remoteChoice); card.append(button);
+        }
+        conflicts.append(card);
+      }
+    }
+    function reload() {
+      // Keep a typed draft intact; commit() will compare its original record on save.
+      if (dialog.open && (formDirty || activeTab === "words" && selection?.id)) return;
+      const next = normalizeState(JSON.parse(localStorage.getItem(KEY))), serialized = JSON.stringify(next);
+      if (serialized === committed) return;
+      const field = ({ words: "glossary", vocabulary: "vocabulary", profiles: "profiles" })[activeTab];
+      const refresh = field && JSON.stringify(next[field]) !== JSON.stringify(state[field]);
+      for (const key of Object.keys(next)) if (JSON.stringify(next[key]) === JSON.stringify(state[key])) next[key] = state[key];
+      state = next; committed = serialized;
+      renderQuick(); decorateAll();
+      if (dialog.open && !libraryActive && refresh) render(activeTab);
+    }
     let featureArgument = null, libraryActive = false;
     $("#workbench-title").textContent = "Tiện ích đọc";
     panel.insertAdjacentHTML("beforebegin", '<button type="button" class="btn-link workbench-return" id="workbench-library-return" hidden>← Về tiện ích</button>');
@@ -86,7 +134,7 @@
     $("#btn-reader-listen").after(sideButton);
     function close() { if (!libraryActive || options.library.canClose()) options.surfaces.close(dialog); }
     dialog.querySelector(".tools-close").onclick = close;
-    dialog.addEventListener("close", () => { generation++; opener?.focus({ preventScroll: true }); });
+    dialog.addEventListener("close", () => { generation++; formDirty = false; selection = null; reload(); opener?.focus({ preventScroll: true }); });
     dialog.querySelectorAll("[data-workbench-tab]").forEach((b) => b.onclick = () => render(b.dataset.workbenchTab));
     function open(tab = activeTab, argument) {
       options.closeSettings(); quickActions.hidden = true; $("#reader-quick-toggle").setAttribute("aria-expanded", "false");
@@ -118,10 +166,12 @@
       if (!dialog.open) { opener = document.activeElement; options.closeSettings(); options.surfaces.open(dialog); }
       libraryActive = true; generation++; panel.hidden = true; featureSlot.hidden = true; librarySlot.hidden = false;
       $("#workbench-title").textContent = title; $("#workbench-library-return").hidden = false; updateNavigation();
+      paintSync();
     }
     function render(tab) {
       if (libraryActive && !options.library.canClose()) return;
       activeTab = tab; libraryActive = false; generation++; panel.scrollTop = 0;
+      formDirty = false; paintSync();
       $("#workbench-title").textContent = LABELS[tab] || "Tiện ích đọc";
       panel.hidden = FEATURE_TABS.includes(tab); featureSlot.hidden = !panel.hidden; librarySlot.hidden = true; updateNavigation();
       if (tab === "home") { panel.hidden = true; renderHome(); return; }
@@ -230,7 +280,7 @@
     document.addEventListener("pointerdown", (event) => { if (event.target.closest("[data-workbench-selection]")) selection = selectedSource() || selection; }, { capture: true });
     function renderWords() {
       const book = ctx().series, terms = state.glossary.filter((t) => t.slug === book.slug), draft = selection?.slug === book.slug ? selection : {};
-      panel.innerHTML = `<p class="tools-hint">Ghi nghĩa ngắn cho từ khó hoặc tên riêng. Bôi đen một từ trong truyện để lấy kèm câu gốc. Mọi dữ liệu chỉ lưu trên thiết bị này.</p><label class="workbench-switch"><span class="workbench-switch-copy"><strong>Hiện chú giải trong trang đọc</strong><span>Nghĩa ngắn hiện ngay phía trên từ trong truyện.</span></span><input id="word-wise-on" type="checkbox" role="switch"${state.inline ? " checked" : ""}></label><form id="glossary-form" class="tools-editor"><label>Từ / tên<input name="term" maxlength="80" required placeholder="Ví dụ: Phù thủy Tro Tàn" value="${escape(draft.term || "")}"></label><label>Nghĩa / chú giải<textarea name="meaning" maxlength="1000" required rows="2" placeholder="Một dòng ngắn gọn, hiện phía trên từ khi đọc">${escape(draft.meaning || "")}</textarea></label>${draft.sentence ? `<p class="tools-hint">${escape(draft.sentence)}</p>` : ""}<div class="tools-actions"><button class="btn-primary" type="submit">Lưu chú giải</button><button class="btn-secondary" type="submit" name="vocab" value="yes">Lưu chú giải & học từ</button></div></form><div>${terms.map((t, i) => `<article class="tool-card"><strong>${escape(t.term)}</strong><p>${escape(t.meaning)}</p><div class="tools-actions"><button type="button" class="btn-secondary" data-term-edit="${i}">Sửa</button><button type="button" class="btn-secondary" data-term-learn="${i}">Lưu học từ</button><button type="button" class="btn-secondary ui-danger" data-term-delete="${i}">Xóa</button></div></article>`).join("") || '<p class="tools-empty">Chưa có chú giải trong sách này.</p>'}</div>`;
+      panel.innerHTML = `<p class="tools-hint">Ghi nghĩa ngắn cho từ khó hoặc tên riêng. Bôi đen một từ trong truyện để lấy kèm câu gốc. Chú giải và sổ từ đi cùng tài khoản khi bật đồng bộ; cách hiển thị giữ riêng trên máy này.</p><label class="workbench-switch"><span class="workbench-switch-copy"><strong>Hiện chú giải trong trang đọc</strong><span>Nghĩa ngắn hiện ngay phía trên từ trong truyện.</span></span><input id="word-wise-on" type="checkbox" role="switch"${state.inline ? " checked" : ""}></label><form id="glossary-form" class="tools-editor"><label>Từ / tên<input name="term" maxlength="80" required placeholder="Ví dụ: Phù thủy Tro Tàn" value="${escape(draft.term || "")}"></label><label>Nghĩa / chú giải<textarea name="meaning" maxlength="1000" required rows="2" placeholder="Một dòng ngắn gọn, hiện phía trên từ khi đọc">${escape(draft.meaning || "")}</textarea></label>${draft.sentence ? `<p class="tools-hint">${escape(draft.sentence)}</p>` : ""}<div class="tools-actions"><button class="btn-primary" type="submit">Lưu chú giải</button><button class="btn-secondary" type="submit" name="vocab" value="yes">Lưu chú giải & học từ</button></div></form><div>${terms.map((t, i) => `<article class="tool-card"><strong>${escape(t.term)}</strong><p>${escape(t.meaning)}</p><div class="tools-actions"><button type="button" class="btn-secondary" data-term-edit="${i}">Sửa</button><button type="button" class="btn-secondary" data-term-learn="${i}">Lưu học từ</button><button type="button" class="btn-secondary ui-danger" data-term-delete="${i}">Xóa</button></div></article>`).join("") || '<p class="tools-empty">Chưa có chú giải trong sách này.</p>'}</div>`;
       $("#word-wise-on").onchange = (ev) => { state.inline = ev.target.checked; persist(); decorateAll(); };
       $("#glossary-form").onsubmit = (ev) => {
         ev.preventDefault(); const form = new FormData(ev.target), term = clean(form.get("term"), 80), meaning = clean(form.get("meaning"), 1000); if (!term || !meaning) return;
@@ -238,7 +288,7 @@
         const value = { ...draft, id: draft.id || uid(), slug: book.slug, term, meaning, volIdx: draft.volIdx ?? ctx().volIdx, chapIdx: draft.chapIdx ?? ctx().chapIdx, p: draft.p || 0 };
         state.glossary = [...state.glossary.filter((t) => t.id !== value.id && !(t.slug === value.slug && t.term.toLocaleLowerCase() === term.toLocaleLowerCase())), value];
         if (ev.submitter?.name === "vocab") addVocabulary(value, false);
-        if (persist()) { selection = null; decorateAll(); renderWords(); }
+        if (persist()) { formDirty = false; selection = null; decorateAll(); renderWords(); }
       };
       panel.querySelectorAll("[data-term-edit]").forEach((b) => b.onclick = () => { selection = { ...terms[Number(b.dataset.termEdit)] }; renderWords(); });
       panel.querySelectorAll("[data-term-learn]").forEach((b) => b.onclick = () => addVocabulary(terms[Number(b.dataset.termLearn)]));
@@ -299,8 +349,8 @@
     function decorateAll() { options.preservePosition(() => document.querySelectorAll(".reader-frame").forEach(decorateSection)); }
     document.addEventListener("reader-characters-changed", decorateAll);
     function renderProfiles() {
-      panel.innerHTML = `<p class="tools-hint">Lưu cỡ chữ, giãn dòng, phông, giao diện, ảnh, E-Ink, đọc liên tục, chạm lật trang và vùng đọc. Áp dụng hồ sơ giữ vị trí hiện tại.</p><form id="profile-form" class="tools-editor"><label>Tên hồ sơ<input name="name" required maxlength="60" placeholder="Đọc buổi tối"></label><button class="btn-primary" type="submit">Lưu cài đặt hiện tại</button></form>${state.profiles.map((p, i) => `<article class="tool-card"><h3>${escape(p.name)}</h3><p class="tools-hint">${p.settings.fontSize}px · ${p.settings.lineHeight} · ${escape(p.settings.theme)}</p><div class="tools-actions"><button type="button" class="btn-primary" data-profile-apply="${i}">Áp dụng</button><button type="button" class="btn-secondary" data-profile-update="${i}">Cập nhật từ hiện tại</button><button type="button" class="btn-secondary ui-danger" data-profile-delete="${i}">Xóa</button></div></article>`).join("")}`;
-      $("#profile-form").onsubmit = (ev) => { ev.preventDefault(); if (state.profiles.length >= 12) { options.message("Tối đa 12 hồ sơ đọc."); return; } state.profiles.push({ id: uid(), name: clean(new FormData(ev.target).get("name"), 60), settings: profileSettings(options.getSettings()) }); persist(); renderProfiles(); };
+      panel.innerHTML = `<p class="tools-hint">Lưu cỡ chữ, giãn dòng, phông, giao diện, ảnh, E-Ink, đọc liên tục, chạm lật trang và vùng đọc. Hồ sơ đồng bộ giữa các máy; chỉ đổi giao diện máy này khi bấm Áp dụng và vẫn giữ vị trí đọc.</p><form id="profile-form" class="tools-editor"><label>Tên hồ sơ<input name="name" required maxlength="60" placeholder="Đọc buổi tối"></label><button class="btn-primary" type="submit">Lưu cài đặt hiện tại</button></form>${state.profiles.map((p, i) => `<article class="tool-card"><h3>${escape(p.name)}</h3><p class="tools-hint">${p.settings.fontSize}px · ${p.settings.lineHeight} · ${escape(p.settings.theme)}</p><div class="tools-actions"><button type="button" class="btn-primary" data-profile-apply="${i}">Áp dụng</button><button type="button" class="btn-secondary" data-profile-update="${i}">Cập nhật từ hiện tại</button><button type="button" class="btn-secondary ui-danger" data-profile-delete="${i}">Xóa</button></div></article>`).join("")}`;
+      $("#profile-form").onsubmit = (ev) => { ev.preventDefault(); if (state.profiles.length >= 12) { options.message("Tối đa 12 hồ sơ đọc."); return; } state.profiles.push({ id: uid(), name: clean(new FormData(ev.target).get("name"), 60), settings: profileSettings(options.getSettings()) }); if (persist()) { formDirty = false; renderProfiles(); } };
       panel.querySelectorAll("[data-profile-apply]").forEach((b) => b.onclick = () => { options.preservePosition(() => options.applySettings(state.profiles[Number(b.dataset.profileApply)].settings)); options.message("Đã áp dụng hồ sơ đọc."); });
       panel.querySelectorAll("[data-profile-update]").forEach((b) => b.onclick = () => { state.profiles[Number(b.dataset.profileUpdate)].settings = profileSettings(options.getSettings()); persist(); renderProfiles(); });
       panel.querySelectorAll("[data-profile-delete]").forEach((b) => b.onclick = () => { state.profiles.splice(Number(b.dataset.profileDelete), 1); persist(); renderProfiles(); });
@@ -352,8 +402,10 @@
     let frame = 0;
     window.addEventListener("scroll", () => { if (!frame) frame = requestAnimationFrame(() => { frame = 0; updateStatus(); }); }, { passive: true });
     window.addEventListener("resize", updateStatus);
+    window.addEventListener("offline", () => cloudSync.changed(false));
+    window.addEventListener("online", () => cloudSync.changed(true));
     renderQuick(); updateStatus();
-    return { open, openHome, decorateSection, isOpen: () => dialog.open, updateStatus, onView() { generation++; selection = null; if (dialog.open) close(); quickActions.hidden = true; $("#reader-quick-toggle").setAttribute("aria-expanded", "false"); updateStatus(); } };
+    return { open, openHome, decorateSection, reload, sync: cloudSync, isOpen: () => dialog.open, updateStatus, onView() { generation++; selection = null; if (dialog.open) close(); quickActions.hidden = true; $("#reader-quick-toggle").setAttribute("aria-expanded", "false"); updateStatus(); } };
   }
   return { create, normalizeState, profileSettings, bookPosition, positionTarget, termMatches };
 });
