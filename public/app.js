@@ -354,6 +354,9 @@
   const OPEN_ARROW = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>';
   const shelfBookLoads = new Map();
   let shelfRenderedLimit = SHELF_BATCH_SIZE, shelfFilterSignature = "";
+  // Where the shelf was scrolled when a book was opened, so coming back lands
+  // on the same row instead of the top of a long list.
+  let shelfScroll = null;
 
   function createShelfNode(series) {
     const seriesIdx = SERIES.indexOf(series);
@@ -399,6 +402,9 @@
   }
 
   function renderShelf() {
+    // Emptying the grid shortens the page and would drop the reader to the top.
+    const keepY = currentView === "shelf" ? window.scrollY : null;
+    const keepSignature = shelfFilterSignature;
     shelfGrid.innerHTML = "";
     const more = $("#shelf-load-more"); more.hidden = true;
     paintShelfConnection();
@@ -442,6 +448,7 @@
       more.textContent = `Xem thêm ${Math.min(SHELF_BATCH_SIZE, ordered.length - renderedCount)} sách · ${renderedCount}/${ordered.length.toLocaleString("vi-VN")}`;
     };
     appendNextBatch(shelfRenderedLimit);
+    if (keepY !== null && signature === keepSignature) window.scrollTo({ top: keepY, behavior: "auto" });
     more.onclick = () => {
       const before = renderedCount; appendNextBatch(); shelfRenderedLimit = renderedCount;
       shelfGrid.querySelectorAll(".shelf-card")[before]?.focus({ preventScroll: true });
@@ -2241,6 +2248,7 @@
     if (currentView === "reader" && name !== "reader") lastReaderPosition = captureReaderPosition();
     // Leaving the reader: the page still shows the chapter, so save where we were.
     if (currentView === "reader" && name !== "reader") recordReadingPosition();
+    if (currentView === "shelf" && name !== "shelf") shelfScroll = { y: window.scrollY, signature: shelfFilterSignature };
 
     [viewShelf, viewHome, viewVolume, viewReader].forEach((view) => view.classList.remove("active"));
     currentView = name;
@@ -2292,8 +2300,9 @@
     closeSettings();
     hideToast();
     pendingAnchor = null;
-    window.scrollTo({ top: 0, behavior: "auto" });
-    lastChromeScrollY = 0;
+    const shelfY = name === "shelf" && shelfScroll?.signature === shelfFilterSignature ? shelfScroll.y : 0;
+    window.scrollTo({ top: shelfY, behavior: "auto" });
+    lastChromeScrollY = window.scrollY;
     setChromeHidden(false);
     if (name === "volume") revealResumeChapter();
     updateScrollProgress();
